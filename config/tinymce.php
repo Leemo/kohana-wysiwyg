@@ -2,4 +2,13 @@
 
 return array
 (
+	'default' => array
+	(
+		'selector' => '#wysiwyg',
+		'theme'    => 'advanced'
+	),
+	'basic' => array
+	(
+
+	)
 );
