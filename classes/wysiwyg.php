@@ -1,3 +1,3 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
-class TinyMCE extends Kohana_TinyMCE { }
+class TinyMCE extends Kohana_WYSIWYG { }

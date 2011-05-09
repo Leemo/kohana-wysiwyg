@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
-class Controller_TinyMCE extends Controller {
+class Controller_WYSIWYG extends Controller {
 
 	public function action_static($file)
 	{
@@ -10,7 +10,7 @@ class Controller_TinyMCE extends Controller {
 		// Remove the extension from the filename
 		$file = substr($file, 0, - (strlen($ext) + 1));
 
-		if ($file = Kohana::find_file('vendor', 'tinymce/'.$file, $ext))
+		if ($file = Kohana::find_file('vendor', 'wysiwyg/'.$file, $ext))
 		{
 			// Check if the browser sent an "if-none-match: <etag>" header, and tell if the file hasn't changed
 			$this->response->check_cache(sha1($this->request->uri()).filemtime($file), $this->request);
@@ -37,7 +37,7 @@ class Controller_TinyMCE extends Controller {
 		// Remove the extension from the filename
 		$instance = substr($file, 0, - (strlen($ext) + 1));
 
-		$config = Kohana::config('tinymce');
+		$config = Kohana::config('wysiwyg');
 
 		if ( ! isset($config[$instance]))
 		{

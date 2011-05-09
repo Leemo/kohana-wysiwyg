@@ -1,10 +1,10 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
-class Kohana_TinyMCE {
+class Kohana_WYSIWYG {
 
 	public static function instance($name = 'default')
 	{
-		$config = Kohana::config('tinymce');
+		$config = Kohana::config('wysiwyg');
 
 		if ( ! isset($config[$name]))
 		{
@@ -18,7 +18,7 @@ class Kohana_TinyMCE {
 
 	public static function js()
 	{
-		return Route::get('tinymce')->uri(array('action' => 'static', 'file' => 'jquery.tinymce.js'));
+		return Route::get('wysiwyg')->uri(array('action' => 'static', 'file' => 'jquery.tinymce.js'));
 	}
 
 	/**
