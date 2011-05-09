@@ -13,7 +13,7 @@ class Kohana_WYSIWYG {
 			));
 		}
 
-		return new TinyMCE($config[$name], $name);
+		return new WYSIWYG($config[$name], $name);
 	}
 
 	public static function js()
@@ -39,14 +39,14 @@ class Kohana_WYSIWYG {
 
 	public function uri()
 	{
-		return Route::get('tinymce')->uri(array('action' => 'instance', 'file' => $this->_instance_name.'.js'));
+		return Route::get('wysiwyg')->uri(array('action' => 'instance', 'file' => $this->_instance_name.'.js'));
 	}
 
 	public function get_js()
 	{
 		$json_config = array
 		(
-			'script_url' => Route::get('tinymce')->uri(array('action' => 'static', 'file' => 'tiny_mce.js')),
+			'script_url' => Route::get('wysiwyg')->uri(array('action' => 'static', 'file' => 'tiny_mce.js')),
 			'theme'      => $this->_config['theme']
 		);
 

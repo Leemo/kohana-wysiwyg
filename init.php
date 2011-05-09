@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-Route::set('tinymce', 'tinymce/(<action>(/<file>))', array('file' => '.*'))
+Route::set('wysiwyg', 'wysiwyg/(<action>(/<file>))', array('file' => '.*'))
 	->defaults(array(
-		'controller' => 'tinymce',
+		'controller' => 'wysiwyg',
 		'action'     => 'js'
 	));
