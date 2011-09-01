@@ -52,5 +52,5 @@ span.CodeMirror-selected {
 .CodeMirror-matchingbracket {color: #0f0 !important;}
 .CodeMirror-nonmatchingbracket {color: #f22 !important;}
 
-.CodeMirror {border: 1px solid #ccc; border-radius: 5px 5px 5px 5px;}
+.CodeMirror {border: 1px solid #ccc}
 .mustache {color: #0ca;}

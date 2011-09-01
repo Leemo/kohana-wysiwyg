@@ -2,74 +2,97 @@
 
 class Kohana_WYSIWYG {
 
-	public static function instance($name = 'default')
-	{
-		$config = Kohana::config('wysiwyg');
-
-		if ( ! isset($config[$name]))
-		{
-			throw new Kohana_Exception('Configuration for TinyMCE instance :name could not found', array(
-				':name' => $name
-			));
-		}
-
-		return new WYSIWYG($config[$name], $name);
-	}
-
-	public static function js()
-	{
-		return Route::get('wysiwyg')->uri(array('action' => 'static', 'file' => 'jquery.tinymce.js'));
-	}
-
 	/**
+	 * Instances array
+	 *
 	 * @var array
 	 */
-	protected $_config;
+	protected static $_instances = array();
 
 	/**
+	 * Singletone
+	 *
+	 * @param   string  $instance_name  Instance name
+	 * @return  WYSIWYG
+	 */
+	public static function instance($instance_name)
+	{
+		self::check_media();
+
+		if ( ! isset(self::$_instances[$instance_name]))
+		{
+			self::$_instances[$instance_name] = new WYSIWYG($instance_name);
+		}
+
+		return self::$_instances[$instance_name];
+	}
+
+	/**
+	 * Config array
+	 *
+	 * @var array
+	 */
+	protected $_config = array();
+
+	/**
+	 * Current instane name
+	 *
 	 * @var string
 	 */
 	protected $_instance_name;
 
-	public function __construct(array $config, $name)
+	/**
+	 * Class constructor
+	 *
+	 * @param  string  $instance_name  Instance name
+	 */
+	public function __construct($instance_name)
 	{
-		$this->_config = $config;
-		$this->_instance_name = $name;
-	}
+		$config = Kohana::$config->load('wysiwyg')
+			->as_array();
 
-	public function uri()
-	{
-		return Route::get('wysiwyg')->uri(array('action' => 'instance', 'file' => $this->_instance_name.'.js'));
-	}
-
-	public function get_js()
-	{
-		$json_config = array
-		(
-			'script_url' => Route::get('wysiwyg')->uri(array('action' => 'static', 'file' => 'tiny_mce.js')),
-			'theme'      => $this->_config['theme']
-		);
-
-		return '$(document).ready(function(){'.$this->_get_instance_js($json_config).'});';
-	}
-
-	protected function _get_instance_js(array $config)
-	{
-		return '$("'.$this->_config['selector'].'").tinymce('.json_encode($config).');';
-	}
-
-	public function __toString()
-	{
-		try
+		if ( ! isset($config[$instance_name]))
 		{
-			$content = $this->get_js();
-		}
-		catch (Exception $e)
-		{
-			$content = '// '.$e->getMessage().' in file '.$e->getFile().':'.$e->getLine();
+			throw new Kohana_Exception('Can\'t find config for instance :instance', array(
+				':instance' => $instance_name
+				));
 		}
 
-		return $content;
+		$this->_instance_name = $instance_name;
+		$this->_config        = $config[$instance_name];
 	}
 
-} // End Kohana_TinyMCE
+	/**
+	 * Returns link to initial WYSIWYG javascript file
+	 *
+	 * @return string
+	 */
+	public function js()
+	{
+		return 'wysiwyg/'.$this->_instance_name.'.js';
+	}
+
+	/**
+	 * Returns link to initial WYSIWYG css file
+	 *
+	 * @return string
+	 */
+	public function css()
+	{
+		return 'wysiwyg/'.$this->_instance_name.'.css';
+	}
+
+	/**
+	 * Checks a module media. If it doesn't exist - throws exception
+	 *
+	 * @throws Kohana_Exception
+	 */
+	protected static function check_media()
+	{
+		if ( ! class_exists('Media'))
+		{
+			throw new Kohana_Exception('Required module Media doesn\'t exist');
+		}
+	}
+
+} // End Kohana_WYSIWYG

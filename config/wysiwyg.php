@@ -7,6 +7,13 @@ return array
 		'selector' => '#wysiwyg',
 		'theme'    => 'advanced'
 	),
+
+	'preview' => array
+	(
+		'selector' => '#wysiwyg',
+		'theme'    => 'advanced'
+	),
+
 	'basic' => array
 	(
 

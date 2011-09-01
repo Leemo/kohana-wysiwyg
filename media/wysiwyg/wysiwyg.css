@@ -1,0 +1,5 @@
+.editorsSwitch {text-align: right}
+.editorsSwitch a {margin: 0 5px; padding: 0 3px; text-decoration: none; border-bottom: 1px dashed}
+.active {background: #efefef; color: #000 !important; border:0 !important}
+.rte {width: 98%}
+.no_wysiwyg {margin-top: 25px;}

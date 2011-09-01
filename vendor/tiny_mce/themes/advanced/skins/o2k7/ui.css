@@ -1,9 +1,7 @@
 /* Reset */
 span.o2k7Skin {
-	border: 1px solid #DDDDDD;
-  border-radius: 5px 5px 5px 5px;
-  display: block;
-  padding: 5px;
+    display: block;
+    padding: 5px;
 }
 .o2k7Skin table, .o2k7Skin tbody, .o2k7Skin a, .o2k7Skin img, .o2k7Skin tr, .o2k7Skin div, .o2k7Skin td, .o2k7Skin iframe, .o2k7Skin span, .o2k7Skin *, .o2k7Skin .mceText {border:0; margin:0; padding:0; background:transparent; white-space:nowrap; text-decoration:none; font-weight:normal; cursor:default; color:#000; vertical-align:baseline; width:auto; border-collapse:separate; text-align:left}
 .o2k7Skin a:hover, .o2k7Skin a:link, .o2k7Skin a:visited, .o2k7Skin a:active {text-decoration:none; font-weight:normal; cursor:default; color:#000}
@@ -23,21 +21,21 @@ span.o2k7Skin {
 /* Layout */
 
 .o2k7Skin table.mceLayout tr.mceFirst td.mceToolbar {
-	border-radius: 5px 5px 0 0;
-	background: -moz-linear-gradient(center top , #e8e8e8, #d3d3d3);
-	background: -webkit-gradient(linear,0% 0%,0% 100%,from(#e8e8e8),to(#d3d3d3));
-  background: linear-gradient(center top , #e8e8e8, #d3d3d3);
-  padding: 7px 0 0 3px;
+    border-radius: 5px 5px 0 0;
+    background: -moz-linear-gradient(center top , #e8e8e8, #d3d3d3);
+    background: -webkit-gradient(linear,0% 0%,0% 100%,from(#e8e8e8),to(#d3d3d3));
+    background: linear-gradient(center top , #e8e8e8, #d3d3d3);
+    padding: 7px 0 0 3px;
 
 }
 .o2k7Skin table.mceLayout tr.mceLast td {border-radius: 0 0 5px 5px;}
 .o2k7Skin table.mceToolbar
 {
-	background: none repeat scroll 0 0 #F2F2F2;
-  border: 0 none;
-  border-radius: 5px 5px 5px 5px;
-  margin: 0 3px 8px;
-  padding: 2px;
+    background: none repeat scroll 0 0 #F2F2F2;
+    border: 0 none;
+    border-radius: 5px 5px 5px 5px;
+    margin: 0 3px 8px;
+    padding: 2px;
 }
 .o2k7Skin table.mceToolbar td {padding: 1px;}
 .o2k7Skin .mceIframeContainer {background: #d3d3d3; padding: 5px;}
@@ -61,7 +59,7 @@ span.o2k7Skin {
 .o2k7Skin .mceButton {display:block; width:22px; height:22px; border-radius: 4px;}
 .o2k7Skin a.mceButton span, .o2k7Skin a.mceButton img {margin-left:1px}
 .o2k7Skin .mceOldBoxModel a.mceButton span, .o2k7Skin .mceOldBoxModel a.mceButton img {margin:0 0 0 1px}
-.o2k7Skin a.mceButtonEnabled:hover {background-color:#e0e0e0; box-shadow: 0 0 4px #FFD775}
+.o2k7Skin a.mceButtonEnabled:hover {background-color:#ccc}
 .o2k7Skin a.mceButtonActive, .o2k7Skin a.mceButtonSelected {background-position:0 -44px}
 .o2k7Skin .mceButtonDisabled .mceIcon {opacity:0.3; -ms-filter:'alpha(opacity=30)'; filter:alpha(opacity=30)}
 .o2k7Skin .mceButtonLabeled {width:auto}
@@ -71,12 +69,12 @@ span.o2k7Skin {
 
 /* Separator */
 .o2k7Skin .mceSeparator {
-	display:block;
-	width:1px;
-	height:22px;
-	margin: 0 4px;
-	background: #fff;
-	border-left: 1px solid #ccc;
+  display:block;
+  width:1px;
+  height:22px;
+  margin: 0 4px;
+  background: #fff;
+  border-left: 1px solid #ccc;
 
 }
 
@@ -108,10 +106,10 @@ span.o2k7Skin {
 
 /* ColorSplitButton */
 .o2k7Skin div.mceColorSplitMenu table {
-	background:#FFF;
-	border: 1px solid #CCCCCC;
-  border-radius: 5px 5px 5px 5px;
-  box-shadow: 1px 1px 6px #666666;
+    background:#FFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 1px 1px 6px #666666;
 }
 .o2k7Skin .mceColorSplitMenu td {padding:2px}
 .o2k7Skin .mceColorSplitMenu a {display:block; width:9px; height:9px; overflow:hidden; border:1px solid #808080}
@@ -124,13 +122,13 @@ span.o2k7Skin {
 
 /* Menu */
 .o2k7Skin .mceMenu {
-	position:absolute;
-	left:0;
-	top:0;
-	z-index:1000;
-	border: 1px solid #CCCCCC;
-  border-radius: 5px 5px 5px 5px;
-  box-shadow: 1px 1px 6px #666666;
+    position:absolute;
+    left:0;
+    top:0;
+    z-index:1000;
+    border: 1px solid #ccc;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 1px 1px 6px #666666;
 }
 .o2k7Skin .mceNoIcons span.mceIcon {width:0;}
 .o2k7Skin .mceNoIcons a .mceText {padding-left:10px}
