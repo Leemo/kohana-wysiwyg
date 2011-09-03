@@ -4,18 +4,10 @@ return array
 (
 	'default' => array
 	(
-		'selector' => '#wysiwyg',
-		'theme'    => 'advanced'
-	),
-
-	'preview' => array
-	(
-		'selector' => '#wysiwyg',
-		'theme'    => 'advanced'
-	),
-
-	'basic' => array
-	(
-
+		'selector' => '.rte',
+		'config'   => array
+		(
+			'skin' => 'kama'
+		)
 	)
 );

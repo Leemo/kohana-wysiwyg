@@ -23,6 +23,9 @@ class Kohana_Controller_WYSIWYG extends Controller_Media {
 		$this->_wysiwyg_config = Kohana::$config->load('wysiwyg')
 			->as_array();
 
+		// Be cause minimized WYSIWYG editor does not work...
+		// I don't know why... I add this problem in my TODO
+		// Alexey Popov :)
 		$this->_config['filters'] = array
 		(
 			'css' => $this->_config['filters']['css']
@@ -30,7 +33,7 @@ class Kohana_Controller_WYSIWYG extends Controller_Media {
 
 		$file = pathinfo($this->_file, PATHINFO_FILENAME);
 
-		if (isset($this->_wysiwyg_config[$file]))
+		if ($file == 'init')
 		{
 			$ext = pathinfo($this->_file, PATHINFO_EXTENSION);
 
@@ -52,35 +55,12 @@ class Kohana_Controller_WYSIWYG extends Controller_Media {
 	{
 		$files = array
 		(
-			Kohana::find_file('media/tiny_mce', 'jquery.tinymce', 'js'),
-			Kohana::find_file('media/codemirror/lib', 'codemirror', 'js'),
-			Kohana::find_file('media/codemirror/lib', 'overlay', 'js'),
-			Kohana::find_file('media/codemirror/mode/xml', 'xml', 'js'),
-			Kohana::find_file('media/wysiwyg', 'initEditors', 'js'),
+			Kohana::find_file('media/wysiwyg', 'init', 'js')
 		);
 
-		$optional_content = array
-		(
-			'textAreaClass' => 'rte',
-			'media_dir'     => $this->_config['media_directory'].'/wysiwyg',
-			'lang'          => array(__('Rich text'), __('Source code'))
-		);
-
-		$optional_content = 'var editor = '.json_encode($optional_content).';';
+		$optional_content = 'var wysiwyg_config = '.json_encode($this->_wysiwyg_config).';';
 
 		$source = $this->_source($files, $optional_content);
-	}
-
-	public function action_css()
-	{
-		$files = array
-		(
-			Kohana::find_file('media/wysiwyg', 'wysiwyg', 'css'),
-			Kohana::find_file('media/codemirror/lib', 'codemirror', 'css'),
-			Kohana::find_file('media/codemirror/mode/xml', 'xml', 'css')
-		);
-
-		$source = $this->_source($files);
 	}
 
 } // End Kohana_Controller_WYSIWYG

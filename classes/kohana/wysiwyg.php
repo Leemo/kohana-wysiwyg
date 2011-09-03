@@ -3,63 +3,27 @@
 class Kohana_WYSIWYG {
 
 	/**
-	 * Instances array
+	 * Instance
 	 *
 	 * @var array
 	 */
-	protected static $_instances = array();
+	protected static $_instance;
 
 	/**
 	 * Singletone
 	 *
-	 * @param   string  $instance_name  Instance name
 	 * @return  WYSIWYG
 	 */
-	public static function instance($instance_name)
+	public static function instance()
 	{
 		self::check_media();
 
-		if ( ! isset(self::$_instances[$instance_name]))
+		if (empty(self::$_instance))
 		{
-			self::$_instances[$instance_name] = new WYSIWYG($instance_name);
+			self::$_instance = new WYSIWYG;
 		}
 
-		return self::$_instances[$instance_name];
-	}
-
-	/**
-	 * Config array
-	 *
-	 * @var array
-	 */
-	protected $_config = array();
-
-	/**
-	 * Current instane name
-	 *
-	 * @var string
-	 */
-	protected $_instance_name;
-
-	/**
-	 * Class constructor
-	 *
-	 * @param  string  $instance_name  Instance name
-	 */
-	public function __construct($instance_name)
-	{
-		$config = Kohana::$config->load('wysiwyg')
-			->as_array();
-
-		if ( ! isset($config[$instance_name]))
-		{
-			throw new Kohana_Exception('Can\'t find config for instance :instance', array(
-				':instance' => $instance_name
-				));
-		}
-
-		$this->_instance_name = $instance_name;
-		$this->_config        = $config[$instance_name];
+		return self::$_instance;
 	}
 
 	/**
@@ -69,7 +33,12 @@ class Kohana_WYSIWYG {
 	 */
 	public function js()
 	{
-		return 'wysiwyg/'.$this->_instance_name.'.js';
+		return array
+		(
+			'wysiwyg/ckeditor/ckeditor.js',
+			'wysiwyg/ckeditor/jquery.ckeditor.js',
+			'wysiwyg/init.js'
+		);
 	}
 
 	/**
