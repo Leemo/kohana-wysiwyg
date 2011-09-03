@@ -1,14 +1,9 @@
 .CodeMirror {
-  line-height: 1em;
-  font-family: monospace;
-}
-
-.CodeMirror-scroll {
   overflow: auto;
   height: 300px;
-  /* This is needed to prevent an IE[67] bug where the scrolled content
-     is visible outside of the scrolling box. */
-  position: relative;
+  line-height: 1em;
+  font-family: monospace;
+  _position: relative; /* IE6 hack */
 }
 
 .CodeMirror-gutter {
@@ -34,15 +29,6 @@
   border-radius: 0;
   border-width: 0; margin: 0; padding: 0; background: transparent;
   font-family: inherit;
-  font-size: inherit;
-  padding: 0; margin: 0;
-  white-space: pre;
-  word-wrap: normal;
-}
-
-.CodeMirror textarea {
-  font-family: inherit !important;
-  font-size: inherit !important;
 }
 
 .CodeMirror-cursor {
@@ -65,3 +51,6 @@ span.CodeMirror-selected {
 
 .CodeMirror-matchingbracket {color: #0f0 !important;}
 .CodeMirror-nonmatchingbracket {color: #f22 !important;}
+
+.CodeMirror {border: 1px solid #ccc}
+.mustache {color: #0ca;}

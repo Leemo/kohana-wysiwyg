@@ -21,20 +21,20 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
     if (ch == "<") {
       if (stream.eat("!")) {
         if (stream.eat("[")) {
-          if (stream.match("CDATA[")) return chain(inBlock("atom", "]]>"));
+          if (stream.match("[CDATA[")) return chain(inBlock("xml-cdata", "]]>"));
           else return null;
         }
-        else if (stream.match("--")) return chain(inBlock("comment", "-->"));
-        else if (stream.match("DOCTYPE", true, true)) {
+        else if (stream.match("--")) return chain(inBlock("xml-comment", "-->"));
+        else if (stream.match("DOCTYPE")) {
           stream.eatWhile(/[\w\._\-]/);
-          return chain(inBlock("meta", ">"));
+          return chain(inBlock("xml-doctype", ">"));
         }
         else return null;
       }
       else if (stream.eat("?")) {
         stream.eatWhile(/[\w\._\-]/);
-        state.tokenize = inBlock("meta", "?>");
-        return "meta";
+        state.tokenize = inBlock("xml-processing", "?>");
+        return "xml-processing";
       }
       else {
         type = stream.eat("/") ? "closeTag" : "openTag";
@@ -43,13 +43,13 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         var c;
         while ((c = stream.eat(/[^\s\u00a0=<>\"\'\/?]/))) tagName += c;
         state.tokenize = inTag;
-        return "tag";
+        return "xml-tag";
       }
     }
     else if (ch == "&") {
       stream.eatWhile(/[^;]/);
       stream.eat(";");
-      return "atom";
+      return "xml-entity";
     }
     else {
       stream.eatWhile(/[^&<]/);
@@ -62,7 +62,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
     if (ch == ">" || (ch == "/" && stream.eat(">"))) {
       state.tokenize = inText;
       type = ch == ">" ? "endTag" : "selfcloseTag";
-      return "tag";
+      return "xml-tag";
     }
     else if (ch == "=") {
       type = "equals";
@@ -74,7 +74,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
     }
     else {
       stream.eatWhile(/[^\s\u00a0=<>\"\'\/?]/);
-      return "word";
+      return "xml-word";
     }
   }
 
@@ -86,7 +86,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
           break;
         }
       }
-      return "string";
+      return "xml-attribute";
     };
   }
 
@@ -128,18 +128,8 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
 
   function element(type) {
     if (type == "openTag") {curState.tagName = tagName; return cont(attributes, endtag(curState.startOfLine));}
-    else if (type == "closeTag") {
-      var err = false;
-      if (curState.context) {
-        err = curState.context.tagName != tagName;
-        popContext();
-      } else {
-        err = true;
-      }
-      if (err) setStyle = "error";
-      return cont(endclosetag(err));
-    }
-    else if (type == "string") {
+    else if (type == "closeTag") {popContext(); return cont(endclosetag);}
+    else if (type == "xml-cdata") {
       if (!curState.context || curState.context.name != "!cdata") pushContext("!cdata");
       if (curState.tokenize == inText) popContext();
       return cont();
@@ -155,27 +145,20 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
       return cont();
     };
   }
-  function endclosetag(err) {
-    return function(type) {
-      if (err) setStyle = "error";
-      if (type == "endTag") return cont();
-      return pass();
-    }
+  function endclosetag(type) {
+    if (type == "endTag") return cont();
+    return pass();
   }
 
   function attributes(type) {
-    if (type == "word") {setStyle = "attribute"; return cont(attributes);}
+    if (type == "xml-word") {setStyle = "xml-attname"; return cont(attributes);}
     if (type == "equals") return cont(attvalue, attributes);
     return pass();
   }
   function attvalue(type) {
-    if (type == "word" && Kludges.allowUnquoted) {setStyle = "string"; return cont();}
-    if (type == "string") return cont(attvaluemaybe);
+    if (type == "xml-word" && Kludges.allowUnquoted) {setStyle = "xml-attribute"; return cont();}
+    if (type == "xml-attribute") return cont();
     return pass();
-  }
-  function attvaluemaybe(type) {
-    if (type == "string") return cont(attvaluemaybe);
-    else return pass();
   }
 
   return {
@@ -192,7 +175,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
 
       setStyle = type = tagName = null;
       var style = state.tokenize(stream, state);
-      if ((style || type) && style != "comment") {
+      if ((style || type) && style != "xml-comment") {
         curState = state;
         while (true) {
           var comb = state.cc.pop() || element;
@@ -213,14 +196,6 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         context = context.prev;
       if (context) return context.indent + indentUnit;
       else return 0;
-    },
-
-    compareStates: function(a, b) {
-      if (a.indented != b.indented || a.tagName != b.tagName) return false;
-      for (var ca = a.context, cb = b.context; ; ca = ca.prev, cb = cb.prev) {
-        if (!ca || !cb) return ca == cb;
-        if (ca.tagName != cb.tagName) return false;
-      }
     },
 
     electricChars: "/"
