@@ -5,9 +5,11 @@ return array
 	'default' => array
 	(
 		'selector' => '.rte',
+
 		'config'   => array
 		(
-			'skin' => 'kama'
-		)
+			'skin'        => 'kama',
+			'filebrowser' => TRUE
+		),
 	)
 );

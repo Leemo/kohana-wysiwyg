@@ -1,0 +1,52 @@
+* {
+  padding: 0;
+  margin: 0
+}
+
+body, html {
+  height:100%;
+  background-color: #efefef
+}
+
+#dirs {
+  /* background: #7ebafe; */
+  width: 235px;
+  float: left;
+  min-height: 100%;
+  position: relative;
+}
+
+#content {
+  margin-left: 265px;
+  min-height: 100%;
+  /* background: #eaf3fb; */
+  position: relative;
+}
+
+#controls {
+  height: 100px;
+  /* background: #ffecd4; */
+  padding: 15px;
+}
+
+#files {
+  padding: 20px 15px 100px;
+}
+
+#info {
+  height: 90px;
+  /* background: #c37efe; */
+  margin: -90px 0 0 265px;
+  position: relative
+}
+
+.rounded {
+  margin: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background-color: #fff;
+  min-height: 100%;
+  padding: 10px;
+  position: relative;
+}

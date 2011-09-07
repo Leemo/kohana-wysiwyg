@@ -10,6 +10,13 @@ class Kohana_Controller_WYSIWYG extends Controller_Media {
 	protected $_wysiwyg_config = array();
 
 	/**
+	 * WYSIWYG filebrowser configuration array
+	 *
+	 * @var array
+	 */
+	protected $_filebrowser_config = array();
+
+	/**
 	 * Environment name
 	 *
 	 * @var string
@@ -21,6 +28,9 @@ class Kohana_Controller_WYSIWYG extends Controller_Media {
 		parent::before();
 
 		$this->_wysiwyg_config = Kohana::$config->load('wysiwyg')
+			->as_array();
+
+		$this->_filebrowser_config = Kohana::$config->load('filebrowser')
 			->as_array();
 
 		// Be cause minimized WYSIWYG editor does not work...
@@ -58,7 +68,8 @@ class Kohana_Controller_WYSIWYG extends Controller_Media {
 			Kohana::find_file('media/wysiwyg', 'init', 'js')
 		);
 
-		$optional_content = 'var wysiwyg_config = '.json_encode($this->_wysiwyg_config).';';
+		$optional_content  = 'var wysiwyg_config = '.json_encode($this->_wysiwyg_config).'; ';
+		$optional_content .= 'var filebrowser_config = '.json_encode($this->_filebrowser_config).';';
 
 		$source = $this->_source($files, $optional_content);
 	}

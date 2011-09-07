@@ -7,3 +7,9 @@ Route::set('media/wysiwyg', $public_directory.'/wysiwyg/<file>(?<mtime>)', array
 		'controller' => 'wysiwyg',
 		'action'     => 'plain'
 	));
+
+Route::set('wysiwyg/filebrowser', 'wysiwyg/filebrowser/<action>(/<path>)', array('path' => '.+'))
+	->defaults(array(
+		'controller' => 'filebrowser',
+		'action'     => 'browse'
+	));
