@@ -7,13 +7,15 @@
 <?php
 	echo $css
 		->add_file('filebrowser/global.css')
-		->add_file('filebrowser/treeview.css')
+		->add_file('filebrowser/directories.css')
+		->add_file('filebrowser/fancybox.css');
 ?>
 <?php
 	echo $js
 		->add_file('filebrowser/jquery-1.6.2.js')
 		->add_file('filebrowser/jquery.tmpl.js')
-		->add_file('filebrowser/jquery.treeview.js')
+		->add_file('filebrowser/jquery.fancybox.js')
+		//->add_file('filebrowser/jquery.swfobject.js')
 		->add_file('filebrowser/global.js');
 ?>
 	</head>

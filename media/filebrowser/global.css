@@ -3,22 +3,34 @@
   margin: 0
 }
 
-body, html {
+body,
+html {
   height:100%;
 }
 
-body, .header {
-	background: url('images/bkg.png') 0 0 repeat-x #d3d3d3;
-	font-family: Arial
+body,
+.header {
+  background: #d3d3d3;
+  font-family: Arial;
+  font-size: 13px
+}
+
+a,
+a:visited {
+  color: blue
+}
+
+a:hover {
+  color: red
 }
 
 #dirs {
   width: 220px;
   float: left;
   min-height: 100%;
-	position: relative;
-	background: #fff;
-	margin-left: 10px;
+  position: relative;
+  background: #fff;
+  margin-left: 10px;
   -moz-border-radius: 0 0 5px 5px;
   -webkit-border-radius: 0 0 5px 5px;
   border-radius: 0 0 5px 5px;
@@ -28,113 +40,204 @@ body, .header {
   margin: 0 10px 0 240px;
   min-height: 100%;
   position: relative;
-	background: #e0e0e0;
+  background: #e0e0e0;
 }
 
 .header {
-	padding-top: 10px;
+  padding-top: 10px;
 }
 
 .header span {
-	display: block;
-	height: 10px;
-	-moz-border-radius: 5px 5px 0 0;
+  display: block;
+  height: 10px;
+  -moz-border-radius: 5px 5px 0 0;
   -webkit-border-radius: 5px 5px 0 0;
   border-radius: 5px 5px 0 0;
 }
 
 .footer {
-	position: absolute;
-	bottom:0;
-	left: 0;
-	padding-bottom: 10px;
-	width: 100%;
-	background: #d3d3d3;
+  position: absolute;
+  bottom:0;
+  left: 0;
+  padding-bottom: 10px;
+  width: 100%;
+  background: #d3d3d3;
 }
 
 .footer span, #info_wrap span {
-	display: block;
-	height: 10px;
-	-moz-border-radius: 0 0 5px 5px;
-  -webkit-border-radius: 0 0 5px 5px;
-  border-radius: 0 0 5px 5px;
+  display: block;
+  height: 10px;
+  -moz-border-radius: 0 0 8px 8px;
+  -webkit-border-radius: 0 0 8px 8px;
+  border-radius: 0 0 8px 8px;
 }
 
 #content .header span, #info_wrap span {
-	background: #e0e0e0;
+  background: #e0e0e0;
 }
 
 #dirs .header span, #dirs .footer span {
-	background: #fff;
+  background: #fff;
 }
 
 #controls {
-  height: 15px;
-  padding: 10px;
-	background: #f1f1f1;
-  width: 50%;
-	margin: 0 0 5px 0;
+  height: 25px;
+  margin: 0 0 5px 0;
 }
 
 #files {
   padding: 20px 15px 0;
-	margin-right: 10px;
-	overflow-y: auto
+  margin-right: 10px;
+  overflow-y: auto
 }
 
 #info {
   height: 20px;
-	background: #e0e0e0;
-	margin: 5px 0 0 0;
-	font: 11px/20px Arial;
-	padding-left: 5px;
+  margin: 5px 0 0 0;
+  padding-left: 5px;
 }
 
 #info_wrap {
-	margin: -45px 10px 0 240px;
-	position: relative;
-	background: #d3d3d3;
-	padding-bottom: 10px;
+  margin: -45px 10px 0 240px;
+  position: relative;
+  background: #d3d3d3;
+  padding-bottom: 10px;
 }
 
 .rounded {
-   -moz-border-radius: 5px;
+  -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
+  padding: 8px;
+  background-color: #fff
 }
 
 a.file {
-	display: block;
-	float: left;
-	margin-right: 10px;
-	background: #f4f4f4;
-	border: 1px solid #f4f4f4;
-	padding:10px;
-	color: #666;
-	font-size: 12px;
-	text-align: center; 
-	-moz-border-radius: 3px;
+  display: block;
+  float: left;
+  margin-right: 10px;
+  background: #f4f4f4;
+  border: 1px solid #f4f4f4;
+  padding:10px;
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-	text-decoration: none;
+  text-decoration: none;
 
 }
 
 .file .icon {
-	width: 90px;
-	height: 90px;
-	background-color: #c1d2ee;
-	border: 1px solid #ccc;
-	margin-bottom: 10px;
+  width: 90px;
+  height: 90px;
+  background-color: #c1d2ee;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
 }
 
 .file .size {
-	color: #888;
-	font-size: 11px;
+  color: #888;
+  font-size: 11px;
 }
 
 a.file:hover {
-	background: #fff;
-	color: #000;
-	border-color: #ccc;
+  background: #fff;
+  color: #000;
+  border-color: #ccc;
+}
+
+#controls a {
+  margin-right: 5px
+}
+
+#upload {
+  padding: 5px
+}
+
+#upload .queue {
+  width: 300px;
+  height: 200px;
+}
+
+#upload .buttons {
+  text-align: right
+}
+
+#upload .buttons a {
+  margin-left: 10px
+}
+
+/* --- AWESOME BUTTONS STYLES (http://www.zurb.com/article/266/super-awesome-buttons-with-css3-and-rgba) --- */
+
+.awesome {
+  background: #222 url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAyCAYAAACd+7GKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAClJREFUeNpi/v//vwMTAwPDfzjBgMpFI/7hFSOT9Y8qRuF3JLoHAQIMAHYtMmRA+CugAAAAAElFTkSuQmCC") repeat-x;
+  display: inline-block;
+  padding: 5px 20px 6px;
+  color: #000 !important;
+  text-decoration: none !important;
+  line-height: 1;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-shadow: 0 1px 3px #999;
+  -webkit-box-shadow: 0 1px 3px #999;
+  /* text-shadow: 0 -1px 1px #222; */
+  border-bottom: 1px solid #222;
+  position: relative;
+  cursor: pointer;
+  border: 0 !important
+}
+
+.awesome:hover {
+  background-color: #111;
+}
+
+.awesome:active {
+  top: 1px;
+}
+
+.small.awesome,
+.small.awesome:visited {
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.awesome,
+.awesome:visited,
+.medium.awesome,
+.medium.awesome:visited {
+  font-size: 13px;
+  line-height: 1;
+  /* text-shadow: 0 -1px 1px rgba(0,0,0,0.25); */
+}
+
+.green.awesome,
+.green.awesome:visited {
+  color: #186912 !important;
+  background-color: #a2f99c;
+}
+
+.green.awesome:hover {
+  background-color: #7ee178;
+}
+
+.blue.awesome,
+.blue.awesome:visited {
+  color: #0f21f6!important;
+  background-color: #15cff0;
+}
+
+.blue.awesome:hover {
+  background-color: #2175e4;
+}
+
+.red.awesome,
+.red.awesome:visited {
+  background-color: #e33100;
+}
+
+.red.awesome:hover {
+  background-color: #872300;
 }
