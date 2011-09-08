@@ -156,7 +156,7 @@ a.file:hover {
   padding: 5px
 }
 
-#upload .queue {
+#upload #queue {
   width: 300px;
   height: 200px;
 }
