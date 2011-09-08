@@ -1,0 +1,81 @@
+
+.directories {
+	padding: 0 10px 25px;
+	margin: 0 5px 0 0;
+	list-style: none;
+	font-size: 13px;
+}
+
+.directories div {
+	margin: 0;
+	padding: 3px 0 3px 16px;
+}
+
+.directories>div{
+	padding-left:0 !important
+}
+
+.directories div p {
+	padding: 1px 3px 1px;
+}
+.directories div p.selected {
+	background: #efefef;
+}
+
+.directories div p.selected b span {
+	border-top-color: #efefef;
+	border-bottom-color: #efefef;
+}
+
+.directories div.open p.selected b span {
+	border-left-color: #efefef;
+	border-right-color: #efefef;
+}
+
+.directories div a {
+	background: url(images/folder-closed.gif) 0 1px no-repeat;
+	padding-left: 20px;
+	text-decoration: none;
+}
+
+.directories div.open a {
+	background: url(images/folder.gif) 0 1px no-repeat;
+}
+
+.directories div a.selected {
+	background-color: #efefef
+}
+
+.directories div b {
+	cursor: pointer;
+}
+.directories div b span {
+	display: inline-block;
+	position: relative;
+	margin: 0 3px 0 5px;
+	font-size: 0;
+	width:0;
+	border: 4px solid #fff;
+	border-right:0;
+	border-left: 8px solid #ccc;
+}
+
+.directories div b:hover span{
+	border-left-color: red;
+}
+
+.directories div.open b span {
+	border: 4px solid #fff;
+	border-bottom:0;
+	border-top: 8px solid #ccc;
+	top: 2px;
+}
+
+.directories div.open b:hover span {
+	border-top-color: red;
+}
+
+
+
+
+
