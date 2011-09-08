@@ -1,7 +1,15 @@
+
+.treeview {
+	padding-bottom: 25px !important;
+	overflow-y: auto;
+	margin-right: 5px !important;
+}
+
 .treeview, .treeview ul {
-	padding: 0;
+	padding: 0 10px;
 	margin: 0;
 	list-style: none;
+	font-size: 13px;
 }
 
 .treeview ul {
@@ -28,6 +36,40 @@
 	padding: 3px 0pt 3px 16px;
 }
 
+.treeview li a {
+	background: url(images/folder.gif) 0 1px no-repeat;
+	padding-left: 20px;
+}
+
+.treeview li span {
+	display: inline-block;
+	position: relative;
+	margin-right: 5px;
+	cursor: pointer;
+	font-size: 0;
+	width:0;
+	border: 4px solid #fff;
+	border-right:0;
+	border-left: 9px solid #ccc;
+}
+
+.treeview li span:hover {
+	border-left-color: #888;
+}
+
+.treeview li span.open {
+	border: 4px solid #fff;
+	border-bottom:0;
+	border-top: 9px solid #ccc;
+	margin-right: 6px;
+	top: 2px;
+}
+
+.treeview li span.open:hover {
+	border-top-color: #888;
+}
+
+
 .treeview a.selected {
 	background-color: #eee;
 }
@@ -36,7 +78,7 @@
 
 .treeview .hover { color: red; cursor: pointer; }
 
-.treeview li { background: url(images/treeview-line.gif) 0 0 no-repeat; }
+
 .treeview li.collapsable, .treeview li.expandable { background-position: 0 -176px; }
 
 .treeview .expandable-hitarea { background-position: -80px -3px; }
