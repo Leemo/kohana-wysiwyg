@@ -1,23 +1,27 @@
 <div id="dirs">
 	<div class="header"><span></span></div>
-	<ul class="treeview">
+	<div class="treeview">
 		<?php foreach ($dirs as $dir): ?>
-			<li><span></span><a href=""><?php echo $dir ?></a></li>
+			<div>
+				<p>
+					<b><span></span></b><a href=""><?php echo $dir ?></a>
+				</p>
+			</div>
 		<?php endforeach ?>
-		</ul>
+		</div>
 
-<div class="footer"><span></span></div>
+		<div class="footer"><span></span></div>
 	</div>
 	<div id="content">
 		<div class="header">
 			<div id="controls" class="rounded">
-			Здесь контролы
+				Здесь контролы
 			</div>
 			<span></span>
 		</div>
 		<div id="files">
 		<?php echo '&nbsp;'; ?>
-	</div>
+		</div>
 	</div>
 	<div id="info_wrap">
 		<span></span>

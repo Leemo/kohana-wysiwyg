@@ -2,7 +2,7 @@
   $(function(){
      $.recountHeight();
 		 $(window).bind("resize", function(){$.recountHeight();});
-		 $("ul.treeview span").click(function(){$(this).toggleClass("open");});
+		 $("div.treeview b").click(function(){$(this).parent().parent().toggleClass("open");});
      $(document).bind("filebrowser_load_dirs", {"path": ""}, function() {
        $("#dirs ul").treeview({
          "collapsed": true,
