@@ -2,10 +2,10 @@
 $.fn.folderTree = function(opt){
 	var opt = $.extend({
 		unit : "div", //each folder unit
-		root : "filebrowser/",
+		root : "wysiwyg/filebrowser/",
 		getDirs : "dirs", //link suffix for folders json getting
 		getFiles : "files", //link suffix for files json getting
-		cacheTime : 1 //during this time (minutes) folder opening show last loaded inner 
+		cacheTime : 1 //during this time (minutes) folder opening show last loaded inner
 	}, opt);
 
 	this.children(opt.unit).each(function(){

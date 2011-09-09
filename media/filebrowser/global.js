@@ -9,15 +9,11 @@
       $.recountHeight();
     });
 
-	  $("div.directories").folderTree();
+    $("div.directories").folderTree();
 
     $(document).bind("filebrowser_load_dirs", {
       "path": ""
     }, function() {
-      /* $("#dirs ul").treeview({
-        "collapsed": true,
-        "prerendered": true
-      }); */
       }).bind("filebrowser_load_files", {
       "path": ""
     }, function() {
@@ -29,25 +25,38 @@
     })
     .bind("fancybox_ready", function(){
       $("#fancybox-content .close")
-        .click(function(){
-          $.fancybox.close(); return false
-        });
+      .click(function(){
+        $.fancybox.close();
+        return false
+      });
 
       $("#file_upload").uploadify({
         "uploader": "media/filebrowser/uploadify.swf",
         "script": "/wysiwyg/filebrowser/upload",
         "cancelImg": "media/filebrowser/cancel.png",
         "auto": true,
+        "width": 0,
+        "height": 0,
         "buttonText": "Select Images",
         "method": "post",
         "multi": true,
         "queueID": "queue",
         "removeCompleted": true,
+        "hideButton": true,
         /* "onComplete": function() { $(document).trigger("filebrowser_load_files", {"path": path}) }, */
-        "onError": function(a, b, c, d, e) { if (d !== "1") { alert("error "+d.type+" status: "+d.status+": "+d.text) } }
+        "onError": function(a, b, c, d, e) {
+          if (d !== "1") {
+            alert("error "+d.type+" status: "+d.status+": "+d.text)
+          }
+        }
+      });
+
+      $("#fancybox-content .choose").click(function() {
+        $("#file_upload").trigger("click");
+        return false
       })
     })
-    .trigger("filebrowser_load_dirs", "")
+  .trigger("filebrowser_load_dirs", "")
     .trigger("filebrowser_load_files", "");
 
     $("#refresh").click(function(){
@@ -63,7 +72,9 @@
       "showCloseButton": false,
       "speedIn": 100,
       "speedOut": 100,
-      "onComplete": function(){ $(document).trigger("fancybox_ready") }
+      "onComplete": function(){
+        $(document).trigger("fancybox_ready")
+      }
     });
 
   })
