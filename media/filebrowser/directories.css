@@ -27,9 +27,10 @@
 	border-bottom-color: #efefef;
 }
 
-.directories div.open p.selected b span {
+.directories div.open>p.selected b span {
 	border-left-color: #efefef;
 	border-right-color: #efefef;
+	border-top-color: #ccc;
 }
 
 .directories div a {
@@ -38,12 +39,8 @@
 	text-decoration: none;
 }
 
-.directories div.open a {
+.directories div.open>p a {
 	background: url(images/folder.gif) 0 1px no-repeat;
-}
-
-.directories div a.selected {
-	background-color: #efefef
 }
 
 .directories div b {
@@ -64,14 +61,14 @@
 	border-left-color: red;
 }
 
-.directories div.open b span {
+.directories div.open>p b span {
 	border: 4px solid #fff;
 	border-bottom:0;
 	border-top: 8px solid #ccc;
 	top: 2px;
 }
 
-.directories div.open b:hover span {
+.directories div.open>p b:hover span {
 	border-top-color: red;
 }
 

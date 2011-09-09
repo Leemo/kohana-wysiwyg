@@ -29,6 +29,27 @@
         $("#tpl-files").tmpl(data).appendTo("#files");
       });
     })
+    .bind("fancybox_ready", function(){
+      $("#fancybox-content .close")
+        .click(function(){
+          $.fancybox.close(); return false
+        });
+
+      $("#fancybox-content #file_upload").fancybox({
+        "swf": "media/filebrowser/uploadify.swf",
+        "uploader": "wysiwyg/filebrowser/upload/"+path,
+        "auto": true,
+        "buttonText": "Select Images",
+        "width": 150,
+        "height": 30,
+        "fileSizeLimit": 1*1024, // 1MB
+        "fileTypeExts": '*.gif;*.jpg;*.png',
+        "method": "post",
+        "multi": true,
+        "queueID": "queue",
+        "removeCompleted": true
+      })
+    })
     .trigger("filebrowser_load_dirs", "")
     .trigger("filebrowser_load_files", "");
 
@@ -45,7 +66,7 @@
       "showCloseButton": false,
       "speedIn": 100,
       "speedOut": 100,
-      "onComplete": function(){ $("#fancybox-content .close").click(function(){ $.fancybox.close(); return false }) },
+      "onComplete": function(){ $(document).trigger("fancybox_ready") },
       "onClosed": function(){ $(document).trigger("filebrowser_load_files", {"path": path}) }
     });
 

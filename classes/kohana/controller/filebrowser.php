@@ -65,7 +65,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$this->response->body('');
+		list($dirs, $files) = Filebrowser::list_files($this->_directory.DIRECTORY_SEPARATOR.$this->_path,
+			Filebrowser::FILEBROWSER_LIST_DIRS);
+
+		return $this->response->body(json_encode(array('dirs' => array_keys($dirs))));
 	}
 
 	public function action_files()
