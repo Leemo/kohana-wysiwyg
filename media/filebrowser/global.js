@@ -35,19 +35,18 @@
           $.fancybox.close(); return false
         });
 
-      $("#fancybox-content #file_upload").fancybox({
-        "swf": "media/filebrowser/uploadify.swf",
-        "uploader": "wysiwyg/filebrowser/upload/"+path,
+      $("#file_upload").uploadify({
+        "uploader": "media/filebrowser/uploadify.swf",
+        "script": "/wysiwyg/filebrowser/upload",
+        "cancelImg": "media/filebrowser/cancel.png",
         "auto": true,
         "buttonText": "Select Images",
-        "width": 150,
-        "height": 30,
-        "fileSizeLimit": 1*1024, // 1MB
-        "fileTypeExts": '*.gif;*.jpg;*.png',
         "method": "post",
         "multi": true,
         "queueID": "queue",
-        "removeCompleted": true
+        "removeCompleted": true,
+        /* "onComplete": function() { $(document).trigger("filebrowser_load_files", {"path": path}) }, */
+        "onError": function(a, b, c, d, e) { if (d !== "1") { alert("error "+d.type+" status: "+d.status+": "+d.text) } }
       })
     })
     .trigger("filebrowser_load_dirs", "")
@@ -66,8 +65,7 @@
       "showCloseButton": false,
       "speedIn": 100,
       "speedOut": 100,
-      "onComplete": function(){ $(document).trigger("fancybox_ready") },
-      "onClosed": function(){ $(document).trigger("filebrowser_load_files", {"path": path}) }
+      "onComplete": function(){ $(document).trigger("fancybox_ready") }
     });
 
   })

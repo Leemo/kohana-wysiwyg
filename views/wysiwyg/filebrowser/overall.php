@@ -12,10 +12,10 @@
 ?>
 <?php
 	echo $js
+		->add_file('filebrowser/swfobject.js')
 		->add_file('filebrowser/jquery-1.6.2.js')
 		->add_file('filebrowser/jquery.tmpl.js')
 		->add_file('filebrowser/jquery.fancybox.js')
-		->add_file('filebrowser/jquery.swfobject.js')
 		->add_file('filebrowser/jquery.uploadify.js')
 		->add_file('filebrowser/global.js');
 ?>

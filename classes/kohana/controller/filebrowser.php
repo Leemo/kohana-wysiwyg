@@ -112,6 +112,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
+		if ($_FILES)
+		{
+			return;
+		}
+
 		$content = View::factory('wysiwyg/filebrowser/upload');
 
 		return $this->response->body($content);

@@ -1,7 +1,8 @@
 /*
-Uploadify v3.0.0
-Copyright (c) 2011 Leemo Studio http://leemo-studio.net
-Copyright (c) 2010 Ronnie Garcia
+Uploadify v2.1.4
+Release Date: November 8, 2010
+
+Copyright (c) 2010 Ronnie Garcia, Travis Nickels
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +22,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
-.uploadifyButton {
-	background-color: #505050;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	color: #FFF;
-	font: 12px Arial, Helvetica, sans-serif;
-	padding: 8px 0;
-	text-align: center;
-	width: 100%;
-}
-.uploadify:hover .uploadifyButton {
-	background-color: #808080;
-}
 .uploadifyQueueItem {
 	background-color: #F5F5F5;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
+	border: 2px solid #E5E5E5;
 	font: 11px Verdana, Geneva, sans-serif;
 	margin-top: 5px;
-	max-width: 350px;
 	padding: 10px;
+	width: 350px;
 }
 .uploadifyError {
 	background-color: #FDE5DD !important;
+	border: 2px solid #FBCBBC !important;
 }
 .uploadifyQueueItem .cancel {
 	float: right;
