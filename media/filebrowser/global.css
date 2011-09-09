@@ -83,7 +83,7 @@ a:hover {
 #controls {
   height: 25px;
   margin: 0 0 10px 0;
-	padding: 8px;
+  padding: 8px;
 }
 
 #files {
@@ -183,7 +183,6 @@ a.file:hover {
   border-radius: 3px;
   -moz-box-shadow: 0 1px 3px #999;
   -webkit-box-shadow: 0 1px 3px #999;
-  /* text-shadow: 0 -1px 1px #222; */
   border-bottom: 1px solid #222;
   position: relative;
   cursor: pointer;
@@ -209,8 +208,7 @@ a.file:hover {
 .medium.awesome,
 .medium.awesome:visited {
   font-size: 13px;
-  line-height: 1;
-  /* text-shadow: 0 -1px 1px rgba(0,0,0,0.25); */
+  line-height: 1
 }
 
 .green.awesome,
@@ -219,18 +217,10 @@ a.file:hover {
   background-color: #a2f99c;
 }
 
-.green.awesome:hover {
-  background-color: #7ee178;
-}
-
 .blue.awesome,
 .blue.awesome:visited {
   color: #0f21f6!important;
   background-color: #15cff0;
-}
-
-.blue.awesome:hover {
-  background-color: #2175e4;
 }
 
 .red.awesome,
@@ -238,6 +228,9 @@ a.file:hover {
   background-color: #e33100;
 }
 
-.red.awesome:hover {
-  background-color: #872300;
+.red.awesome:hover,
+.blue.awesome:hover,
+.green.awesome:hover {
+  color: #000 !important;
+  background-color: #ffff00;
 }
