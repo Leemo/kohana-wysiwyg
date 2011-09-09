@@ -9,9 +9,7 @@
       $.recountHeight();
     });
 
-    $("ul.directories span").click(function(){
-      $(this).toggleClass("open");
-    });
+	  $("div.directories").folderTree();
 
     $(document).bind("filebrowser_load_dirs", {
       "path": ""
