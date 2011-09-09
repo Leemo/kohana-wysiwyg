@@ -9,9 +9,7 @@
       $.recountHeight();
     });
 
-    $("ul.directories span").click(function(){
-      $(this).toggleClass("open");
-    });
+	  $("div.directories").folderTree();
 
     $(document).bind("filebrowser_load_dirs", {
       "path": ""
@@ -74,6 +72,6 @@
 $.extend({
   recountHeight : function(){
     $("#dirs>ul").height($("body").height()-70+"px");
-    $("#files").height($("body").height()- $("#content div.header").height()-75+"px");
+    $("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
   }
 });

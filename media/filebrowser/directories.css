@@ -1,115 +1,78 @@
 
 .directories {
-	padding-bottom: 25px !important;
-	overflow-y: auto;
-	margin-right: 5px !important;
+	padding: 0 10px 25px;
+	margin: 0 5px 0 0;
+	list-style: none;
+	font-size: 13px;
 }
 
-.directories, .directories ul {
-	padding: 0 10px;
+.directories div {
 	margin: 0;
-	list-style: none
+	padding: 3px 0 3px 16px;
 }
 
-.directories ul {
-	background-color: white;
-	margin-top: 4px;
+.directories>div{
+	padding-left:0 !important
 }
 
-.directories .hitarea {
-	background: url(images/directories.gif) -64px -25px no-repeat;
-	height: 16px;
-	width: 16px;
-	margin-left: -16px;
-	float: left;
+.directories div p {
+	padding: 1px 3px 2px;
+}
+.directories div p.selected {
+	background: #efefef;
+}
+
+.directories div p.selected b span {
+	border-top-color: #efefef;
+	border-bottom-color: #efefef;
+}
+
+.directories div.open>p.selected b span {
+	border-left-color: #efefef;
+	border-right-color: #efefef;
+	border-top-color: #ccc;
+}
+
+.directories div a {
+	background: url(images/folder-closed.gif) 0 1px no-repeat;
+	padding-left: 20px;
+	text-decoration: none;
+}
+
+.directories div.open>p a {
+	background: url(images/folder.gif) 0 1px no-repeat;
+}
+
+.directories div b {
 	cursor: pointer;
 }
-/* fix for IE6 */
-* html .hitarea {
-	display: inline;
-	float:none;
-}
-
-.directories li {
-	margin: 0;
-	padding: 3px 0pt 3px 16px;
-}
-
-.directories li a {
-	background: url(images/folder.gif) 0 1px no-repeat;
-	padding-left: 20px;
-}
-
-.directories li span {
+.directories div b span {
 	display: inline-block;
 	position: relative;
-	margin-right: 5px;
-	cursor: pointer;
+	margin: 0 3px 0 5px;
 	font-size: 0;
 	width:0;
 	border: 4px solid #fff;
 	border-right:0;
-	border-left: 9px solid #ccc;
+	border-left: 8px solid #ccc;
 }
 
-.directories li span:hover {
-	border-left-color: #888;
+.directories div b:hover span{
+	border-left-color: red;
 }
 
-.directories li span.open {
+.directories div.open>p b span {
 	border: 4px solid #fff;
 	border-bottom:0;
-	border-top: 9px solid #ccc;
-	margin-right: 6px;
+	border-top: 8px solid #ccc;
 	top: 2px;
 }
 
-.directories li span.open:hover {
-	border-top-color: #888;
+.directories div.open>p b:hover span {
+	border-top-color: red;
 }
 
 
-.directories a.selected {
-	background-color: #eee;
-}
-
-#treecontrol { margin: 1em 0; display: none; }
-
-.directories .hover { color: red; cursor: pointer; }
 
 
-.directories li.collapsable, .directories li.expandable { background-position: 0 -176px; }
 
-.directories .expandable-hitarea { background-position: -80px -3px; }
-
-.directories li.last { background-position: 0 -1766px }
-.directories li.lastCollapsable, .directories li.lastExpandable { background-image: url(images/directories.gif); }
-.directories li.lastCollapsable { background-position: 0 -111px }
-.directories li.lastExpandable { background-position: -32px -67px }
-
-.directories div.lastCollapsable-hitarea, .directories div.lastExpandable-hitarea { background-position: 0; }
-
-.directories-red li { background-image: url(images/directories-red-line.gif); }
-.directories-red .hitarea, .directories-red li.lastCollapsable, .directories-red li.lastExpandable { background-image: url(images/directories-red.gif); }
-
-.directories-black li { background-image: url(images/directories-black-line.gif); }
-.directories-black .hitarea, .directories-black li.lastCollapsable, .directories-black li.lastExpandable { background-image: url(images/directories-black.gif); }
-
-.directories-gray li { background-image: url(images/directories-gray-line.gif); }
-.directories-gray .hitarea, .directories-gray li.lastCollapsable, .directories-gray li.lastExpandable { background-image: url(images/directories-gray.gif); }
-
-.directories-famfamfam li { background-image: url(images/directories-famfamfam-line.gif); }
-.directories-famfamfam .hitarea, .directories-famfamfam li.lastCollapsable, .directories-famfamfam li.lastExpandable { background-image: url(images/directories-famfamfam.gif); }
-
-.directories .placeholder {
-	background: url(images/ajax-loader.gif) 0 0 no-repeat;
-	height: 16px;
-	width: 16px;
-	display: block;
-}
-
-.filetree li { padding: 3px 0 2px 16px; }
-.filetree span.folder, .filetree span.file { padding: 1px 0 1px 16px; display: block; }
-.filetree span.folder { background: url(images/folder.gif) 0 0 no-repeat; }
-.filetree li.expandable span.folder { background: url(images/folder-closed.gif) 0 0 no-repeat; }
-.filetree span.file { background: url(images/file.gif) 0 0 no-repeat; }

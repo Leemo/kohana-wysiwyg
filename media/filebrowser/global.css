@@ -82,7 +82,8 @@ a:hover {
 
 #controls {
   height: 25px;
-  margin: 0 0 5px 0;
+  margin: 0 0 10px 0;
+	padding: 8px;
 }
 
 #files {
@@ -93,12 +94,12 @@ a:hover {
 
 #info {
   height: 20px;
-  margin: 5px 0 0 0;
-  padding-left: 5px;
+  margin: 10px 0 0 0;
+  padding: 8px;
 }
 
 #info_wrap {
-  margin: -45px 10px 0 240px;
+  margin: -66px 10px 0 240px;
   position: relative;
   background: #d3d3d3;
   padding-bottom: 10px;
@@ -108,7 +109,6 @@ a:hover {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  padding: 8px;
   background-color: #fff
 }
 

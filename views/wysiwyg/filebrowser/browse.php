@@ -1,10 +1,15 @@
 <div id="dirs">
 	<div class="header"><span></span></div>
-	<ul class="directories">
-		<?php foreach ($dirs as $dir): ?>
-			<li><span></span><a href=""><?php echo $dir ?></a></li>
+
+	<div class="directories">
+			<?php foreach ($dirs as $dir): ?>
+			<div>
+				<p>
+					<b><span></span></b><a href=""><?php echo $dir ?></a>
+				</p>
+			</div>
 		<?php endforeach ?>
-	</ul>
+	</div>
 
 	<div class="footer"><span></span></div>
 </div>
