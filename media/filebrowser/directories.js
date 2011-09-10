@@ -5,7 +5,8 @@ $.fn.folderTree = function(opt){
 		root : "wysiwyg/filebrowser/",
 		getDirs : "dirs", //link suffix for folders json getting
 		getFiles : "files", //link suffix for files json getting
-		cacheTime : 1 //during this time (minutes) folder opening show last loaded inner
+		cacheTime : 1, //during this time (minutes) folder opening show last loaded inner
+		container : this
 	}, opt);
 
 	this.children(opt.unit).each(function(){
@@ -15,34 +16,48 @@ $.fn.folderTree = function(opt){
 
 $.fn.setPath = function(parentPath,opt){
 	var dir = this[0];
-	$.data(dir, "path", parentPath+"/"+$("a", this).text());
+	$(dir).data("data",{
+		"path" : parentPath+"/"+$("a", this).text(),
+		"name" : $("a", this).text(),
+		"open" : false,
+		"hasSelected" : false,
+		"hasChild" : this.attr("name")*1,
+		"lastResponce" : false,
+		"filesLoaded" : false
+	});
 	console.log(parentPath+"/"+$("a", this).text());
 	$("b", this).toggle(
 		function(){
-				if(!$.data(dir,"lastResponce") || new Date().getMinutes()-$.data(dir,"lastResponce") > opt.cacheTime){
-				var parentPath = $.data(dir, "path");
+			if(!$(dir).data("data").lastResponce || new Date().getMinutes()-$(dir).data("data").lastResponce > opt.cacheTime){
+				var parentPath = $(dir).data("data").path;
+				$(dir).addClass("process");
 				$.getJSON(parentPath, function(data){
-					$(dir).addClass("open");
+					$(dir).removeClass("process").addClass("open");
+					$(dir).data("data").open = true;
 					$("div", dir).remove();
-					for(var i in data.dirs){
-						$('<div><p><b><span></span></b><a href="">'+data.dirs[i]+'</a></p></div>').appendTo(dir).setPath(parentPath,opt);
+					for(var dirName in data.dirs){
+						$('<div name="'+data.dirs[dirName]+'"><p><b><span></span></b><a href="">'+dirName+'</a></p></div>').appendTo(dir).setPath(parentPath,opt);
 					}
-					$.data(dir,"lastResponce", new Date().getMinutes());
+					$(dir).data("data").lastResponce = new Date().getMinutes();
 				});
 			}
 			else {
 				$("div", dir).show();
-				$(dir).addClass("open");
+				$(dir).addClass("open").data("data").open = true;
+				if($(dir).children("p").hasClass("selected") && $(dir).data("data").hasSelected && !$(dir).data("data").filesLoaded){
+					$(dir).removeClass("selected");
+				}
 			}
 		},
 		function(){
 			var selectedChild = false;
-			$(dir).removeClass("open").children("div").each(function(){
-				if($("p", this).hasClass("selected")) selectedChild = $("a",this).text();
+			$(dir).data("data").open = false;
+			$(dir).removeClass().children("div").each(function(){
+				if($(this).data("data").filesLoaded) selectedChild = $(this).data("data").name;
+				$(this).hide();
 			});
-			$.data(dir, "selectedChild", selectedChild);
-			if(selectedChild) $("p", dir).addClass("selected");
-			$(this).hide();
+			$(dir).data("data").hasSelected = selectedChild;
+			if(selectedChild) $(dir).children("p").addClass("selected");
 		}
 		);
 
@@ -51,9 +66,15 @@ $.fn.setPath = function(parentPath,opt){
 	$link.click(function(){
 		$.getJSON(this.href, function(data){
 			$("#files").empty().append($("#tpl-files").tmpl(data));
-			$("p", dir.parentNode).removeClass("selected");
+			$("p", opt.container).removeClass("selected");
+			$("div", opt.container).data("data").filesLoad = false;
 			$(dir).children("p").addClass("selected");
+			$(dir).data("data").filesLoad = true;
 		});
 		return false;
 	});
 }
+
+/*$.fn.markSelectParent = function(mode){
+	$.data(this.parent()[0],
+}*/

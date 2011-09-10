@@ -43,6 +43,10 @@
 	background: url(images/folder.gif) 0 1px no-repeat;
 }
 
+.directories div.process>p a {
+	background: url(images/ajax-loader.gif) 0 1px no-repeat;
+}
+
 .directories div b {
 	cursor: pointer;
 }

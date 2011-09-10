@@ -70,7 +70,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		foreach($dirs as $key => $val)
 		{
-			$dirname = $this->_directory.DIRECTORY_SEPARATOR.$this->_path.$key;
+			$dirname = $this->_directory.DIRECTORY_SEPARATOR.$this->_path.DIRECTORY_SEPARATOR.$key;
 
 			$subdirs = Filebrowser::list_files($dirname, Filebrowser::FILEBROWSER_LIST_DIRS);
 
