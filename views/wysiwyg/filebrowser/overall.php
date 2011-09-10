@@ -18,6 +18,7 @@
 		->add_file('filebrowser/jquery.tmpl.js')
 		->add_file('filebrowser/jquery.contextmenu.js')
 		->add_file('filebrowser/jquery.fancybox.js')
+		->add_file('filebrowser/jquery.progressbar.js')
 		->add_file('filebrowser/jquery.uploadify.js')
 		->add_file('filebrowser/global.js')
 		->add_file('filebrowser/directories.js');
