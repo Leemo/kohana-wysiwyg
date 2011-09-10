@@ -33,10 +33,10 @@
       var totalSize = 0;
       var bytesUpload = 0;
 
-      $("#file_upload").uploadify({
-        "uploader":        "media/filebrowser/uploadify.swf",
+      var uploadifySettings = {
+        "uploader":        "/media/filebrowser/uploadify.swf",
         "script":          "/wysiwyg/filebrowser/upload",
-        "cancelImg":       "media/filebrowser/cancel.png",
+        "cancelImg":       "/media/filebrowser/cancel.png",
         "auto":            true,
         //"width": 5,
         //"height": 5,
@@ -47,19 +47,29 @@
         "removeCompleted": true,
         "fileExt":         "*.jpg;*.gif;*.png",
         "fileDesc":        "Image files",
+        //"onSWFReady":          function() { $("#fancybox-content .choose").click(function() { $("#file_upload").trigger("click"); return false })},
         //"hideButton": true,
-        "onSelect":        function(event, ID, fileObj) { totalSize = fileObj.size; alert(totalSize) },
+        "onSelect":        function(event, ID, fileObj) { totalSize = fileObj.size; alert(totalSize); $("#uploadprogress").progressBar(0) },
         "onComplete":      function(event, ID, fileObj, response, data) { bytesUpload += fileObj.size },
-        "onProgress":      function(event,ID,fileObj,data) { var progress = (data.bytesLoaded+bytesUpload)/totalSize; /* $("#uploadprogress").progressBar();*/ alert(progress) }
+        "onAllComplete":   function() { $(document).trigger("filebrowser_load_files", {"path": path}) },
+        "onProgress":      function(event,ID,fileObj,data) { var progress = ((data.bytesLoaded+bytesUpload)/totalSize)*100; $("#uploadprogress").progressBar(progress) }
 /*         "onError": function(a, b, c, d, e) {
           if (d !== "1") {
             alert("error "+d.type+" status: "+d.status+": "+d.text)
           }
         } */
-      });
+      };
+
+      $("#file_upload").uploadify(uploadifySettings);
 
       $("#fancybox-content .choose").click(function() {
+
+        for (var key in uploadifySettings) {
+          $("#file_upload").uploadifySettings(key, uploadifySettings.key, true);
+        }
+
         $("#file_upload").trigger("click");
+
         return false
       });
 
