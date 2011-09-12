@@ -109,12 +109,12 @@
       }
     });
 
+  });
+
+  $.extend({
+    recountHeight : function(){
+      $("#dirs>ul").height($("body").height()-70+"px");
+      $("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
+    }
   })
 }(jQuery));
-
-$.extend({
-  recountHeight : function(){
-    $("#dirs>ul").height($("body").height()-70+"px");
-    $("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
-  }
-});
