@@ -1,35 +1,35 @@
 (function($) {
-  $(function(){
+	$(function(){
 
-    var path = "";
+		var path = "";
 
-    $.recountHeight();
+		$.recountHeight();
 
-    $(window).bind("resize", function(){
-      $.recountHeight();
-    });
+		$(window).bind("resize", function(){
+			$.recountHeight();
+		});
 
-    $("div.directories").folderTree();
+		$("div.directories").folderTree();
 
-    $(document).bind("filebrowser_load_dirs", {
-      "path": ""
-    }, function() {
-      }).bind("filebrowser_load_files", {
-      "path": ""
-    }, function() {
-      $("#files").html("");
+		$(document).bind("filebrowser_load_dirs", {
+			"path": ""
+		}, function() {
+			}).bind("filebrowser_load_files", {
+			"path": ""
+		}, function() {
+			$("#filesRow").empty();
 
-      $.getJSON("filebrowser/files", function(data){
-        $("#tpl-files").tmpl(data).appendTo("#files");
-      });
-    })
-    .bind("fancybox_ready", function(){
-      $("#fancybox-content .close")
-      .click(function(){
-        $.fancybox.close();
-        return false
-      });
-      /*
+			$.getJSON("filebrowser/files", function(data){
+				$("#tpl-files").tmpl(data).appendTo("#filesRow");
+			});
+		})
+		.bind("fancybox_ready", function(){
+			$("#fancybox-content .close")
+			.click(function(){
+				$.fancybox.close();
+				return false
+			});
+			/*
       var totalSize = 0;
       var bytesUpload = 0;
 
@@ -78,43 +78,43 @@
         "barImage": "media/filebrowser/images/progressbg_green.gif"
       });*/
 
-      var uploadOptions = {
-        "allowedFileTypes": [{
-          "description": "Images",
-          "extensions": "*.jpg; *.gif; *.png"
-        }],
-        "maxFileSize": 1024*1024,
-        "swfId": "mySwfId",
-        "swfUrl": "/media/filebrowser/uploadify.swf"
-      };
-    })
-    .trigger("filebrowser_load_dirs", "")
-    .trigger("filebrowser_load_files", "");
+			var uploadOptions = {
+				"allowedFileTypes": [{
+					"description": "Images",
+					"extensions": "*.jpg; *.gif; *.png"
+				}],
+				"maxFileSize": 1024*1024,
+				"swfId": "mySwfId",
+				"swfUrl": "/media/filebrowser/uploadify.swf"
+			};
+		})
+		.trigger("filebrowser_load_dirs", "")
+		.trigger("filebrowser_load_files", "");
 
-    $("#refresh").click(function(){
-      $(document).trigger("filebrowser_load_files", {
-        "path": path
-      });
-      return false
-    });
+		$("#refresh").click(function(){
+			$(document).trigger("filebrowser_load_files", {
+				"path": path
+			});
+			return false
+		});
 
-    $("a[rel=boxed]").fancybox({
-      "overlayOpacity": 0,
-      "hideOnOverlayClick": false,
-      "showCloseButton": false,
-      "speedIn": 100,
-      "speedOut": 100,
-      "onComplete": function(){
-        $(document).trigger("fancybox_ready")
-      }
-    });
+		$("a[rel=boxed]").fancybox({
+			"overlayOpacity": 0,
+			"hideOnOverlayClick": false,
+			"showCloseButton": false,
+			"speedIn": 100,
+			"speedOut": 100,
+			"onComplete": function(){
+				$(document).trigger("fancybox_ready")
+			}
+		});
 
-  });
+	});
 
-  $.extend({
-    recountHeight : function(){
-      $("#dirs>div.directories").height($("body").height()-70+"px");
-      $("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
-    }
-  })
+	$.extend({
+		recountHeight : function(){
+			$("#dirs>div.directories").height($("body").height()-70+"px");
+			$("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
+		}
+	})
 }(jQuery));

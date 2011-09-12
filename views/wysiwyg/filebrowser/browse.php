@@ -21,11 +21,12 @@
 			<div id="controls" class="rounded">
 			<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'medium green awesome', 'rel' => 'boxed')) ?>
 			<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'medium blue awesome', 'id' => 'refresh')) ?>
-			</div>
-			<span></span>
 		</div>
-		<div id="files">
-		<?php echo '&nbsp;'; ?>
+		<span></span>
+	</div>
+	<div id="files">
+		<h3>Root</h3>
+		<div id="filesRow"></div>
 	</div>
 </div>
 <div id="info_wrap">
@@ -36,7 +37,6 @@
 </div>
 
 <script id="tpl-files" type="text/x-jquery-tmpl">
-	<h3></h3>
 	{{each(key, value) files}}
 	<a class="file" href="">
 		<div class="icon"></div>
