@@ -1,9 +1,11 @@
 
 .directories {
-	padding: 0 10px 25px;
-	margin: 0 5px 0 0;
+	padding: 0 10px 30px;
+	margin: 0 5px;
 	list-style: none;
 	font-size: 13px;
+	overflow: auto;
+	position: relative;
 }
 
 .directories div {
@@ -11,15 +13,29 @@
 	padding: 3px 0 3px 16px;
 }
 
+#dirs>span {
+	position: absolute;
+	width: 15px;
+	min-height: 100%;
+	right: 0;
+	top: 0;
+	z-index:2;
+	background: url('images/dirs_fader.png') 0 0 repeat-y;
+}
+
 .directories>div{
 	padding-left:0 !important
 }
 
 .directories div p {
-	padding: 1px 3px 2px;
+	padding: 1px 0 2px;
+	white-space:nowrap;
 }
 .directories div p.selected {
 	background: #efefef;
+	width: 190px;
+	padding-left: 100px;
+	margin-left: -100px;
 }
 
 .directories div p.selected b span {
@@ -41,6 +57,10 @@
 
 .directories div.open>p a {
 	background: url(images/folder.gif) 0 1px no-repeat;
+}
+
+.directories div#root>p a {
+	background: url(images/folder-root.gif) 0 1px no-repeat;
 }
 
 .directories div.process>p a {

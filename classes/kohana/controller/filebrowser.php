@@ -110,11 +110,21 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	protected function _filebrowser(array $allowed_types = NULL, array $disallowed_types = NULL)
 	{
-		list($dirs, $files) = Filebrowser::list_files($this->_directory.DIRECTORY_SEPARATOR.$this->_path);
+	list($dirs, $files) = Filebrowser::list_files($this->_directory.DIRECTORY_SEPARATOR.$this->_path,
+			Filebrowser::FILEBROWSER_LIST_DIRS);
+
+		foreach($dirs as $key => $val)
+		{
+			$dirname = $this->_directory.DIRECTORY_SEPARATOR.$this->_path.DIRECTORY_SEPARATOR.$key;
+
+			$subdirs = Filebrowser::list_files($dirname, Filebrowser::FILEBROWSER_LIST_DIRS);
+
+			$dirs[$key] = sizeof($subdirs[0]);
+		}
 
 		$this->template->content = View::factory('wysiwyg/filebrowser/browse')
 			->bind('files', $files)
-			->set('dirs', array_keys($dirs));
+			->set('dirs', $dirs);
 	}
 
 	public function action_upload()
