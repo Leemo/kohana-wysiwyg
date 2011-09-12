@@ -29,34 +29,66 @@
         $.fancybox.close();
         return false
       });
+      /*
+      var totalSize = 0;
+      var bytesUpload = 0;
 
-      $("#file_upload").uploadify({
-        "uploader": "media/filebrowser/uploadify.swf",
-        "script": "/wysiwyg/filebrowser/upload",
-        "cancelImg": "media/filebrowser/cancel.png",
-        "auto": true,
-        "width": 0,
-        "height": 0,
-        "buttonText": "Select Images",
-        "method": "post",
-        "multi": true,
-        "queueID": "queue",
+      var uploadifySettings = {
+        "uploader":        "/media/filebrowser/uploadify.swf",
+        "script":          "/wysiwyg/filebrowser/upload",
+        "cancelImg":       "/media/filebrowser/cancel.png",
+        "auto":            true,
+        //"width": 5,
+        //"height": 5,
+        "buttonText":      "Select Images",
+        //"method":          "post",
+        "multi":           true,
+        "queueID":         "queue",
         "removeCompleted": true,
-        "hideButton": true,
-        /* "onComplete": function() { $(document).trigger("filebrowser_load_files", {"path": path}) }, */
-        "onError": function(a, b, c, d, e) {
+        "fileExt":         "*.jpg;*.gif;*.png",
+        "fileDesc":        "Image files",
+        //"onSWFReady":          function() { $("#fancybox-content .choose").click(function() { $("#file_upload").trigger("click"); return false })},
+        //"hideButton": true,
+        "onSelect":        function(event, ID, fileObj) { totalSize = fileObj.size; alert(totalSize); $("#uploadprogress").progressBar(0) },
+        "onComplete":      function(event, ID, fileObj, response, data) { bytesUpload += fileObj.size },
+        "onAllComplete":   function() { $(document).trigger("filebrowser_load_files", {"path": path}) },
+        "onProgress":      function(event,ID,fileObj,data) { var progress = ((data.bytesLoaded+bytesUpload)/totalSize)*100; $("#uploadprogress").progressBar(progress) }
+         "onError": function(a, b, c, d, e) {
           if (d !== "1") {
             alert("error "+d.type+" status: "+d.status+": "+d.text)
           }
         }
-      });
+      };
+
+      $("#file_upload").uploadify(uploadifySettings);
 
       $("#fancybox-content .choose").click(function() {
+
+        for (var key in uploadifySettings) {
+          $("#file_upload").uploadifySettings(key, uploadifySettings.key, true);
+        }
+
         $("#file_upload").trigger("click");
+
         return false
-      })
+      });
+
+      $("#uploadprogress").progressBar({
+        "boxImage": "media/filebrowser/images/progressbar.gif",
+        "barImage": "media/filebrowser/images/progressbg_green.gif"
+      });*/
+
+      var uploadOptions = {
+        "allowedFileTypes": [{
+          "description": "Images",
+          "extensions": "*.jpg; *.gif; *.png"
+        }],
+        "maxFileSize": 1024*1024,
+        "swfId": "mySwfId",
+        "swfUrl": "/media/filebrowser/uploadify.swf"
+      };
     })
-  .trigger("filebrowser_load_dirs", "")
+    .trigger("filebrowser_load_dirs", "")
     .trigger("filebrowser_load_files", "");
 
     $("#refresh").click(function(){
@@ -77,12 +109,12 @@
       }
     });
 
+  });
+
+  $.extend({
+    recountHeight : function(){
+      $("#dirs>div.directories").height($("body").height()-70+"px");
+      $("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
+    }
   })
 }(jQuery));
-
-$.extend({
-  recountHeight : function(){
-    $("#dirs div.directories").height($("body").height()-70+"px");
-    $("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
-  }
-});

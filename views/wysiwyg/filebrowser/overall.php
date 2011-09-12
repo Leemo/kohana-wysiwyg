@@ -13,14 +13,20 @@
 ?>
 <?php
 	echo $js
-		->add_file('filebrowser/swfobject.js')
 		->add_file('filebrowser/jquery-1.6.2.js')
+		->add_source('jQuery.noConflict()');
+
+	echo $js
+		->add_file('filebrowser/fancyupload/mootools-1.3.2.js')
+		->add_file('filebrowser/fancyupload/Fx.ProgressBar.js')
+		->add_file('filebrowser/fancyupload/Swiff.Uploader.js')
+		->add_file('filebrowser/fancyupload/FancyUpload3.Attach.js')
 		->add_file('filebrowser/jquery.tmpl.js')
 		->add_file('filebrowser/jquery.contextmenu.js')
 		->add_file('filebrowser/jquery.fancybox.js')
-		->add_file('filebrowser/jquery.uploadify.js')
-		->add_file('filebrowser/global.js')
-		->add_file('filebrowser/directories.js');
+		->add_file('filebrowser/jquery.transmit.js')
+		->add_file('filebrowser/directories.js')
+		->add_file('filebrowser/global.js');
 ?>
 	</head>
 	<body>
