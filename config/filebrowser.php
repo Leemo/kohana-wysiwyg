@@ -5,6 +5,11 @@ $filebrowser = Route::get('wysiwyg/filebrowser');
 return array
 (
 	'uploads_directory'         => 'uploads',
+	'thumbs'                    => array
+	(
+		'width'  => 200,
+		'height' => 100
+	),
 	'filebrowserBrowseUrl'      => $filebrowser->uri(array('action' => 'browse')),
 	'filebrowserImageBrowseUrl' => $filebrowser->uri(array('action' => 'images')),
 	'filebrowserFlashBrowseUrl' => $filebrowser->uri(array('action' => 'flash')),

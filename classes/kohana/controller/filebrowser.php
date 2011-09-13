@@ -65,14 +65,13 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		list($dirs, $files) = Filebrowser::list_files($this->_directory.DIRECTORY_SEPARATOR.$this->_path,
-			Filebrowser::FILEBROWSER_LIST_DIRS);
+		$dirs = Filebrowser::list_dirs($this->_directory.DIRECTORY_SEPARATOR.$this->_path);
 
 		foreach($dirs as $key => $val)
 		{
 			$dirname = $this->_directory.DIRECTORY_SEPARATOR.$this->_path.DIRECTORY_SEPARATOR.$key;
 
-			$subdirs = Filebrowser::list_files($dirname, Filebrowser::FILEBROWSER_LIST_DIRS);
+			$subdirs = Filebrowser::list_files($dirname);
 
 			$dirs[$key] = sizeof($subdirs[0]);
 		}
@@ -84,10 +83,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		list($dirs, $files) = Filebrowser::list_files($this->_directory.DIRECTORY_SEPARATOR.$this->_path,
-			Filebrowser::FILEBROWSER_LIST_FILES);
-
-		return $this->response->body(json_encode(array('files' => $files)));
+		return $this->response->body(json_encode(array(
+			'files' => Filebrowser::list_files($this->_directory.DIRECTORY_SEPARATOR.$this->_path)
+			)));
 	}
 
 	public function action_images()
@@ -110,16 +108,14 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	protected function _filebrowser(array $allowed_types = NULL, array $disallowed_types = NULL)
 	{
-	list($dirs, $files) = Filebrowser::list_files($this->_directory.DIRECTORY_SEPARATOR.$this->_path,
-			Filebrowser::FILEBROWSER_LIST_DIRS);
+		$dirs  = Filebrowser::list_dirs($this->_directory.DIRECTORY_SEPARATOR.$this->_path);
+		$files = Filebrowser::list_files($this->_directory.DIRECTORY_SEPARATOR.$this->_path);
 
 		foreach($dirs as $key => $val)
 		{
 			$dirname = $this->_directory.DIRECTORY_SEPARATOR.$this->_path.DIRECTORY_SEPARATOR.$key;
 
-			$subdirs = Filebrowser::list_files($dirname, Filebrowser::FILEBROWSER_LIST_DIRS);
-
-			$dirs[$key] = sizeof($subdirs[0]);
+			$dirs[$key] = sizeof(Filebrowser::list_dirs($dirname));
 		}
 
 		$this->template->content = View::factory('wysiwyg/filebrowser/browse')
@@ -146,6 +142,25 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$content = View::factory('wysiwyg/filebrowser/upload');
 
 		return $this->response->body($content);
+	}
+
+	public function action_thumb()
+	{
+		$this->auto_render = FALSE;
+
+		$config = Kohana::$config->load('filebrowser.thumbs');
+
+		$image = APPPATH.$this->_directory.DIRECTORY_SEPARATOR.$this->_path;
+
+		$image = Image::factory($image)
+			->resize($config['width'], $config['height'])
+			->render();
+
+		$this->response
+			->headers('content-type', File::mime_by_ext(pathinfo($this->_path, PATHINFO_EXTENSION)));
+
+		$this->response
+			->body($image);
 	}
 
 	protected function _upload()

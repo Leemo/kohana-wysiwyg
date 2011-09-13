@@ -39,7 +39,7 @@
 	<h3></h3>
 	{{each(key, value) files}}
 	<a class="file" href="">
-		<div class="icon"></div>
+		<div class="icon">{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}</div>
 		<p>${key}</p>
 		<p class="size">${value.size}</p>
 	</a>

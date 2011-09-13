@@ -3,24 +3,50 @@
 class Kohana_Filebrowser {
 
 	/**
-	 * Constants for Filebrowser::list_files()
-	 */
-	const FILEBROWSER_LIST_FILES = 1;
-	const FILEBROWSER_LIST_DIRS  = 2;
-	const FILEBROWSER_LIST_BOTH  = 3;
-
-	/**
-	 * Returns content of directory (not recursive)
+	 * Returns subdirs of directory (not recursive)
 	 *
 	 * @param   string   $directory  Directory path
-	 * @param   integer  $list       Flags
-	 * @return  array  Directory contents
+	 * @return  array  Subdirs
 	 */
-	public static function list_files($directory, $list = Filebrowser::FILEBROWSER_LIST_BOTH)
+	public static function list_files($directory)
 	{
-		$directory = APPPATH.DIRECTORY_SEPARATOR.$directory;
+		return self::_list($directory, FALSE, TRUE);
+	}
 
-		$files = $dirs = array();
+	/**
+	 * Returns files of directory (not recursive)
+	 *
+	 * @param   string   $directory  Directory path
+	 * @return  array  Files
+	 */
+	public static function list_dirs($directory)
+	{
+		return self::_list($directory, TRUE, FALSE);
+	}
+
+	/**
+	 * Returns files of directory (not recursive)
+	 *
+	 * @param   string   $directory  Directory path
+	 * @return  array  Files
+	 */
+	public static function list_all($directory)
+	{
+		return self::_list($directory, TRUE, TRUE);
+	}
+
+	/**
+	 * Returns contents of directory
+	 *
+	 * @param string $directory
+	 * @param type $dirs
+	 * @return type
+	 */
+	protected static function _list($directory, $dirs, $files)
+	{
+		$directory = APPPATH.$directory;
+
+		$return = array();
 
 		$iterator = new DirectoryIterator($directory);
 
@@ -29,28 +55,56 @@ class Kohana_Filebrowser {
 			if ( ! $fileinfo->isDot())
 			{
 				// Read directories
-				if (($list == Filebrowser::FILEBROWSER_LIST_BOTH OR
-					$list == Filebrowser::FILEBROWSER_LIST_DIRS) AND
-						$fileinfo->isDir())
+				if ($dirs AND $fileinfo->isDir())
 				{
-					$dirs[$fileinfo->getFilename()] = array();
+					$return[$fileinfo->getFilename()] = array();
 				}
 
 				// Read files
-				if (($list == Filebrowser::FILEBROWSER_LIST_BOTH OR
-					$list == Filebrowser::FILEBROWSER_LIST_FILES) AND
-						$fileinfo->isFile())
+				if ($files AND $fileinfo->isFile())
 				{
-					$files[$fileinfo->getFilename()] = array
+					$return[$fileinfo->getFilename()] = array
 					(
 						'type' => pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION),
 						'size' => $fileinfo->getSize()
 					);
+
+					$filename = $directory.$fileinfo->getFilename();
+
+					if (self::_is_image($filename))
+					{
+						$dir = APPPATH
+							.Kohana::$config->load('media.media_directory')
+							.DIRECTORY_SEPARATOR
+							.Kohana::$config->load('filebrowser.uploads_directory')
+							.DIRECTORY_SEPARATOR;
+
+						$return[$fileinfo->getFilename()]['thumb'] = Route::get('wysiwyg/filebrowser')
+							->uri(array(
+								'action' => 'thumb',
+								'path'   => str_replace(array($dir, DIRECTORY_SEPARATOR), array('', '/'), $filename)
+								));
+					}
 				}
 			}
 		}
 
-		return array($dirs, $files);
+		return $return;
+	}
+
+	protected static function _is_image($path)
+	{
+		try
+		{
+			// If it's image file - get dimentions
+			$dimentions = getimagesize($path);
+		}
+		catch (Exception $e)
+		{
+			// If isn't - do nothing
+		}
+
+		return ! empty($dimentions);
 	}
 
 } // End Kohana_Filebrowser
