@@ -159,18 +159,31 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		$image = APPPATH.$this->_directory.$this->_path;
 
-		if ( ! Filebrowser::is_image($image))
+		if ( ! is_file($image) OR ! Filebrowser::is_image($image))
 		{
-			return;
+			// Return a 404 status
+			return $this->response
+				->status(404);
 		}
 
+		$lastmod = filemtime($image);
+
+		// Check if the browser sent an "if-none-match: <etag>" header,
+		// and tell if the file hasn't changed
+		$this->response
+			->check_cache(sha1($this->request->uri()).$lastmod, $this->request);
+
+		// Resize image
 		$image = Image::factory($image)
 			->resize($config['width'], $config['height'])
 			->render();
 
+		// Send headers
 		$this->response
-			->headers('content-type', File::mime_by_ext(pathinfo($this->_path, PATHINFO_EXTENSION)));
+			->headers('content-type', File::mime_by_ext(pathinfo($this->_path, PATHINFO_EXTENSION)))
+			->headers('last-modified', date('r', $lastmod));
 
+		// Send thumbnail content
 		$this->response
 			->body($image);
 	}
