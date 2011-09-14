@@ -159,7 +159,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		$image = APPPATH.$this->_directory.$this->_path;
 
-		if ( ! is_file($image) OR ! Filebrowser::is_image($image))
+		if ( ! is_file($image) OR ! ($dimentions = Filebrowser::is_image($image)))
 		{
 			// Return a 404 status
 			return $this->response
@@ -173,10 +173,19 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$this->response
 			->check_cache(sha1($this->request->uri()).$lastmod, $this->request);
 
-		// Resize image
-		$image = Image::factory($image)
-			->resize($config['width'], $config['height'])
-			->render();
+		// If the image is smaller than the thumbnail, stretch, it is not necessary
+		if ($dimentions[0] <= $config['width'] AND $dimentions[1] <= $config['height'])
+		{
+			// Do nothing - return original image
+			$image = file_get_contents($image);
+		}
+		else
+		{
+			// Resize image
+			$image = Image::factory($image)
+				->resize($config['width'], $config['height'])
+				->render();
+		}
 
 		// Send headers
 		$this->response

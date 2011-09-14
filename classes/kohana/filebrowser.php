@@ -97,10 +97,11 @@ class Kohana_Filebrowser {
 	}
 
 	/**
-	 * Checks whether the image file
+	 * Checks whether the image file.
+	 * If it's image - returns dimentions, if isn't - returns FALSE
 	 *
 	 * @param   string  $path  Path to file
-	 * @return  boolean
+	 * @return  mixed
 	 */
 	public static function is_image($path)
 	{
@@ -112,9 +113,10 @@ class Kohana_Filebrowser {
 		catch (Exception $e)
 		{
 			// If isn't - do nothing
+			$dimentions = FALSE;
 		}
 
-		return ! empty($dimentions);
+		return $dimentions;
 	}
 
 	protected static $_types = array
