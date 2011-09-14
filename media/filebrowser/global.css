@@ -150,20 +150,41 @@ a.file {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  text-decoration: none;
-
+  text-decoration: none
 }
 
 .file .icon {
   width: 110px;
   height: 70px;
   margin-bottom: 10px;
+  background-position: center center;
+  background-repeat: no-repeat
 }
 
 .file .icon img {
   -moz-box-shadow: 0 0 8px #ababab;
   -webkit-box-shadow: 0 0 8px #ababab;
   box-shadow: 0 0 8px #ababab;
+}
+
+.file .archive {
+  background-image: url("/media/filebrowser/images/icons/archive.png")
+}
+
+.file .document {
+  background-image: url("/media/filebrowser/images/icons/document.png")
+}
+
+.file .music {
+  background-image: url("/media/filebrowser/images/icons/music.png")
+}
+
+.file .unknown {
+  background-image: url("/media/filebrowser/images/icons/unknown.png")
+}
+
+.file .video {
+  background-image: url("/media/filebrowser/images/icons/video.png")
 }
 
 .file .size {

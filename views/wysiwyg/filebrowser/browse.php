@@ -39,7 +39,7 @@
 <script id="tpl-files" type="text/x-jquery-tmpl">
 	{{each(key, value) files}}
 	<a class="file" href="">
-		<div class="icon">{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}</div>
+		<div class="icon{{if value.type}} ${value.type}{{/if}}">{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}</div>
 		<p>${key}</p>
 		<p class="size">${value.size}</p>
 	</a>

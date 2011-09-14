@@ -65,7 +65,6 @@ class Kohana_Filebrowser {
 				{
 					$return[$fileinfo->getFilename()] = array
 					(
-						'type' => pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION),
 						'size' => $fileinfo->getSize()
 					);
 
@@ -84,6 +83,11 @@ class Kohana_Filebrowser {
 								'action' => 'thumb',
 								'path'   => str_replace(array($dir, DIRECTORY_SEPARATOR), array('', '/'), $filename)
 								));
+					}
+					else
+					{
+						$return[$fileinfo->getFilename()]['type'] =
+							self::type_by_ext(pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION));
 					}
 				}
 			}
@@ -111,6 +115,101 @@ class Kohana_Filebrowser {
 		}
 
 		return ! empty($dimentions);
+	}
+
+	protected static $_types = array
+	(
+		'archive'  => array
+		(
+			'7z',
+			'bz',
+			'bzip',
+			'bz2',
+			'bzip2',
+			'gz',
+			'gzip',
+			'rar',
+			'sfx',
+			'tar',
+			'tar.gz',
+			'zip',
+			'zipx'
+		),
+
+		'document' => array
+		(
+			'doc',
+			'docm',
+			'docx',
+			'fb2',
+			'latex',
+			'pdf',
+			'txt',
+			'xps'
+		),
+
+		'music'    => array
+		(
+			'aa3',
+			'aac',
+			'ac3',
+			'amf',
+			'amr',
+			'cmf',
+			'm3u',
+			'mid',
+			'midi',
+			'mp2',
+			'mp3',
+			'mpa',
+			'mpga',
+			'smf',
+			'vmf',
+			'wav',
+			'wma'
+		),
+
+		'text'     => array
+		(
+			'txt'
+		),
+
+		'video'    => array
+		(
+			'asf',
+			'asx',
+			'avi',
+			'dv-avi',
+			'dvx',
+			'flv',
+			'm2v',
+			'm4v',
+			'mkv',
+			'mov',
+			'moovie',
+			'mp4',
+			'mp4v',
+			'mpeg',
+			'mpeg4',
+			'swf',
+			'wm',
+			'wmv',
+			'wmx',
+			'xvid'
+		)
+	);
+
+	public static function type_by_ext($ext)
+	{
+		foreach (self::$_types as $type => $extensions)
+		{
+			if (in_array($ext, $extensions))
+			{
+				return $type;
+			}
+		}
+
+		return 'unknown';
 	}
 
 } // End Kohana_Filebrowser
