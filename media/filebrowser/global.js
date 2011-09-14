@@ -22,7 +22,7 @@
 			$.getJSON("filebrowser/files", function(data){
 				$("#tpl-files").tmpl(data).appendTo("#filesRow");
 
-        $("#filesRow").children("a.file").contextMenu({
+        $("#filesRow a.file").contextMenu({
           "list": [
             {
               "text": "Choose"
