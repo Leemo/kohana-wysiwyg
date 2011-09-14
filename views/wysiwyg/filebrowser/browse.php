@@ -3,7 +3,7 @@
  	<div class="directories">
 		<div id="root" class="open">
 			<p>
-				<a href="">Root</a>
+				<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
 			</p>
 			<?php foreach ($dirs as $dir => $parents): ?>
 				<div name="<?php echo $parents ?>">
