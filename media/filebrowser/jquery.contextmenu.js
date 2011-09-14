@@ -18,20 +18,20 @@
  *
  *     list: [ // (default:empty array) array of objects (or string value for delemiter) for each menu point;
  *       {
- *				text:'someText', // the text of this menu point, empty make this point ignored (irrespective of other parameters)
- *				itemClass:'classOfpoint', // the css class directly for this point contain for example bkg-color, bkg-icon, text-color
- *				event: 'eventName',  // user event starting on click this menu point, WARNING! event start on element which has opened contextmenu, not on menu point! you can get opener as event.target
- *				handler: function(){}, // anonym function which will call on click this menu point. WARNING! It will called "as is" like "<a>" onClick handler, it's 'return' will transport to link, you should controll return value
- *				href: 'http://somelink',  // link to some url will put to point 'href' attribute, link behaviour should be coordinate to handler function (for ex. it can return 'false' and this 'href' not be processed)
- *			  nonActive : false,// (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain <span> in place of <a> and class name ".nonActive"
+ *				text:'someText',            // the text of this menu point, empty make this point ignored (irrespective of other parameters)
+ *				itemClass:'classOfpoint',   // the css class directly for this point contain for example bkg-color, bkg-icon, text-color
+ *				event: 'eventName',         // user event starting on click this menu point, WARNING! event start on element which has opened contextmenu, not on menu point! you can get opener as event.target
+ *				handler: function(){},      // anonymous function which will call on click this menu point. WARNING! It will called "as is" like "<a>" onClick handler, it's 'return' will transport to link, you should controll return value
+ *				href: 'http://somelink',    // link to some url will put to point 'href' attribute, link behaviour should be coordinate to handler function (for ex. it can return 'false' and this 'href' not be processed)
+ *			  nonActive : false,          // (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain <span> in place of <a> and class name ".nonActive"
  *
  *			 },
- *			"break", //change all described object to string "break" make the delimiter point between menu points. this point styles set in class '.delimiter'
+ *			"break",                      //change all described object to string "break" make the delimiter point between menu points. this point styles set in class '.delimiter'
  *     ]
  *   });
  *
  * - Leemo-studio, 2011 http://leemo-studio.net/
- *  
+ *
  * MIT License: https://github.com/joewalnes/jquery-simple-context-menu/blob/master/LICENSE.txt
  */
 
@@ -70,7 +70,7 @@
 				"class": "delimiter"
 			}).appendTo($menu);
 		});
-    
+
 		this.bind("contextmenu", function(e){
 			var $p = $('<div class = "'+opt.cssClass+'"></div>').append($menu).appendTo("body");
 			if(opt.title) $("<h3>"+opt.title+"</h3>").insertBefore($menu);
