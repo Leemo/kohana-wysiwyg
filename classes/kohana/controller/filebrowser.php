@@ -73,7 +73,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		{
 			$dirname = $this->_directory.$this->_path.DIRECTORY_SEPARATOR.$key;
 
-			$subdirs = Filebrowser::list_files($dirname);
+			$subdirs = Filebrowser::list_dirs($dirname);
 
 			$dirs[$key] = sizeof($subdirs);
 		}
