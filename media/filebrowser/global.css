@@ -221,14 +221,6 @@ a.file:hover {
   height: 200px;
 }
 
-#upload .buttons {
-  text-align: right
-}
-
-#upload .buttons a {
-  margin-left: 10px
-}
-
 /* --- AWESOME BUTTONS STYLES (http://www.zurb.com/article/266/super-awesome-buttons-with-css3-and-rgba) --- */
 
 .awesome {

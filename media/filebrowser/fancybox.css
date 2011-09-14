@@ -188,66 +188,6 @@
   right: 20px;
 }
 
-.fancybox-bg {
-  position: absolute;
-  padding: 0;
-  margin: 0;
-  border: 0;
-  width: 20px;
-  height: 20px;
-  z-index: 1001;
-}
-
-#fancybox-bg-n {
-  top: -20px;
-  left: 0;
-  width: 100%
-}
-
-#fancybox-bg-ne {
-  top: -20px;
-  right: -20px;
-  background-position: -40px -162px;
-}
-
-#fancybox-bg-e {
-  top: 0;
-  right: -20px;
-  height: 100%;
-  background-position: -20px 0px;
-}
-
-#fancybox-bg-se {
-  bottom: -20px;
-  right: -20px;
-  background-position: -40px -182px;
-}
-
-#fancybox-bg-s {
-  bottom: -20px;
-  left: 0;
-  width: 100%;
-  background-position: 0px -20px;
-}
-
-#fancybox-bg-sw {
-  bottom: -20px;
-  left: -20px;
-  background-position: -40px -142px;
-}
-
-#fancybox-bg-w {
-  top: 0;
-  left: -20px;
-  height: 100%;
-}
-
-#fancybox-bg-nw {
-  top: -20px;
-  left: -20px;
-  background-position: -40px -122px;
-}
-
 #fancybox-title {
   font-family: Helvetica;
   font-size: 12px;
@@ -342,3 +282,20 @@
 /* IE6, IE7, IE8 */
 
 .fancybox-ie .fancybox-bg { background: transparent !important; }
+
+#fancybox-content .buttons {
+  text-align: right;
+  padding-bottom: 4px
+}
+
+#fancybox-content .buttons a {
+  margin-left: 10px
+}
+
+#fancybox-content h1 {
+  margin-bottom: 10px
+}
+
+#fancybox-content p {
+  margin-bottom: 5px
+}

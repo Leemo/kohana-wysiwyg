@@ -146,6 +146,20 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		return $this->response->body($content);
 	}
 
+	public function action_delete()
+	{
+		$this->auto_render = FALSE;
+
+		$file = $this->_directory.$this->_path;
+
+		$filename = pathinfo($file, PATHINFO_BASENAME);
+
+		$content = View::factory('wysiwyg/filebrowser/delete')
+			->bind('filename', $filename);
+
+		$this->response->body($content);
+	}
+
 	/**
 	 * Generates a thumbnail of a image
 	 *

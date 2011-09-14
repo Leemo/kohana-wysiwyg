@@ -3,6 +3,18 @@
 
 		var path = "";
 
+    var fancyBoxOptions = {
+      "overlayOpacity": 0,
+      "hideOnOverlayClick": false,
+      "showCloseButton": false,
+      "width": 300,
+      "speedIn": 100,
+      "speedOut": 100,
+      "onComplete": function(){
+        $(document).trigger("fancybox_ready")
+      }
+    };
+
 		$.recountHeight();
 
 		$(window).bind("resize", function(){
@@ -25,24 +37,33 @@
     $("#filesRow a.file").contextMenu({
           "list": [
             {
-              "text": "Choose"
+              "text": "Choose",
+              "itemClass": "choose"
             },
             "break",
             {
               "text": "Resize",
+              "itemClass": "resize",
               "event": "filebrowser_image_resize"
             },
             {
               "text": "Crop",
+              "itemClass": "crop",
               "event": "filebrowser_image_crop"
             },
             "break",
             {
+              "text": "Rename",
+              "itemClass": "edit",
+              "event": "filebrowser_file_rename"
+            },
+            {
               "text": "Delete",
+              "itemClass": "delete",
               "event": "filebrowser_file_delete"
             }
           ]
-        }); 
+        });
 			});
 		})
     .bind("filebrowser_image_resize", function(e){
@@ -52,8 +73,10 @@
     .bind("filebrowser_image_crop", function(e){
       // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
     })
-    .bind("filebrowser_image_delete", function(e){
-      // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
+    .bind("filebrowser_file_delete", function(e){
+      $.get('wysiwyg/filebrowser/delete/'+path+$(e.target).children("p:first").text(), function(data){
+        $.fancybox(data, fancyBoxOptions);
+      })
     })
 		.bind("fancybox_ready", function(){
 			$("#fancybox-content .close")
@@ -131,16 +154,7 @@
       return false
     });
 
-    $("a[rel=boxed]").fancybox({
-      "overlayOpacity": 0,
-      "hideOnOverlayClick": false,
-      "showCloseButton": false,
-      "speedIn": 100,
-      "speedOut": 100,
-      "onComplete": function(){
-        $(document).trigger("fancybox_ready")
-      }
-    });
+    $("a[rel=boxed]").fancybox(fancyBoxOptions);
 
   });
 
