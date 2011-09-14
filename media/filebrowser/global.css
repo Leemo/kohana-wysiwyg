@@ -142,14 +142,8 @@ a:hover {
 a.file {
   display: block;
   float: left;
-<<<<<<< HEAD
-  margin-right: 10px;
-  margin-bottom: 10px;
-=======
   margin: 0 10px 10px 0;
-  background: #f4f4f4;
-  border: 1px solid #f4f4f4;
->>>>>>> 796db133c55ce91d25765fbf09b6f952178a3669
+  margin-bottom: 10px;
   padding:10px;
   color: #000;
   text-align: center;

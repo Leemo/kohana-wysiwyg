@@ -78,7 +78,7 @@
         "barImage": "media/filebrowser/images/progressbg_green.gif"
       });*/
 
-<<<<<<< HEAD
+
       var uploadOptions = {
         "allowedFileTypes": [{
           "description": "Images",
@@ -118,45 +118,4 @@
       $("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
     }
   })
-=======
-			var uploadOptions = {
-				"allowedFileTypes": [{
-					"description": "Images",
-					"extensions": "*.jpg; *.gif; *.png"
-				}],
-				"maxFileSize": 1024*1024,
-				"swfId": "mySwfId",
-				"swfUrl": "/media/filebrowser/uploadify.swf"
-			};
-		})
-		.trigger("filebrowser_load_dirs", "")
-		.trigger("filebrowser_load_files", "");
-
-		$("#refresh").click(function(){
-			$(document).trigger("filebrowser_load_files", {
-				"path": path
-			});
-			return false
-		});
-
-		$("a[rel=boxed]").fancybox({
-			"overlayOpacity": 0,
-			"hideOnOverlayClick": false,
-			"showCloseButton": false,
-			"speedIn": 100,
-			"speedOut": 100,
-			"onComplete": function(){
-				$(document).trigger("fancybox_ready")
-			}
-		});
-
-	});
-
-	$.extend({
-		recountHeight : function(){
-			$("#dirs>div.directories").height($("body").height()-70+"px");
-			$("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
-		}
-	})
->>>>>>> 796db133c55ce91d25765fbf09b6f952178a3669
 }(jQuery));
