@@ -88,6 +88,81 @@
 				$(opt.filesPathLine).buildFullPath(dir);
 			});
 			return false;
+		}).contextMenu({
+			title : "Folder menu",
+			list : [
+				{
+					text : "Add folder",
+					itemClass : "addFolder",
+					event : "onAddFolderClick",
+					href : "http://www.google.com"
+				},
+				
+				{
+					text : "Delete folder",
+					itemClass : "delFolder",
+					event : "onDelFolderClick",
+					handler : function(){
+						alert("сработала функция-обработчик клика по пункту меню ");
+						return false;
+					},
+					href : "/delfolder"
+				},
+				{
+					text : "Rename folder",
+					itemClass : "renFolder",
+					event : "onRenameFolderClick",
+					handler : function(){
+						console.log(this);
+						return false;
+					},
+					href : "http://ya.ru"
+				},
+			// examples
+				"break",
+				{
+					text : "Example 1",
+					itemClass : "example1",
+					event : "onRenameFolderClick",
+					handler : function(){
+						console.log(this);
+						return false;
+					},
+					href : "http://ya.ru"
+				},
+				{
+					text : "Example 2",
+					itemClass : "example2",
+					event : "onRenameFolderClick",
+					handler : function(){
+						console.log(this);
+						return false;
+					},
+					href : "http://ya.ru"
+				},
+				{
+					text : "Example 3",
+					itemClass : "example3",
+					event : "onRenameFolderClick",
+					handler : function(){
+						console.log(this);
+						return false;
+					},
+					href : "http://ya.ru",
+					nonActive: true
+				},
+				{
+					text : "Example 4",
+					itemClass : "example4",
+					event : "onRenameFolderClick",
+					handler : function(){
+						console.log(this);
+						return false;
+					},
+					href : "http://ya.ru"
+				}
+			// end examples
+			]
 		});
 	};
 
@@ -120,4 +195,5 @@
 		parent($(dir));
 	};
 };
+
 })(jQuery);

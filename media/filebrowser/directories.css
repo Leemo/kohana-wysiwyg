@@ -49,13 +49,13 @@
 }
 
 .directories div a {
-	background: url(images/folder-closed.gif) 0 1px no-repeat;
+	background: url(images/Folder-icon.png) 0 1px no-repeat;
 	padding-left: 20px;
 	text-decoration: none;
 }
 
 .directories div.open>p a {
-	background: url(images/folder.gif) 0 1px no-repeat;
+	background: url(images/Folder-open-icon.png) 0 1px no-repeat;
 }
 
 .directories div#root>p a {
