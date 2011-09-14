@@ -21,8 +21,40 @@
 
 			$.getJSON("filebrowser/files", function(data){
 				$("#tpl-files").tmpl(data).appendTo("#filesRow");
+
+        $("#filesRow").children("a.file").contextMenu({
+          "list": [
+            {
+              "text": "Choose"
+            },
+            "break",
+            {
+              "text": "Resize",
+              "event": "filebrowser_image_resize"
+            },
+            {
+              "text": "Crop",
+              "event": "filebrowser_image_crop"
+            },
+            "break",
+            {
+              "text": "Delete",
+              "event": "filebrowser_file_delete"
+            }
+          ]
+        })
 			});
 		})
+    .bind("filebrowser_image_resize", function(e){
+      alert($(e.target).children("p:first").text())
+      // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
+    })
+    .bind("filebrowser_image_crop", function(e){
+      // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
+    })
+    .bind("filebrowser_image_delete", function(e){
+      // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
+    })
 		.bind("fancybox_ready", function(){
 			$("#fancybox-content .close")
 			.click(function(){
