@@ -154,6 +154,7 @@ a.file {
 }
 
 .file .icon {
+  display: block;
   width: 110px;
   height: 70px;
   margin-bottom: 10px;
