@@ -22,7 +22,7 @@
 			$.getJSON("filebrowser/files", function(data){
 				$("#tpl-files").tmpl(data).appendTo("#filesRow");
 
-        $("#filesRow a.file").contextMenu({
+    $("#filesRow a.file").contextMenu({
           "list": [
             {
               "text": "Choose"
@@ -42,7 +42,7 @@
               "event": "filebrowser_file_delete"
             }
           ]
-        })
+        }); 
 			});
 		})
     .bind("filebrowser_image_resize", function(e){
