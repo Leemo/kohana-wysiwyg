@@ -7,20 +7,16 @@
 			cacheTime : 0, //during this time (minutes) folder opening show last loaded inner
 			autoTurnTree : true, //auto open tree to folder which files is currently opened in browser
 			filesPathLine : "#files h3", //jQuery selector of outher html element has showing files path
+			filesPathDelimiter : "<span> / </span>",
 			container : this //don't change!
 		}, opt);
 
-		$("div",this).each(function(){
-			$(this).setPath(opt.root+opt.getDirs, opt);
-		});
-	};
-
-	$.fn.setPath = function(parentPath,opt){
+	$.fn.setPath = function(parentPath){
 		var dir = this[0], dirP = $(dir).children("p");
 		var isRoot = ($(this).attr("id") == "root") ? true : false;
 		this.data("data",{
 			"path" : parentPath+"/"+((!isRoot) ? $("a", this).text() : ""),
-			"name" : $("a", this).text(),
+			"name" : dirP.children("a").text(),
 			"isRoot" : isRoot,
 			"open" : isRoot,
 			"hasChild" : this.attr("name")*1,
@@ -50,7 +46,6 @@
 									if($(this).data("data").name == path[0]){
 										path.shift();
 										$(this).children("p").addClass("selected").end().data("data").pathToSelected = (path.length > 0) ? path.join("/") : false;
-										console.log($(this).data("data").name+ " -> " + $(this).data("data").pathToSelected);
 										if(opt.autoTurnTree && $(this).data("data").pathToSelected) $("b", this).click();
 									}
 								});
@@ -81,7 +76,7 @@
 		$link.attr("href", href);
 		$link.click(function(){
 			$.getJSON(this.href, function(data){
-				$("#files").empty().append($("#tpl-files").tmpl(data));
+				$("#filesRow").empty().append($("#tpl-files").tmpl(data));
 				$("p", opt.container).removeClass("selected");
 				$(opt.container).find("div").each(function(){
 					$(this).data("data").pathToSelected = false;
@@ -90,6 +85,7 @@
 				dirP.addClass("selected");
 				dirData.filesLoaded = true;
 				$(dir).addPathToParent();
+				$(opt.filesPathLine).buildFullPath(dir);
 			});
 			return false;
 		});
@@ -100,11 +96,28 @@
 		if(parent.data("data")){
 			if(!parent.data("data").isRoot){
 				parent.data("data").pathToSelected = params.name+((params.pathToSelected) ? "/"+params.pathToSelected : "");
-				console.log("dir: "+parent.data("data").name+" => "+ parent.data("data").pathToSelected);
 				parent.addPathToParent();
 			}
 		}
 		else return this;
 	};
 
+		$("div",this).each(function(){
+			$(this).setPath(opt.root+opt.getDirs, opt);
+		});
+
+		$.fn.buildFullPath = function(dir){
+		var fullPath = this.empty();
+		var parent = function(folder){
+			if(folder.data("data")){
+				fullPath.prepend((fullPath.children().length > 0)
+					?'<a href="">'+folder.data("data").name+'</a><span>'+opt.filesPathDelimiter+'</span>'
+					: '<b>'+folder.data("data").name+'</b>');
+				return parent(folder.parent());
+			}
+			else return;
+		};
+		parent($(dir));
+	};
+};
 })(jQuery);

@@ -33,9 +33,8 @@
 }
 .directories div p.selected {
 	background: #efefef;
-	width: 190px;
 	padding-left: 100px;
-	margin-left: -100px;
+	margin: 0 -10px 0 -100px;
 }
 
 .directories div p.selected b span {

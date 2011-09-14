@@ -91,9 +91,32 @@ a:hover {
 }
 
 #files {
-  padding: 20px 15px 0;
+  padding: 0 15px;
   margin-right: 10px;
   overflow-y: auto
+}
+
+#files #filesRow {
+	padding-top: 15px;
+}
+
+#files h3 {
+	font-size: 13px;
+	color: #555;
+	text-shadow: 1px 1px 0 #efefef;
+	margin: 0 0 10px 0;
+}
+
+#files h3 span {
+	color: #000;
+}
+
+#files h3 a {
+	text-decoration: none;
+}
+
+#files h3 b {
+	font-weight: normal;
 }
 
 #info {
@@ -119,8 +142,14 @@ a:hover {
 a.file {
   display: block;
   float: left;
+<<<<<<< HEAD
   margin-right: 10px;
   margin-bottom: 10px;
+=======
+  margin: 0 10px 10px 0;
+  background: #f4f4f4;
+  border: 1px solid #f4f4f4;
+>>>>>>> 796db133c55ce91d25765fbf09b6f952178a3669
   padding:10px;
   color: #000;
   text-align: center;
