@@ -7,8 +7,8 @@ return array
 	'uploads_directory'         => 'uploads',
 	'thumbs'                    => array
 	(
-		'width'  => 200,
-		'height' => 100
+		'width'  => 100,
+		'height' => 75
 	),
 	'filebrowserBrowseUrl'      => $filebrowser->uri(array('action' => 'browse')),
 	'filebrowserImageBrowseUrl' => $filebrowser->uri(array('action' => 'images')),

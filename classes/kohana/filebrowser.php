@@ -71,7 +71,7 @@ class Kohana_Filebrowser {
 
 					$filename = $directory.$fileinfo->getFilename();
 
-					if (self::_is_image($filename))
+					if (self::is_image($filename))
 					{
 						$dir = APPPATH
 							.Kohana::$config->load('media.media_directory')
@@ -92,7 +92,13 @@ class Kohana_Filebrowser {
 		return $return;
 	}
 
-	protected static function _is_image($path)
+	/**
+	 * Checks whether the image file
+	 *
+	 * @param   string  $path  Path to file
+	 * @return  boolean
+	 */
+	public static function is_image($path)
 	{
 		try
 		{
