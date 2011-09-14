@@ -1,68 +1,68 @@
 .contextMenu {
   -webkit-user-select: none;
-	-moz-user-select: none;
-	user-select: none;
+  -moz-user-select: none;
+  user-select: none;
   font-size: 12px;
   position: absolute;
   min-width: 100px;
   background-color: #f7f3f7;
   border: 1px solid #ccc;
   overflow: hidden;
-	-moz-box-shadow: 2px 2px 3px #d4d4d4;
-	-webkit-box-shadow: 2px 2px 3px #d4d4d4;
-	box-shadow: 2px 2px 3px #d4d4d4;
+  -moz-box-shadow: 2px 2px 3px #d4d4d4;
+  -webkit-box-shadow: 2px 2px 3px #d4d4d4;
+  box-shadow: 2px 2px 3px #d4d4d4;
 }
 
 .contextMenu ul {
-list-style-type: none;
-border: 2px solid #fff;
+  list-style-type: none;
+  border: 2px solid #fff;
 }
 
 .contextMenu h3+ul { /* if header exist */
-	border-top: 0;
+  border-top: 0;
 }
 
 .contextMenu li {
   margin: 2px;
   background-repeat: no-repeat;
-	overflow: hidden;
-	white-space: nowrap;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .contextMenu li a,
 .contextMenu li span {
   position: relative;
-	display: block;
+  display: block;
   padding: 3px 3px 3px 28px;
  	text-decoration: none;
-	color: #444;
-	cursor: default;
-	margin: 1px;
-	background-repeat: no-repeat;
-	background-position: 5px 1px
+  color: #444;
+  cursor: default;
+  margin: 1px;
+  background-repeat: no-repeat;
+  background-position: 5px 1px
 }
 
 .contextMenu li span {
-	opacity: 0.5;
-	color: #666;
-	text-shadow: 1px 1px 0 #fff;
+  opacity: 0.5;
+  color: #666;
+  text-shadow: 1px 1px 0 #fff;
 }
 
 .contextMenu li a:hover {
-	border: 1px solid #fffbff;
-	margin:0
+  border: 1px solid #fffbff;
+  margin:0
 }
 
 .contextMenu li.active:hover {
   outline: 1px solid #b5d3ff;
-	background: -moz-linear-gradient(top, rgba(239,239,255,0.5) 0%, rgba(223,223,255,0.5) 100%); /* FF3.6+ */
+  background: -moz-linear-gradient(top, rgba(239,239,255,0.5) 0%, rgba(223,223,255,0.5) 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(239,239,255,0.5)), color-stop(100%,rgba(223,223,255,0.5))); /* Chrome,Safari4+ */
   background: -webkit-linear-gradient(top, rgba(239,239,255,0.5) 0%,rgba(223,223,255,0.5) 100%); /* Chrome10+,Safari5.1+ */
   background: -o-linear-gradient(top, rgba(239,239,255,0.5) 0%,rgba(223,223,255,0.5) 100%); /* Opera11.10+ */
   background: -ms-linear-gradient(top, rgba(239,239,255,0.5) 0%,rgba(223,223,255,0.5) 100%); /* IE10+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80efefff', endColorstr='#80dfdfff',GradientType=0 ); /* IE6-9 */
   background: linear-gradient(top, rgba(239,239,255,0.5) 0%,rgba(223,223,255,0.5) 100%); /* W3C */
- }
+}
 
 .contextMenu li.delimiter {
   border-top: 1px solid #e7e3e7;
@@ -82,39 +82,66 @@ border: 2px solid #fff;
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a0a0a0', endColorstr='#5a5a5a',GradientType=0 ); /* IE6-9 */
   background: linear-gradient(top, rgba(160,160,160,1) 0%,rgba(90,90,90,1) 100%); /* W3C */
   -moz-text-shadow: -1px -1px 0 #444;
-	-webkit-text-shadow: -1px -1px 0 #444;
-	text-shadow: -1px -1px 0 #444;
-	border: 2px solid #fff;
-	border-bottom:0;
-	position: relative;
+  -webkit-text-shadow: -1px -1px 0 #444;
+  text-shadow: -1px -1px 0 #444;
+  border: 2px solid #fff;
+  border-bottom:0;
+  position: relative;
   cursor: default;
   padding: 3px;
   color: #ffffff;
-	font-size: 13px;
+  font-size: 13px;
 }
 
 /*--------------------- classes for menu points in concrete case ------------------- */
 
 .addFolder *{
-	background-image: url('images/folder_add.png');
-}
-.delFolder *{
-	background-image: url('images/folder_delete.png');
-}
-.renFolder *{
-	background-image: url('images/folder_edit.png');
+  background-image: url('images/folder_add.png');
 }
 
+.delFolder *{
+  background-image: url('images/folder_delete.png');
+}
+
+.renFolder *{
+  background-image: url('images/folder_edit.png');
+}
+/*
 .example1 * {
-	background-image: url('images/folder_heart.png');
+  background-image: url('images/folder_heart.png');
 }
 .example2 * {
-	background-image: url('images/folder_camera.png');
+  background-image: url('images/folder_camera.png');
 }
 .example3 * {
-	background-image: url('images/folder_link.png');
-	
+  background-image: url('images/folder_link.png');
+
 }.example4 * {
-	background-image: url('images/folder_user.png');
+  background-image: url('images/folder_user.png');
 }
 
+*/
+
+.add *{
+  background-image: url('images/menu/add.png')
+}
+
+.choose *{
+  background-image: url('images/menu/choose.png')
+}
+
+.crop *{
+  background-image: url('images/menu/crop.png')
+}
+
+.delete *{
+  background-image: url('images/menu/delete.png')
+}
+
+.edit *{
+  background-image: url('images/menu/edit.png')
+}
+
+.resize *{
+  background-image: url('images/menu/edit.png')
+}
