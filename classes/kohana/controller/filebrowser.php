@@ -75,7 +75,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 			$subdirs = Filebrowser::list_files($dirname);
 
-			$dirs[$key] = sizeof($subdirs[0]);
+			$dirs[$key] = sizeof($subdirs);
 		}
 
 		return $this->response->body(json_encode(array('dirs' => $dirs)));
