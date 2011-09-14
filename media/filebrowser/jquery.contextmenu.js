@@ -35,66 +35,71 @@
  * MIT License: https://github.com/joewalnes/jquery-simple-context-menu/blob/master/LICENSE.txt
  */
 
-;(function($){
+;
+(function($){
 	$.fn.contextMenu = function(opt) {
 		var opt = $.extend({
-			closeType: {zone : 'any', events : ''},
+			closeType: {
+				zone : 'any',
+				events : ''
+			},
 			cssClass : 'contextMenu',
 			title: '',
 			list: []
 		}, opt);
-
-		var $li, $menu = $("<ul>"), opener = this;
-		$.each(opt.list, function(i,item){
-			if(typeof(item) == "object"){
-				if(item.text) {
-					$li = $("<li>",{
-						"class" : ((item.nonActive) ? "" :"active ")+item.itemClass
-					}).appendTo($menu);
-					$li.append((item.nonActive) ? $("<span>", {
-						text : item.text
-					}) : $("<a>",{
-						text : item.text,
-						href : item.href,
-						click : (typeof(item.handler) == "function" || item.event != "") ?
-						function(e){
-							if(opt.closeType.zone == 'outSide') e.stopPropagation();
-							if(item.event) opener.trigger(item.event);
-							return (item.handler)? item.handler(e) :"";
-						}
-						:""
-					}));
+		$.each(this, function(){
+			var $li, $menu = $("<ul>"), opener = $(this);
+			$.each(opt.list, function(i,item){
+				if(typeof(item) == "object"){
+					if(item.text) {
+						$li = $("<li>",{
+							"class" : ((item.nonActive) ? "" :"active ")+item.itemClass
+						}).appendTo($menu);
+						$li.append((item.nonActive) ? $("<span>", {
+							text : item.text
+						}) : $("<a>",{
+							text : item.text,
+							href : item.href,
+							click : (typeof(item.handler) == "function" || item.event != "") ?
+							function(e){
+								if(opt.closeType.zone == 'outSide') e.stopPropagation();
+								if(item.event) opener.trigger(item.event);
+								return (item.handler)? item.handler(e) :"";
+							}
+							:""
+						}));
+					}
 				}
-			}
-			else $("<li>",{
-				"class": "delimiter"
-			}).appendTo($menu);
-		});
+				else $("<li>",{
+					"class": "delimiter"
+				}).appendTo($menu);
+			});
 
-		this.bind("contextmenu", function(e){
-			var $p = $('<div class = "'+opt.cssClass+'"></div>').append($menu).appendTo("body");
-			if(opt.title) $("<h3>"+opt.title+"</h3>").insertBefore($menu);
-			$p.css({
-				"left": e.pageX+"px",
-				"top" : e.pageY+"px"
-			});
-			if($p.offset().top*1 + $p.outerHeight() > $(window).height()+$(document).scrollTop()) {
+			$(this).bind("contextmenu", function(e){
+				var $p = $('<div class = "'+opt.cssClass+'"></div>').append($menu).appendTo("body");
+				if(opt.title) $("<h3>"+opt.title+"</h3>").insertBefore($menu);
 				$p.css({
-					"top" : e.pageY - $p.outerHeight()+"px"
+					"left": e.pageX+"px",
+					"top" : e.pageY+"px"
 				});
-			}
-			if($p.offset().left*1 + $p.outerWidth() > $(window).width()) {
-				$p.css({
-					"left" : e.pageX - $p.outerWidth()
+				if($p.offset().top*1 + $p.outerHeight() > $(window).height()+$(document).scrollTop()) {
+					$p.css({
+						"top" : e.pageY - $p.outerHeight()+"px"
+					});
+				}
+				if($p.offset().left*1 + $p.outerWidth() > $(window).width()) {
+					$p.css({
+						"left" : e.pageX - $p.outerWidth()
+					});
+				}
+				$.each(opt.closeType.events.split(",").concat(['click','contextmenu']), function(i,ev){
+					$(document).bind(ev, function(){
+						$p.remove();
+						$(this).unbind(ev);
+					});
 				});
-			}
-			$.each(opt.closeType.events.split(",").concat(['click','contextmenu']), function(i,ev){
-				$(document).bind(ev, function(){
-					$p.remove();
-					$(this).unbind(ev);
-				});
+				return false;
 			});
-			return false;
 		});
 	}
 })(jQuery);
