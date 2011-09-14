@@ -1,24 +1,29 @@
 /**
  * jQuery plugin for right click context menu.
  *
- * content of file contextmenu.css to be included in page css.
+ * content of file 'contextmenu.css' to be included in page css styles.
  * Auto correction direction of popup opening depending on position of edge of the screen:
  * context menu open to left or right or up or down from clicked object to be full visible whithout scrolling.
- * Also supported non-active point of menu, delimiter of points group, set method of closing popup, call diferent handlers or(end) start user events for each menu points.
+ * Also supported non-active (visible but not clicable) point of menu, delimiter of points group, set method and events list of closing popup, call individual handlers or(and) start user events for click each menu points.
  * Usage:
  *
  *   $(selector).contextMenu({
  *     cssClass: 'someClass' // (default:'contextMenu') class name for popup
+ *
  *     title: 'Popup title', // (default:empty) header of popup. If empty container don't generating,
- *     closeType: 'anyClick'|'outSideClick' // (default:'anyClick') anyclick - close by any click including menu elements click, 'outSideClick - close only by click outside popup
+ *
+ *     closeType: { zone: 'any'|'outSide', events:[event1,event2,event3...]} // (default:{zone: 'any', events: ''})
+ *     //"zone": - on what element(s) click close popup: 'any' - all document including popup elements,'outSide - close only by 'click' outside popup,
+ *     // "events": the list of events (in addition to 'click') should close popup. WARNING! Browser events 'click' and 'contextmenu' always close popup irrespective of any settings.
+ *
  *     list: [ // (default:empty array) array of objects (or string value for delemiter) for each menu point;
  *       {
- *				text:'someText', // the text of this menu point, empty value make this menu point ignored (irrespective of other parameters)
+ *				text:'someText', // the text of this menu point, empty make this point ignored (irrespective of other parameters)
  *				itemClass:'classOfpoint', // the css class directly for this point contain for example bkg-color, bkg-icon, text-color
  *				event: 'eventName',  // user event starting on click this menu point, WARNING! event start on element which has opened contextmenu, not on menu point! you can get opener as event.target
- *				handler: function(){}, // anonym function which will call on click this menu point, it called "as is" like "<a>" onClick handler, return transport to link, you should controll return value
- *				href: 'http://somelink',  // link to some url will put to 'href' attribute, link behaviour should be coordinate to handler function (for ex. it can return 'false' and this 'href' not be processed)
- *			  nonActive : false,// (BOOL) setting 'true' make menu point visible but non clicable
+ *				handler: function(){}, // anonym function which will call on click this menu point. WARNING! It will called "as is" like "<a>" onClick handler, it's 'return' will transport to link, you should controll return value
+ *				href: 'http://somelink',  // link to some url will put to point 'href' attribute, link behaviour should be coordinate to handler function (for ex. it can return 'false' and this 'href' not be processed)
+ *			  nonActive : false,// (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain <span> in place of <a> and class name ".nonActive"
  *
  *			 },
  *			"break", //change all described object to string "break" make the delimiter point between menu points. this point styles set in class '.delimiter'
@@ -30,10 +35,10 @@
  * MIT License: https://github.com/joewalnes/jquery-simple-context-menu/blob/master/LICENSE.txt
  */
 
-(function($){
+;(function($){
 	$.fn.contextMenu = function(opt) {
 		var opt = $.extend({
-			closeType: 'anyClick',
+			closeType: {zone : 'any', events : ''},
 			cssClass : 'contextMenu',
 			title: '',
 			list: []
@@ -53,7 +58,7 @@
 						href : item.href,
 						click : (typeof(item.handler) == "function" || item.event != "") ?
 						function(e){
-							if(opt.closeType == 'outSideClick') e.stopPropagation();
+							if(opt.closeType.zone == 'outSide') e.stopPropagation();
 							if(item.event) opener.trigger(item.event);
 							return (item.handler)? item.handler(e) :"";
 						}
@@ -67,28 +72,25 @@
 		});
     
 		this.bind("contextmenu", function(e){
-			var $popup = $('<div class = "'+opt.cssClass+'"></div>').append($menu).appendTo("body");
+			var $p = $('<div class = "'+opt.cssClass+'"></div>').append($menu).appendTo("body");
 			if(opt.title) $("<h3>"+opt.title+"</h3>").insertBefore($menu);
-			$popup.css({
+			$p.css({
 				"left": e.pageX+"px",
 				"top" : e.pageY+"px"
 			});
-			
-			var right = $popup.offset().left*1 + $popup.outerWidth();
-			var bottom = $popup.offset().top*1 + $popup.outerHeight();
-			if(bottom > $(window).height()+$(document).scrollTop()) {
-				$popup.css({
-					"top" : e.pageY - $popup.outerHeight()+"px"
-				})
-			}
-			if(right > $(window).width()) {
-				$popup.css({
-					"left" : e.pageX - $popup.outerWidth()
+			if($p.offset().top*1 + $p.outerHeight() > $(window).height()+$(document).scrollTop()) {
+				$p.css({
+					"top" : e.pageY - $p.outerHeight()+"px"
 				});
 			}
-			$.each(['click','contextmenu'], function(i,ev){
+			if($p.offset().left*1 + $p.outerWidth() > $(window).width()) {
+				$p.css({
+					"left" : e.pageX - $p.outerWidth()
+				});
+			}
+			$.each(opt.closeType.events.split(",").concat(['click','contextmenu']), function(i,ev){
 				$(document).bind(ev, function(){
-					$popup.remove();
+					$p.remove();
 					$(this).unbind(ev);
 				});
 			});

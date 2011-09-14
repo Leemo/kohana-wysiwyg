@@ -1,4 +1,4 @@
-(function($){
+;(function($){
 	$.fn.folderTree = function(opt){
 		var opt = $.extend({
 			root : "wysiwyg/filebrowser/",
@@ -59,6 +59,7 @@
 					if(dirP.hasClass("selected") && !dirData.filesLoaded){
 						dirP.removeClass("selected");
 					}
+					$(document).trigger("openFolderClick");
 				},
 				function(){
 					var selectedChild = dirData.open = false;
@@ -67,6 +68,7 @@
 						$(this).hide();
 					});
 					if(selectedChild) dirP.addClass("selected");
+					$(document).trigger("closeFolderClick");
 				}
 				);
 		} // end add handlers to click on triangle
@@ -90,6 +92,7 @@
 			return false;
 		}).contextMenu({
 			title : "Folder menu",
+			closeType : {zone : 'any', events : 'closeFolderClick,openFolderClick'},
 			list : [
 				{
 					text : "Add folder",
