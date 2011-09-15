@@ -214,6 +214,12 @@ class Kohana_Filebrowser {
 		return 'unknown';
 	}
 
+	/**
+	 * Prepares file size to human readable type
+	 *
+	 * @param   integer  $size  File size in bytes
+	 * @return  string Formatted file size
+	 */
 	public static function prepare_size($size)
 	{
 		$offset = 'bytes';

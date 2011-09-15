@@ -73,6 +73,11 @@
     .bind("filebrowser_image_crop", function(e){
       // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
     })
+    .bind("filebrowser_file_rename", function(e){
+      $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).children("p:first").text(), function(data){
+        $.fancybox(data, fancyBoxOptions);
+      })
+    })
     .bind("filebrowser_file_delete", function(e){
       $.get('wysiwyg/filebrowser/delete/'+path+$(e.target).children("p:first").text(), function(data){
         $.fancybox(data, fancyBoxOptions);

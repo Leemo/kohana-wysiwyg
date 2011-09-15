@@ -285,10 +285,11 @@
 
 #fancybox-content .buttons {
   text-align: right;
-  padding-bottom: 4px
+  padding-bottom: 4px;
+  white-space: nowrap
 }
 
-#fancybox-content .buttons a {
+#fancybox-content .buttons * {
   margin-left: 10px
 }
 
