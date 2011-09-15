@@ -65,7 +65,7 @@ class Kohana_Filebrowser {
 				{
 					$return[$fileinfo->getFilename()] = array
 					(
-						'size' => $fileinfo->getSize()
+						'size' => self::prepare_size($fileinfo->getSize())
 					);
 
 					$filename = $directory.$fileinfo->getFilename();
@@ -212,6 +212,29 @@ class Kohana_Filebrowser {
 		}
 
 		return 'unknown';
+	}
+
+	public static function prepare_size($size)
+	{
+		$offset = 'bytes';
+
+		$offsets = array
+		(
+			'Kb',
+			'Mb',
+			'Gb'
+		);
+
+		foreach ($offsets as $curr_offset)
+		{
+			if ($size > 500)
+			{
+				$size   = $size / 1024;
+				$offset = $curr_offset;
+			}
+		}
+
+		return sprintf('%01.2f', $size).' '.__($offset);
 	}
 
 } // End Kohana_Filebrowser
