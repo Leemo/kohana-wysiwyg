@@ -146,6 +146,22 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		return $this->response->body($content);
 	}
 
+	public function action_download()
+	{
+		$this->auto_render = FALSE;
+
+		$file = APPPATH.$this->_directory.$this->_path;
+
+		if ( ! file_exists($file) OR ! is_file($file))
+		{
+			return $this->response
+				->status(404);
+		}
+
+		$this->response
+			->send_file($file);
+	}
+
 	public function action_rename()
 	{
 		$this->auto_render = FALSE;
