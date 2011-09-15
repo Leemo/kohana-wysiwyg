@@ -17,6 +17,8 @@
 		->add_source('jQuery.noConflict()');
 
 	echo $js
+		->add_file('filebrowser/i18n/ru.js')
+		->add_file('filebrowser/i18n.js')
 		->add_file('filebrowser/fancyupload/mootools-1.3.2.js')
 		->add_file('filebrowser/fancyupload/Fx.ProgressBar.js')
 		->add_file('filebrowser/fancyupload/Swiff.Uploader.js')

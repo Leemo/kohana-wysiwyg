@@ -37,28 +37,28 @@
     $("#filesRow a.file").contextMenu({
           "list": [
             {
-              "text": "Choose",
+              "text": __("Select"),
               "itemClass": "choose"
             },
             "break",
             {
-              "text": "Resize",
+              "text": __("Resize"),
               "itemClass": "resize",
               "event": "filebrowser_image_resize"
             },
             {
-              "text": "Crop",
+              "text": __("Crop"),
               "itemClass": "crop",
               "event": "filebrowser_image_crop"
             },
             "break",
             {
-              "text": "Rename",
+              "text": __("Rename"),
               "itemClass": "edit",
               "event": "filebrowser_file_rename"
             },
             {
-              "text": "Delete",
+              "text": __("Delete"),
               "itemClass": "delete",
               "event": "filebrowser_file_delete"
             }
@@ -66,6 +66,9 @@
         });
 			});
 		})
+    .bind("filebrowser_file_download", function(e){
+      alert($(e.target).children("p:first").text())
+    })
     .bind("filebrowser_image_resize", function(e){
       alert($(e.target).children("p:first").text())
       // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
