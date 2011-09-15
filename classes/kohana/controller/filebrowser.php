@@ -190,6 +190,43 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			->body($content);
 	}
 
+	public function action_rotate_right()
+	{
+		$this->_rotate(90);
+	}
+
+	public function action_rotate_right()
+	{
+		$this->_rotate(-90);
+	}
+
+	public function action_crop()
+	{
+
+	}
+
+	public function action_resize()
+	{
+
+	}
+
+	protected function _rotate($degress)
+	{
+		$this->auto_render = FALSE;
+
+		$file = APPPATH.$this->_directory.$this->_path;
+
+		if ( ! is_file($file) OR ! Filebrowser::is_image($file))
+		{
+			return $this->response
+				->status(404);
+		}
+
+		Image::factory($file)
+			->rotate($degrees)
+			->save($file);
+	}
+
 	public function action_delete()
 	{
 		$this->auto_render = FALSE;
