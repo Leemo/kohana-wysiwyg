@@ -195,7 +195,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$this->_rotate(90);
 	}
 
-	public function action_rotate_right()
+	public function action_rotate_left()
 	{
 		$this->_rotate(-90);
 	}
