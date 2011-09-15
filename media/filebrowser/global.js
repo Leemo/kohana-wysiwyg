@@ -51,6 +51,16 @@
               "itemClass": "crop",
               "event": "filebrowser_image_crop"
             },
+            {
+              "text": __("Rotate right"),
+              "itemClass": "rotate-right",
+              "event": "filebrowser_image_rotate_right"
+            },
+            {
+              "text": __("Rotate left"),
+              "itemClass": "rotate-left",
+              "event": "filebrowser_image_rotate_left"
+            },
             "break",
             {
               "text": __("Rename"),
