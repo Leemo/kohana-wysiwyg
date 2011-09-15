@@ -20,7 +20,7 @@
 	right: 0;
 	top: 0;
 	z-index:2;
-	background: url('images/dirs_fader.png') 0 0 repeat-y;
+	background: url('images/directories/fader.png') 0 0 repeat-y;
 }
 
 .directories>div{
@@ -49,21 +49,21 @@
 }
 
 .directories div a {
-	background: url(images/Folder-icon.png) 0 1px no-repeat;
+	background: url(images/directories/folder.png) 0 1px no-repeat;
 	padding-left: 20px;
 	text-decoration: none;
 }
 
 .directories div.open>p a {
-	background: url(images/Folder-open-icon.png) 0 1px no-repeat;
+	background: url(images/directories/folder-opened.png) 0 1px no-repeat;
 }
 
 .directories div#root>p a {
-	background: url(images/folder-root.gif) 0 1px no-repeat;
+	background: url(images/directories/root.png) 0 1px no-repeat;
 }
 
 .directories div.process>p a {
-	background: url(images/ajax-loader.gif) 0 1px no-repeat;
+	background: url(images/directories/spinner.gif) 0 1px no-repeat;
 }
 
 .directories div b {

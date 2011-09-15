@@ -91,29 +91,18 @@
 			});
 			return false;
 		}).contextMenu({
-			title : "Folder menu",
+			//title : "Folder menu",
 			closeType : {zone : 'any', events : 'closeFolderClick,openFolderClick'},
 			list : [
 				{
-					text : "Add folder",
-					itemClass : "addFolder",
+					text : __("Add subfolder"),
+					itemClass : "add",
 					event : "onAddFolderClick",
 					href : "http://www.google.com"
 				},
-				
 				{
-					text : "Delete folder",
-					itemClass : "delFolder",
-					event : "onDelFolderClick",
-					handler : function(){
-						alert("сработала функция-обработчик клика по пункту меню ");
-						return false;
-					},
-					href : "/delfolder"
-				},
-				{
-					text : "Rename folder",
-					itemClass : "renFolder",
+					text : __("Rename"),
+					itemClass : "rename",
 					event : "onRenameFolderClick",
 					handler : function(){
 						console.log(this);
@@ -121,8 +110,19 @@
 					},
 					href : "http://ya.ru"
 				},
+        "break",
+				{
+					text : __("Delete"),
+					itemClass : "delete",
+					event : "onDelFolderClick",
+					handler : function(){
+						alert("сработала функция-обработчик клика по пункту меню ");
+						return false;
+					},
+					href : "/delfolder"
+				}//,
 			// examples
-				"break",
+/* 				"break",
 				{
 					text : "Example 1",
 					itemClass : "example1",
@@ -163,7 +163,7 @@
 						return false;
 					},
 					href : "http://ya.ru"
-				}
+				} */
 			// end examples
 			]
 		});
