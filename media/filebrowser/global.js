@@ -38,7 +38,11 @@
           "list": [
             {
               "text": __("Select"),
-              "itemClass": "choose"
+              "itemClass": "select"
+            },
+            {
+              "text": __("Download"),
+              "itemClass": "download"
             },
             "break",
             {
@@ -64,7 +68,7 @@
             "break",
             {
               "text": __("Rename"),
-              "itemClass": "edit",
+              "itemClass": "rename",
               "event": "filebrowser_file_rename"
             },
             {

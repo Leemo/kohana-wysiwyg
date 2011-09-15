@@ -126,10 +126,6 @@
   background-image: url('images/menu/add.png')
 }
 
-.choose *{
-  background-image: url('images/menu/choose.png')
-}
-
 .crop *{
   background-image: url('images/menu/crop.png')
 }
@@ -138,10 +134,30 @@
   background-image: url('images/menu/delete.png')
 }
 
+.download *{
+  background-image: url('images/menu/download.png')
+}
+
 .edit *{
   background-image: url('images/menu/edit.png')
 }
 
+.rename *{
+  background-image: url('images/menu/rename.png')
+}
+
 .resize *{
   background-image: url('images/menu/resize.png')
+}
+
+.rotate-left *{
+  background-image: url('images/menu/rotate-left.png')
+}
+
+.rotate-right *{
+  background-image: url('images/menu/rotate-right.png')
+}
+
+.select *{
+  background-image: url('images/menu/select.png')
 }
