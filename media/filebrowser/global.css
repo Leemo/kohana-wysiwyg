@@ -86,8 +86,7 @@ a:hover {
 
 #controls {
   height: 25px;
-  margin: 0 0 10px 0;
-  padding: 8px;
+  margin: 5px 0;
 }
 
 #files {
@@ -176,6 +175,33 @@ a.file {
 
 .file p {
   white-space: nowrap;
+	position: relative;
+	overflow: hidden;
+}
+
+.file p i {
+	display: block;
+	position: absolute;
+	height: 100%;
+	width:8px;
+	top: 0;
+	right: 0;
+	z-index: 2;
+	background: -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255, 1) 100%);
+  background: -webkit-gradient(linear, left top, right top, color-start(0%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255, 1)));
+  background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: -o-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: -ms-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255, 1) 100%);
+}
+
+.file:hover p i {
+	background: -moz-linear-gradient(left, rgba(154,170,252,0) 0%, rgba(154,170,252, 1) 100%);
+  background: -webkit-gradient(linear, left top, right top, color-start(0%,rgba(154,170,252,0)), color-stop(100%,rgba(154,170,252, 1)));
+  background: -webkit-linear-gradient(left, rgba(154,170,252,0) 0%,rgba(154,170,252, 1) 100%);
+  background: -o-linear-gradient(left, rgba(154,170,252,0) 0%,rgba(154,170,252, 1) 100%);
+  background: -ms-linear-gradient(left, rgba(154,170,252,0) 0%,rgba(154,170,252, 1) 100%);
+  background: linear-gradient(left, rgba(154,170,252,0) 0%, rgba(154,170,252, 1) 100%);
 }
 
 .file .archive {

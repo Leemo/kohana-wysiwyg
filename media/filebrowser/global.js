@@ -21,20 +21,43 @@
 			$.recountHeight();
 		});
 
-		$("div.directories").folderTree();
+		$("div.directories").folderTree()
+			.contextMenu({  // bind context menu to delegate for all elements in folders column
+			//title : "Folder menu",
+			closeType : {zone : 'any', events : 'closeFolderClick,openFolderClick'},
+			list : [
+				{
+					text : __("Add subfolder"),
+					itemClass : "add",
+					event : "onAddFolderClick",
+					href : "http://www.google.com"
+				},
+				{
+					text : __("Rename"),
+					itemClass : "rename",
+					event : "onRenameFolderClick",
+					handler : function(){
+						console.log(this);
+						return false;
+					},
+					href : "http://ya.ru"
+				},
+        "break",
+				{
+					text : __("Delete"),
+					itemClass : "delete",
+					event : "onDelFolderClick",
+					handler : function(){
+						alert("сработала функция-обработчик клика по пункту меню ");
+						return false;
+					},
+					href : "/delfolder"
+				}
+			]
+		});
 
-		$(document).bind("filebrowser_load_dirs", {
-			"path": ""
-		}, function() {
-			}).bind("filebrowser_load_files", {
-			"path": ""
-		}, function() {
-			$("#filesRow").empty();
-
-			$.getJSON("filebrowser/files", function(data){
-				$("#tpl-files").tmpl(data).appendTo("#filesRow");
-
-    $("#filesRow a.file").contextMenu({
+		$("#filesRow").contextMenu({ // bind context menu to delegate for all elements in files area
+					"targetSelector" : 'a.file',
           "list": [
             {
               "text": __("Select"),
@@ -78,7 +101,15 @@
             }
           ]
         });
-			});
+
+		$(document).bind("filebrowser_load_files", {
+			"path": ""
+		}, function() {
+			$("#filesRow").empty();
+
+			$.getJSON("filebrowser/files", function(data){
+				$("#tpl-files").tmpl(data).appendTo("#filesRow");
+ 			});
 		})
     .bind("filebrowser_file_download", function(e){
       alert($(e.target).children("p:first").text())

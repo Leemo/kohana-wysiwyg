@@ -18,7 +18,7 @@
 	</div>
 	<div id="content">
 		<div class="header">
-			<div id="controls" class="rounded">
+			<div id="controls">
 			<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'button white medium', 'rel' => 'boxed')) ?>
 			<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'button white medium', 'id' => 'refresh')) ?>
 		</div>

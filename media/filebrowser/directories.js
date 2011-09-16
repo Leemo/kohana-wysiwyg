@@ -24,8 +24,11 @@
 			"filesLoaded" : false,
 			"pathToSelected" : false
 		});
-		var dirData = $(dir).data("data");
-		if(this.data("data").hasChild == 0) $("b", this.children("p")).css("visibility", "hidden");
+
+		$.fn.getD = function(){return this.data("data");};
+		
+		var dirData = $(dir).getD();
+		if($(this).getD().hasChild == 0) $("b", this.children("p")).css("visibility", "hidden");
 		else {
 			$("b", this.children("p")).toggle(
 				function(){
@@ -33,7 +36,7 @@
 						var parentPath = dirData.path;
 						$(dir).addClass("process");
 						$.getJSON(parentPath, function(data){
-							$(dir).removeClass("process").addClass("open").data("data").open = true;
+							$(dir).removeClass("process").addClass("open").getD().open = true;
 							$("div", dir).remove();
 							for(var dirName in data.dirs){
 								$('<div name="'+data.dirs[dirName]+'"><p><b><span></span></b><a href="">'+dirName+'</a></p></div>').appendTo(dir).setPath(parentPath,opt);
@@ -43,10 +46,10 @@
 							if(dirData.pathToSelected) {
 								var path = dirData.pathToSelected.split("/");
 								$(dir).children("div").each(function(){
-									if($(this).data("data").name == path[0]){
+									if($(this).getD().name == path[0]){
 										path.shift();
-										$(this).children("p").addClass("selected").end().data("data").pathToSelected = (path.length > 0) ? path.join("/") : false;
-										if(opt.autoTurnTree && $(this).data("data").pathToSelected) $("b", this).click();
+										$(this).children("p").addClass("selected").end().getD().pathToSelected = (path.length > 0) ? path.join("/") : false;
+										if(opt.autoTurnTree && $(this).getD().pathToSelected) $("b", this).click();
 									}
 								});
 							}
@@ -54,7 +57,7 @@
 					}
 					else {
 						$("div", dir).show();
-						$(dir).addClass("open").data("data").open = true;
+						$(dir).addClass("open").getD().open = true;
 					}
 					if(dirP.hasClass("selected") && !dirData.filesLoaded){
 						dirP.removeClass("selected");
@@ -64,7 +67,7 @@
 				function(){
 					var selectedChild = dirData.open = false;
 					$(dir).removeClass().find("div").each(function(){
-						if($(this).data("data").filesLoaded) selectedChild = true;
+						if($(this).getD().filesLoaded) selectedChild = true;
 						$(this).hide();
 					});
 					if(selectedChild) dirP.addClass("selected");
@@ -81,8 +84,8 @@
 				$("#filesRow").empty().append($("#tpl-files").tmpl(data));
 				$("p", opt.container).removeClass("selected");
 				$(opt.container).find("div").each(function(){
-					$(this).data("data").pathToSelected = false;
-					$(this).data("data").filesLoaded = false;
+					$(this).getD().pathToSelected = false;
+					$(this).getD().filesLoaded = false;
 				});
 				dirP.addClass("selected");
 				dirData.filesLoaded = true;
@@ -90,90 +93,14 @@
 				$(opt.filesPathLine).buildFullPath(dir);
 			});
 			return false;
-		}).contextMenu({
-			//title : "Folder menu",
-			closeType : {zone : 'any', events : 'closeFolderClick,openFolderClick'},
-			list : [
-				{
-					text : __("Add subfolder"),
-					itemClass : "add",
-					event : "onAddFolderClick",
-					href : "http://www.google.com"
-				},
-				{
-					text : __("Rename"),
-					itemClass : "rename",
-					event : "onRenameFolderClick",
-					handler : function(){
-						console.log(this);
-						return false;
-					},
-					href : "http://ya.ru"
-				},
-        "break",
-				{
-					text : __("Delete"),
-					itemClass : "delete",
-					event : "onDelFolderClick",
-					handler : function(){
-						alert("сработала функция-обработчик клика по пункту меню ");
-						return false;
-					},
-					href : "/delfolder"
-				}//,
-			// examples
-/* 				"break",
-				{
-					text : "Example 1",
-					itemClass : "example1",
-					event : "onRenameFolderClick",
-					handler : function(){
-						console.log(this);
-						return false;
-					},
-					href : "http://ya.ru"
-				},
-				{
-					text : "Example 2",
-					itemClass : "example2",
-					event : "onRenameFolderClick",
-					handler : function(){
-						console.log(this);
-						return false;
-					},
-					href : "http://ya.ru"
-				},
-				{
-					text : "Example 3",
-					itemClass : "example3",
-					event : "onRenameFolderClick",
-					handler : function(){
-						console.log(this);
-						return false;
-					},
-					href : "http://ya.ru",
-					nonActive: true
-				},
-				{
-					text : "Example 4",
-					itemClass : "example4",
-					event : "onRenameFolderClick",
-					handler : function(){
-						console.log(this);
-						return false;
-					},
-					href : "http://ya.ru"
-				} */
-			// end examples
-			]
 		});
 	};
 
 	$.fn.addPathToParent = function(){
-		var params = this.data("data"), parent = this.parent();
-		if(parent.data("data")){
-			if(!parent.data("data").isRoot){
-				parent.data("data").pathToSelected = params.name+((params.pathToSelected) ? "/"+params.pathToSelected : "");
+		var params = this.getD(), parent = this.parent();
+		if(parent.getD()){
+			if(!parent.getD().isRoot){
+				parent.getD().pathToSelected = params.name+((params.pathToSelected) ? "/"+params.pathToSelected : "");
 				parent.addPathToParent();
 			}
 		}
@@ -187,16 +114,17 @@
 		$.fn.buildFullPath = function(dir){
 		var fullPath = this.empty();
 		var parent = function(folder){
-			if(folder.data("data")){
+			if(folder.getD()){
 				fullPath.prepend((fullPath.children().length > 0)
-					?'<a href="">'+folder.data("data").name+'</a><span>'+opt.filesPathDelimiter+'</span>'
-					: '<b>'+folder.data("data").name+'</b>');
+					?'<a href="">'+folder.getD().name+'</a><span>'+opt.filesPathDelimiter+'</span>'
+					: '<b>'+folder.getD().name+'</b>');
 				return parent(folder.parent());
 			}
 			else return;
 		};
 		parent($(dir));
 	};
+	return this;
 };
 
 })(jQuery);
