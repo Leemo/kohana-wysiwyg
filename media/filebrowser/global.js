@@ -1,7 +1,7 @@
 (function($) {
-	$(function(){
+  $(function(){
 
-		var path = "";
+    var path = "";
 
     var fancyBoxOptions = {
       "overlayOpacity": 0,
@@ -15,81 +15,81 @@
       }
     };
 
-		$.recountHeight();
+    $.recountHeight();
 
-		$(window).bind("resize", function(){
-			$.recountHeight();
-		});
+    $(window).bind("resize", function(){
+      $.recountHeight();
+    });
 
-		$("div.directories").folderTree();
+    $("div.directories").folderTree();
 
-		$(document).bind("filebrowser_load_dirs", {
-			"path": ""
-		}, function() {
-			}).bind("filebrowser_load_files", {
-			"path": ""
-		}, function() {
-			$("#filesRow").empty();
+    $(document).bind("filebrowser_load_dirs", {
+      "path": ""
+    }, function() {
+      }).bind("filebrowser_load_files", {
+      "path": ""
+    }, function() {
+      $("#filesRow").empty();
 
-			$.getJSON("filebrowser/files", function(data){
-				$("#tpl-files").tmpl(data).appendTo("#filesRow");
+      $.getJSON("filebrowser/files", function(data){
+        $("#tpl-files").tmpl(data).appendTo("#filesRow");
 
-    $("#filesRow a.file").contextMenu({
+        $("#filesRow a.file").contextMenu({
           "list": [
-            {
-              "text": __("Select"),
-              "itemClass": "select"
-            },
-            {
-              "text": __("Download"),
-              "itemClass": "download"
-            },
-            "break",
-            {
-              "text": __("Resize"),
-              "itemClass": "resize",
-              "event": "filebrowser_image_resize"
-            },
-            {
-              "text": __("Crop"),
-              "itemClass": "crop",
-              "event": "filebrowser_image_crop"
-            },
-            {
-              "text": __("Rotate right"),
-              "itemClass": "rotate-right",
-              "event": "filebrowser_image_rotate_right"
-            },
-            {
-              "text": __("Rotate left"),
-              "itemClass": "rotate-left",
-              "event": "filebrowser_image_rotate_left"
-            },
-            "break",
-            {
-              "text": __("Rename"),
-              "itemClass": "rename",
-              "event": "filebrowser_file_rename"
-            },
-            {
-              "text": __("Delete"),
-              "itemClass": "delete",
-              "event": "filebrowser_file_delete"
-            }
+          {
+            "text": __("Select"),
+            "itemClass": "select"
+          },
+          {
+            "text": __("Download"),
+            "itemClass": "download"
+          },
+          "break",
+          {
+            "text": __("Resize"),
+            "itemClass": "resize",
+            "event": "filebrowser_image_resize"
+          },
+          {
+            "text": __("Crop"),
+            "itemClass": "crop",
+            "event": "filebrowser_image_crop"
+          },
+          {
+            "text": __("Rotate right"),
+            "itemClass": "rotate-right",
+            "event": "filebrowser_image_rotate_right"
+          },
+          {
+            "text": __("Rotate left"),
+            "itemClass": "rotate-left",
+            "event": "filebrowser_image_rotate_left"
+          },
+          "break",
+          {
+            "text": __("Rename"),
+            "itemClass": "rename",
+            "event": "filebrowser_file_rename"
+          },
+          {
+            "text": __("Delete"),
+            "itemClass": "delete",
+            "event": "filebrowser_file_delete"
+          }
           ]
         });
-			});
-		})
+      });
+    })
     .bind("filebrowser_file_download", function(e){
       alert($(e.target).children("p:first").text())
     })
     .bind("filebrowser_image_resize", function(e){
       alert($(e.target).children("p:first").text())
-      // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
+    // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
     })
     .bind("filebrowser_image_crop", function(e){
       // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
-    })
+      })
     .bind("filebrowser_file_rename", function(e){
       $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).children("p:first").text(), function(data){
         $.fancybox(data, fancyBoxOptions);
@@ -100,13 +100,13 @@
         $.fancybox(data, fancyBoxOptions);
       })
     })
-		.bind("fancybox_ready", function(){
-			$("#fancybox-content .close")
-			.click(function(){
-				$.fancybox.close();
-				return false
-			});
-			/*
+    .bind("fancybox_ready", function(){
+      $("#fancybox-content .close")
+      .click(function(){
+        $.fancybox.close();
+        return false
+      });
+      /*
       var totalSize = 0;
       var bytesUpload = 0;
 
@@ -155,16 +155,68 @@
         "barImage": "media/filebrowser/images/progressbg_green.gif"
       });*/
 
+      window.addEvent('domready', function() {
+        /**
+	       * Uploader instance
+	       */
+        var up = new FancyUpload3.Attach('upload', '#fancybox-content .attach, #fancybox-content .attach-another', {
+          path: '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
+          url: '/wysiwyg/filebrowser/upload'+path,
+          fileSizeMax: 20 * 1024 * 1024,
 
-      var uploadOptions = {
-        "allowedFileTypes": [{
-          "description": "Images",
-          "extensions": "*.jpg; *.gif; *.png"
-        }],
-        "maxFileSize": 1024*1024,
-        "swfId": "mySwfId",
-        "swfUrl": "/media/filebrowser/uploadify.swf"
-      };
+          verbose: true,
+
+          onSelectFail: function(files) {
+            files.each(function(file) {
+              new Element('li', {
+                'class': 'file-invalid',
+                events: {
+                  click: function() {
+                    this.destroy();
+                  }
+                }
+              }).adopt(
+                new Element('span', {
+                  html: file.validationErrorMessage || file.validationError
+                  })
+                ).inject(this.list, 'bottom');
+            }, this);
+          },
+
+          onFileSuccess: function(file) {
+            /* new Element('input', {
+              type: 'checkbox',
+              'checked': true
+            }).inject(file.ui.element, 'top');*/
+            file.ui.element.highlight('#e6efc2');
+          },
+
+          onFileError: function(file) {
+            file.ui.cancel.set('html', 'Retry').removeEvents().addEvent('click', function() {
+              file.requeue();
+              return false;
+            });
+
+            new Element('span', {
+              html: file.errorMessage,
+              'class': 'file-error'
+            }).inject(file.ui.cancel, 'after');
+          },
+
+          onFileRequeue: function(file) {
+            file.ui.element.getElement('.file-error').destroy();
+
+            file.ui.cancel.set('html', 'Cancel').removeEvents().addEvent('click', function() {
+              file.remove();
+              return false;
+            });
+
+            this.start();
+          }
+
+        });
+
+      });
     })
     .trigger("filebrowser_load_dirs", "")
     .trigger("filebrowser_load_files", "");
