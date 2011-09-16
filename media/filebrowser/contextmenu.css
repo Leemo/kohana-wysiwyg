@@ -11,6 +11,7 @@
   -moz-box-shadow: 2px 2px 3px #d4d4d4;
   -webkit-box-shadow: 2px 2px 3px #d4d4d4;
   box-shadow: 2px 2px 3px #d4d4d4;
+	z-index:10;
 }
 
 .contextMenu ul {
@@ -27,10 +28,10 @@
   background-repeat: no-repeat;
   overflow: hidden;
   white-space: nowrap;
+	position: relative;
 }
 
-.contextMenu li a,
-.contextMenu li span {
+.contextMenu li a {
   position: relative;
   display: block;
   padding: 3px 3px 3px 28px;
@@ -39,16 +40,26 @@
   cursor: default;
   margin: 1px;
   background-repeat: no-repeat;
-  background-position: 5px 1px
+  background-position: 5px 1px;
 }
 
-.contextMenu li span {
-  opacity: 0.5;
-  color: #666;
+.contextMenu li.nonActive a {
+	opacity: 0.5;
+  color: #666 !important;
   text-shadow: 1px 1px 0 #fff;
 }
 
-.contextMenu li a:hover {
+.contextMenu li span {
+	display: block;
+  position: absolute;
+	top:0;
+	left:0;
+	width: 100%;
+	height: 100%;
+	background: url('images/menu/pixel.gif') 0 0;
+}
+
+.contextMenu li.active a:hover {
   border: 1px solid #fffbff;
   margin:0
 }

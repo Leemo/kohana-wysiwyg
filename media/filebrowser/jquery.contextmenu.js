@@ -9,7 +9,12 @@
  * Plugin should be binded to parent element of objects which need context menu. It use progressive method 'delegate', and delegete right click event to child elements,
  * so it possible to save in memory only one function-handler on parent element, without many handlers for all elements. Parameter 'targetSelector' set child elements need context menu.
  * Context menu also will work for all future child elements in this parent container.
- * 
+ *
+ * Plugin start event "onOpenContextMenu" on opener (element on which menu open). Event has parameter 'event.menu', it returns menu container.
+ *
+ * Plugin has 2 public methods: pointToggleActive(number) and pointToggleShow(number). Methods can be use in outher scripts
+ * it should call on menu box element to change a view of menu poins (make active, non-active, hide or visible). All they recive a number of <li> element in list.
+ *
  * Usage:
  *
  *   $(selector).contextMenu({
@@ -30,7 +35,7 @@
  *				event: 'eventName',         // user event starting on click this menu point, WARNING! event start on element which has opened contextmenu, not on menu point! you can get opener as event.target
  *				handler: function(){},      // anonymous function which will call on click this menu point. WARNING! It will called "as is" like "<a>" onClick handler, it's 'return' will transport to link, you should controll return value
  *				href: 'http://somelink',    // link to some url will put to point 'href' attribute, link behaviour should be coordinate to handler function if it exist (for ex. handler can return 'false' and this 'href' not be processed)
- *			  nonActive : false,          // (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain <span> in place of <a> and class name ".nonActive"
+ *			  nonActive : false,          // (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain overlay <span> over <a> and have no class ".active"
  *			 },
  *			"break",                      //change all described object to string "break" make the delimiter point between menu points. this point styles set in class '.delimiter'
  *     ]
@@ -67,13 +72,11 @@
 				if(typeof(item) == "object"){
 					if(item.text) {
 						$li = $("<li>",{
-							"class" : ((item.nonActive) ? "" :"active ")+item.itemClass
+							"class" : ((item.nonActive) ? "nonActive " :"active ")+item.itemClass
 						}).appendTo($menu);
-						$li.append((item.nonActive) ? $("<span>", {
-							text : item.text
-						}) : $("<a>",{
+						$li.append( $("<a/>", {
 							text : item.text,
-							href : item.href,
+							href : (item.nonActive) ? item.href : null,
 							click : (typeof(item.handler) == "function" || item.event != "") ?
 							function(e){
 								if(opt.closeType.zone == 'outSide') e.stopPropagation();
@@ -82,7 +85,8 @@
 								return (item.handler)? item.handler(e) :"";
 							}
 							:""
-						}));
+						}
+						)).append((item.nonActive) ? "<span/>" :"").data("href", item.href);
 					}
 				}
 				else $("<li>",{
@@ -111,10 +115,50 @@
 				});
 			});
 			$("a").bind('click contextmenu', function(e){ // for clicks which have stopPropagation or return false (for Crome, IE)
-					$p.remove();
-					$(this).unbind(e);
+				$p.remove();
+				$(this).unbind(e);
 			});
+
+			opener.trigger({
+				type: "onOpenContextMenu",
+				menu: $p
+			});
+
 			return false;
 		});
+
 	};
+
+	$.fn.pointToggleActive = function(n){ // public method for menu points
+		var list = $("li", this);
+		console.log(list);
+		if(list.length > 0 && typeof(list[n]) != 'undefined'){
+			if(!$(list[n]).hasClass("delimiter")){
+				var $li = $(list[n]), $link = $li.children("a");
+				if($li.hasClass("nonActive") && $li.children("span").length > 0) {
+					$li.removeClass("nonActive").addClass("active").children("span").remove();
+					$link.attr("href", $li.data("href"));
+				}
+				else if($li.hasClass("active")) {
+					$li.removeClass("active").addClass("nonActive").append("<span/>");
+					$link.removeAttr("href");
+				}
+			}
+			else console.warn("pointToggleActive: element number "+n+" is delemiter, not menu point");
+		}
+		else console.warn("pointToggleActive: context menu isn't contain element number "+n+" or empty");
+		return this;
+	}
+
+	$.fn.pointToggleShow = function(){
+	var list = $("li", this);
+		console.log(list);
+		if(list.length > 0 && typeof(list[n]) != 'undefined'){
+			if(!$(list[n]).hasClass("delimiter")) list[n].toggle();
+			else console.warn("pointToggleShow: element number "+n+" is delemiter, not menu point");
+		}
+		else console.warn("pointToggleShow: context menu isn't contain element number "+n+" or empty");
+		return this;
+	}
+
 })(jQuery);

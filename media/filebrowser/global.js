@@ -43,7 +43,7 @@
 					console.log(this);
 					return false;
 				},
-				href : "http://ya.ru"
+				href : "http://ya.ru"	
 			},
 			"break",
 			{
@@ -199,8 +199,12 @@
 					"swfId": "mySwfId",
 					"swfUrl": "/media/filebrowser/uploadify.swf"
 				};
+			},
+			onOpenContextMenu : function(e){
+				if($(e.target).parent().parent().attr("id") == "root") $(e.menu).pointToggleActive(3);
 			}
-		}) // end of bind object
+
+		}) // end of bind events to document
 		.trigger("filebrowser_load_dirs", "")
 		.trigger("filebrowser_load_files", "");
 
