@@ -9,7 +9,7 @@
 <p><?php echo __('All external links on this file, if any, are unavailable.') ?></p>
 <p><?php echo __('Are you sure?') ?></p>
 <div class="buttons">
-	<?php echo Form::submit(NULL, __('Yes, rename it'), array('class' => 'medium red awesome choose')) ?>
-	<?php echo HTML::anchor('#', __('No, I changed my mind'), array('class' => 'medium green awesome close')) ?>
+	<?php echo Form::submit(NULL, __('Yes, rename it'), array('class' => 'button gray medium choose')) ?>
+	<?php echo HTML::anchor('#', __('No, I changed my mind'), array('class' => 'button gray medium close')) ?>
 </div>
 <?php echo Form::close() ?>

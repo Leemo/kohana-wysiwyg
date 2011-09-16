@@ -19,8 +19,8 @@
 	<div id="content">
 		<div class="header">
 			<div id="controls" class="rounded">
-			<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'medium green awesome', 'rel' => 'boxed')) ?>
-			<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'medium blue awesome', 'id' => 'refresh')) ?>
+			<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'button white medium', 'rel' => 'boxed')) ?>
+			<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'button white medium', 'id' => 'refresh')) ?>
 		</div>
 		<span></span>
 	</div>
