@@ -9,6 +9,7 @@
 		->add_file('filebrowser/global.css')
 		->add_file('filebrowser/directories.css')
 		->add_file('filebrowser/contextmenu.css')
+		->add_file('filebrowser/fancyupload/style.css')
 		->add_file('filebrowser/fancybox.css');
 ?>
 <?php

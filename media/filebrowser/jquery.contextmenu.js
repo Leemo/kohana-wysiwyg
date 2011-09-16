@@ -58,7 +58,7 @@
 		return this.delegate(opt.targetSelector, "contextmenu", function(e){
 
 			var $p = $('<div class = "'+opt.cssClass+'"></div>').appendTo(document.body);
-			if(opt.title) $p.append.("<h3>"+opt.title+"</h3>");
+			if(opt.title) $p.append("<h3>"+opt.title+"</h3>");
 			var $li, $menu = $("<ul/>").appendTo($p), opener = $(e.target);
 			if(opener.parent() != this) { // if event.target is targrtSelector's child
 				opener = $(e.target).closest(opt.targetSelector) || opener;
