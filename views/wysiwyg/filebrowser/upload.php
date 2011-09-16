@@ -5,6 +5,6 @@
 	<input type="file" id="file_upload" name="file_upload" />
 </div>
 <div class="buttons">
-	<?php echo HTML::anchor("#", __('Choose files'), array('class' => 'medium green awesome choose')) ?>
-	<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'medium red awesome close')) ?>
+	<?php echo HTML::anchor("#", __('Choose files'), array('class' => 'button gray medium choose')) ?>
+	<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'button gray medium close')) ?>
 </div>
