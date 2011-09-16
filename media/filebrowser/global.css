@@ -204,8 +204,18 @@ a.file {
 }
 
 a.file:hover {
-  background: #efefef;
-  border-color: #ccc;
+  /* outline: 1px solid #b5d3ff; */
+  background: -moz-linear-gradient(top, rgba(114,159,207,0.5) 0%, rgba(32,74,135,0.5) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(114,159,207,0.5)), color-stop(100%,rgba(32,74,135,0.5)));
+  background: -webkit-linear-gradient(top, rgba(114,159,207,0.5) 0%,rgba(32,74,135,0.5) 100%);
+  background: -o-linear-gradient(top, rgba(114,159,207,0.5) 0%,rgba(32,74,135,0.5) 100%);
+  background: -ms-linear-gradient(top, rgba(114,159,207,0.5) 0%,rgba(32,74,135,0.5) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#729fcf', endColorstr='#729fcf',GradientType=0 );
+  background: linear-gradient(top, rgba(114,159,207,0.5) 0%,rgba(32,74,135,0.5) 100%);
+}
+
+a.file:hover p.size {
+  color: #fff
 }
 
 #controls a {
