@@ -97,6 +97,21 @@ class Kohana_Filebrowser {
 	}
 
 	/**
+	 * Array of file extensions for which you want to generate thumbnails
+	 * @var array
+	 */
+	protected static $_image_extensions = array
+	(
+		'png',
+		'jpg',
+		'jpeg',
+		'bmp',
+		'gif',
+		'tif',
+		'tiff'
+	);
+
+	/**
 	 * Checks whether the image file.
 	 * If it's image - returns dimentions, if isn't - returns FALSE
 	 *
@@ -105,6 +120,14 @@ class Kohana_Filebrowser {
 	 */
 	public static function is_image($path)
 	{
+		$extension = pathinfo($path, PATHINFO_EXTENSION);
+
+		// Because we don't know what type of image supports GD
+		if ( ! in_array($extension, self::$_image_extensions))
+		{
+			return FALSE;
+		}
+
 		try
 		{
 			// If it's image file - get dimentions
