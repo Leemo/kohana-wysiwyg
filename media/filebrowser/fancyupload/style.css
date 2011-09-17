@@ -20,7 +20,7 @@
 #upload .file {
   line-height: 2em;
   padding-left: 22px;
-  background: url(assets/attach.png) no-repeat 1px 50%;
+  background: url(attach.png) no-repeat 1px 50%;
 }
 
 #upload .file span,
@@ -40,5 +40,5 @@
   width: 125px;
   height: 12px;
   vertical-align: middle;
-  background-image: url(../../assets/progress-bar/progress.gif);
+  background-image: url(progress.gif);
 }

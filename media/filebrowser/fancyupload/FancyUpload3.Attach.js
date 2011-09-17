@@ -14,7 +14,7 @@ if (!window.FancyUpload3) var FancyUpload3 = {};
 FancyUpload3.Attach = new Class({
 
 	Extends: Swiff.Uploader,
-	
+
 	options: {
 		queued: false,
 		instantStart: true
@@ -23,17 +23,17 @@ FancyUpload3.Attach = new Class({
 	initialize: function(list, selects, options) {
 		this.list = $(list);
 		this.selects = $(selects) ? $$($(selects)) : $$(selects);
-				
+
 		options.target = this.selects[0];
 		options.fileClass = options.fileClass || FancyUpload3.Attach.File;
-		
+
 		this.parent(options);
 
 		/**
 		 * Button state
 		 */
 		var self = this;
-		
+
 		this.selects.addEvents({
 			click: function() {
 				return false;
@@ -50,7 +50,7 @@ FancyUpload3.Attach = new Class({
 				this.focus();
 			}
 		});
-		
+
 		if (this.selects.length == 2) {
 			this.selects[1].setStyle('display', 'none');
 			this.addEvents({
@@ -59,7 +59,7 @@ FancyUpload3.Attach = new Class({
 			});
 		}
 	},
-	
+
 	onSelectSuccess: function() {
 		if (this.fileList.length > 0) {
 			this.selects[0].setStyle('display', 'none');
@@ -68,7 +68,7 @@ FancyUpload3.Attach = new Class({
 			this.reposition();
 		}
 	},
-	
+
 	onFileRemove: function() {
 		if (this.fileList.length == 0) {
 			this.selects[0].setStyle('display', 'inline');
@@ -77,12 +77,12 @@ FancyUpload3.Attach = new Class({
 			this.reposition();
 		}
 	},
-	
+
 	start: function() {
 		if (Browser.Platform.linux && window.confirm(MooTools.lang.get('FancyUpload', 'linuxWarning'))) return this;
 		return this.parent();
 	}
-	
+
 });
 
 FancyUpload3.Attach.File = new Class({
@@ -90,7 +90,7 @@ FancyUpload3.Attach.File = new Class({
 	Extends: Swiff.Uploader.File,
 
 	render: function() {
-		
+
 		if (this.invalid) {
 			if (this.validationError) {
 				var msg = MooTools.lang.get('FancyUpload', 'validationErrors')[this.validationError] || this.validationError;
@@ -106,7 +106,7 @@ FancyUpload3.Attach.File = new Class({
 			this.remove();
 			return;
 		}
-		
+
 		this.addEvents({
 			'open': this.onOpen,
 			'remove': this.onRemove,
@@ -116,30 +116,30 @@ FancyUpload3.Attach.File = new Class({
 			'complete': this.onComplete,
 			'error': this.onError
 		});
-		
+
 		this.ui = {};
-		
+
 		this.ui.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
 		this.ui.title = new Element('span', {'class': 'file-title', text: this.name});
 		this.ui.size = new Element('span', {'class': 'file-size', text: Swiff.Uploader.formatUnit(this.size, 'b')});
-		
+
 		this.ui.cancel = new Element('a', {'class': 'file-cancel', text: 'Cancel', href: '#'});
 		this.ui.cancel.addEvent('click', function() {
 			this.remove();
 			return false;
 		}.bind(this));
-		
+
 		this.ui.element.adopt(
 			this.ui.title,
 			this.ui.size,
 			this.ui.cancel
-		).inject(this.base.list).highlight();
-		
-		var progress = new Element('img', {'class': 'file-progress', src: '../../assets/progress-bar/bar.gif'}).inject(this.ui.size, 'after');
+		).inject(this.base.list, "top").highlight();
+
+		var progress = new Element('img', {'class': 'file-progress', src: 'bar.gif'}).inject(this.ui.size, 'after');
 		this.ui.progress = new Fx.ProgressBar(progress, {
 			fit: true
 		}).set(0);
-					
+
 		this.base.reposition();
 
 		return this.parent();
@@ -161,35 +161,35 @@ FancyUpload3.Attach.File = new Class({
 	onStop: function() {
 		this.remove();
 	},
-	
+
 	onComplete: function() {
 		this.ui.element.removeClass('file-uploading');
 
 		if (this.response.error) {
 			var msg = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || '{error} #{code}';
 			this.errorMessage = msg.substitute($extend({name: this.name}, this.response));
-			
+
 			this.base.fireEvent('fileError', [this, this.response, this.errorMessage]);
 			this.fireEvent('error', [this, this.response, this.errorMessage]);
 			return;
 		}
-		
+
 		if (this.ui.progress) this.ui.progress = this.ui.progress.cancel().element.destroy();
 		this.ui.cancel = this.ui.cancel.destroy();
-		
+
 		var response = this.response.text || '';
 		this.base.fireEvent('fileSuccess', [this, response]);
 	},
 
 	onError: function() {
-		this.ui.element.addClass('file-failed');		
+		this.ui.element.addClass('file-failed');
 	}
 
 });
 
 //Avoiding MooTools.lang dependency
 (function() {
-	
+
 	var phrases = {
 		'fileName': '{name}',
 		'cancel': 'Cancel',
@@ -208,7 +208,7 @@ FancyUpload3.Attach.File = new Class({
 		},
 		'linuxWarning': 'Warning: Due to a misbehaviour of Adobe Flash Player on Linux,\nthe browser will probably freeze during the upload process.\nDo you want to start the upload anyway?'
 	};
-	
+
 	if (MooTools.lang) {
 		MooTools.lang.set('en-US', 'FancyUpload', phrases);
 	} else {
@@ -218,5 +218,5 @@ FancyUpload3.Attach.File = new Class({
 			}
 		};
 	}
-	
+
 })();
