@@ -25,7 +25,6 @@
 		<span></span>
 	</div>
 	<div id="files">
-		<h3>Root</h3>
 		<div id="filesRow"></div>
 	</div>
 </div>
