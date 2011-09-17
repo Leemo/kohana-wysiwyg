@@ -26,7 +26,7 @@
 		});
 
 		$.fn.getD = function(){return this.data("data");};
-		
+
 		var dirData = $(dir).getD();
 		if($(this).getD().hasChild == 0) $("b", this.children("p")).css("visibility", "hidden");
 		else {
@@ -77,7 +77,7 @@
 		} // end add handlers to click on triangle
 
 		var $link = $("a", this.children("p"));
-		var href = (!isRoot) ? parentPath.replace(opt.getDirs,opt.getFiles)+'/'+$link.text() : opt.root+"files";
+		var href = (!isRoot) ? global_config.files_url+'/'+$link.text() : global_config.files_url;
 		$link.attr("href", href);
 		$link.click(function(){
 			$.getJSON(this.href, function(data){

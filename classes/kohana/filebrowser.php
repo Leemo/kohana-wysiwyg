@@ -6,11 +6,12 @@ class Kohana_Filebrowser {
 	 * Returns subdirs of directory (not recursive)
 	 *
 	 * @param   string   $directory  Directory path
+	 * @param   array    $filter     Filter array
 	 * @return  array  Subdirs
 	 */
-	public static function list_files($directory)
+	public static function list_files($directory, array $filter = NULL)
 	{
-		return self::_list($directory, FALSE, TRUE);
+		return self::_list($directory, FALSE, TRUE, $filter);
 	}
 
 	/**
@@ -42,11 +43,13 @@ class Kohana_Filebrowser {
 	 * @param type $dirs
 	 * @return type
 	 */
-	protected static function _list($directory, $dirs, $files)
+	protected static function _list($directory, $dirs, $files, array $filter = NULL)
 	{
 		$directory = APPPATH.$directory;
 
 		$return = array();
+
+		$allowed_extensions = $disallowed_extensions = FALSE;
 
 		$iterator = new DirectoryIterator($directory);
 
@@ -63,31 +66,34 @@ class Kohana_Filebrowser {
 				// Read files
 				if ($files AND $fileinfo->isFile())
 				{
-					$return[$fileinfo->getFilename()] = array
-					(
-						'size' => self::prepare_size($fileinfo->getSize())
-					);
-
-					$filename = $directory.$fileinfo->getFilename();
-
-					if (self::is_image($filename))
+					if (Filebrowser::is_allowed($fileinfo->getFilename(), $filter))
 					{
-						$dir = APPPATH
-							.Kohana::$config->load('media.media_directory')
-							.DIRECTORY_SEPARATOR
-							.Kohana::$config->load('filebrowser.uploads_directory')
-							.DIRECTORY_SEPARATOR;
+						$return[$fileinfo->getFilename()] = array
+						(
+							'size' => self::prepare_size($fileinfo->getSize())
+						);
 
-						$return[$fileinfo->getFilename()]['thumb'] = Route::get('wysiwyg/filebrowser')
-							->uri(array(
-								'action' => 'thumb',
-								'path'   => str_replace(array($dir, DIRECTORY_SEPARATOR), array('', '/'), $filename)
-								));
-					}
-					else
-					{
-						$return[$fileinfo->getFilename()]['type'] =
-							self::type_by_ext(pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION));
+						$filename = $directory.$fileinfo->getFilename();
+
+						if (self::is_image($filename))
+						{
+							$dir = APPPATH
+								.Kohana::$config->load('media.media_directory')
+								.DIRECTORY_SEPARATOR
+								.Kohana::$config->load('filebrowser.uploads_directory')
+								.DIRECTORY_SEPARATOR;
+
+							$return[$fileinfo->getFilename()]['thumb'] = Route::get('wysiwyg/filebrowser')
+								->uri(array(
+									'action' => 'thumb',
+									'path'   => str_replace(array($dir, DIRECTORY_SEPARATOR), array('', '/'), $filename)
+									));
+						}
+						else
+						{
+							$return[$fileinfo->getFilename()]['type'] =
+								self::type_by_ext(pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION));
+						}
 					}
 				}
 			}
@@ -140,6 +146,43 @@ class Kohana_Filebrowser {
 		}
 
 		return $dimentions;
+	}
+
+	/**
+	 * Checks whether a file to the given extensions filter
+	 *
+	 * For example:
+	 * ~~~
+	 * $images      = array('allowed' => array('jpg', 'jpeg', 'gif', 'png'));
+	 * $documents   = array('allowed' => array('doc', 'docx', 'pdf'));
+	 * $some_filter = array('allowed' => array('jpg', 'doc'), 'disallowed' => array('png'));
+	 * $yet_another = array('disallowed' => array('php'));
+	 *
+	 * Filebrowser::is_allowed('image.jpg', $images);           // Returns TRUE
+	 * Filebrowser::is_allowed('document.docx', $documents);    // Returns TRUE
+	 * Filebrowser::is_allowed('some/image.png', $some_filter); // Returns FALSE
+	 * Filebrowser::is_allowed('some/file.php', $yet_another);  // Returns FALSE
+	 * ~~~
+	 *
+	 * @param   string  $filename  Filename
+	 * @param   array   $filter    Filter array
+	 * @return  boolean  Allowed or not
+	 */
+	public static function is_allowed($filename, array $filter = NULL)
+	{
+		$filter = Arr::extract($filter, array('allowed', 'disallowed'));
+
+		$extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+		$allowed = $disallowed = FALSE;
+
+		foreach ($filter as $key => $val)
+		{
+			$$key = $val;
+		}
+
+		return ( ! $allowed OR in_array($extension, $allowed)) AND
+			( ! $disallowed OR ! in_array($extension, $disallowed));
 	}
 
 	protected static $_types = array

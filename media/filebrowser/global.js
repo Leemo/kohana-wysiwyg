@@ -109,7 +109,8 @@
       "path": ""
     }, function() {
       $("#filesRow").empty();
-      $.getJSON("filebrowser/files", function(data){
+
+      $.getJSON(global_config.files_url+path, function(data){
         $("#tpl-files").tmpl(data).appendTo("#filesRow");
       });
     }).bind(
