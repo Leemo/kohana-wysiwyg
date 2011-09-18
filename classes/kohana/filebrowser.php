@@ -39,17 +39,16 @@ class Kohana_Filebrowser {
 	/**
 	 * Returns contents of directory
 	 *
-	 * @param string $directory
-	 * @param type $dirs
-	 * @return type
+	 * @param   string   $directory  Directory to scan
+	 * @param   boolean  $dirs       Return directories
+	 * @param   boolean  $dirs       Return files
+	 * @return  array  List of contents
 	 */
 	protected static function _list($directory, $dirs, $files, array $filter = NULL)
 	{
 		$directory = APPPATH.$directory;
 
 		$return = array();
-
-		$allowed_extensions = $disallowed_extensions = FALSE;
 
 		$iterator = new DirectoryIterator($directory);
 
@@ -185,6 +184,11 @@ class Kohana_Filebrowser {
 			( ! $disallowed OR ! in_array($extension, $disallowed));
 	}
 
+	/**
+	 * File types and their extensions
+	 *
+	 * @var array
+	 */
 	protected static $_types = array
 	(
 		'archive'  => array
@@ -267,6 +271,13 @@ class Kohana_Filebrowser {
 		)
 	);
 
+	/**
+	 * Returns file type by etension.
+	 * It is used to display the icon of the file type in filebrowser.
+	 *
+	 * @param   string  $ext  File extension
+	 * @return  string  File type
+	 */
 	public static function type_by_ext($ext)
 	{
 		foreach (self::$_types as $type => $extensions)
