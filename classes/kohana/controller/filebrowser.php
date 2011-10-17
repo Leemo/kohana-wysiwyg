@@ -35,10 +35,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		parent::before();
 
 		$this->template
-			->set('js',      Media::instance('js'))
-			->set('css',     Media::instance('css'))
-			->set('title',   '')
-			->set('content', '');
+			->set('js',            Media::instance('js'))
+			->set('css',           Media::instance('css'))
+			->set('global_config', array())
+			->set('title',         '')
+			->set('content',       '');
 
 		/**
 		 * Load config
@@ -81,15 +82,6 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		return $this->response->body(json_encode(array('dirs' => $dirs)));
 	}
 
-	public function action_files()
-	{
-		$this->auto_render = FALSE;
-
-		return $this->response->body(json_encode(array(
-			'files' => Filebrowser::list_files($this->_directory.$this->_path)
-			)));
-	}
-
 	public function action_images()
 	{
 		$this->template->title = __('Images :path', array(
@@ -108,10 +100,32 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$this->_filebrowser();
 	}
 
-	protected function _filebrowser(array $allowed_types = NULL, array $disallowed_types = NULL)
+	protected function _filebrowser()
 	{
-		$dirs  = Filebrowser::list_dirs($this->_directory.$this->_path);
-		$files = Filebrowser::list_files($this->_directory.$this->_path);
+		$filter = Kohana::$config->load('filebrowser.filters.'.$this->request->action());
+		$path   = $this->_directory.$this->_path;
+
+		if ($this->request->is_ajax())
+		{
+			$this->auto_render = FALSE;
+
+			return $this->response->body(json_encode(array(
+				'files' => Filebrowser::list_files($path, $filter)
+				)));
+		}
+		else
+		{
+			if ( ! empty($this->_path))
+			{
+				return $this->request
+					->redirect(Route::get('wysiwyg/filebrowser')->uri(array(
+						'action' => $this->request->action()
+						)));
+			}
+		}
+
+		$dirs  = Filebrowser::list_dirs($path);
+		$files = Filebrowser::list_files($path, $filter);
 
 		foreach($dirs as $key => $val)
 		{
@@ -299,6 +313,17 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function after()
 	{
+		if ($this->auto_render)
+		{
+			$route = Route::get('wysiwyg/filebrowser');
+
+			$this->template->global_config = array
+			(
+				'dirs_url'  => $route->uri(array('action' => 'dirs')),
+				'files_url' => $route->uri(array('action' => $this->request->action())),
+			);
+		}
+
 		parent::after();
 	}
 

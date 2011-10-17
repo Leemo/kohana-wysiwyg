@@ -15,7 +15,8 @@
 <?php
 	echo $js
 		->add_file('filebrowser/jquery-1.6.2.js')
-		->add_source('jQuery.noConflict()');
+		->add_source('jQuery.noConflict();')
+		->add_source('var global_config = '.json_encode($global_config).';');
 
 	echo $js
 		->add_file('filebrowser/i18n/ru.js')

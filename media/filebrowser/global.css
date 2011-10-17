@@ -230,7 +230,6 @@ a.file {
 }
 
 a.file:hover {
-  /* outline: 1px solid #b5d3ff; */
   background: -moz-linear-gradient(top, rgba(114,159,207,0.5) 0%, rgba(32,74,135,0.5) 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(114,159,207,0.5)), color-stop(100%,rgba(32,74,135,0.5)));
   background: -webkit-linear-gradient(top, rgba(114,159,207,0.5) 0%,rgba(32,74,135,0.5) 100%);
@@ -257,93 +256,16 @@ a.file:hover p.size {
   height: 200px;
 }
 
-/* --- AWESOME BUTTONS STYLES (http://www.zurb.com/article/266/super-awesome-buttons-with-css3-and-rgba) --- */
-/*
-.awesome {
-  background: #222 url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAyCAYAAACd+7GKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAClJREFUeNpi/v//vwMTAwPDfzjBgMpFI/7hFSOT9Y8qRuF3JLoHAQIMAHYtMmRA+CugAAAAAElFTkSuQmCC") repeat-x;
-  display: inline-block;
-  padding: 5px 20px 6px;
-  color: #000 !important;
-  text-decoration: none !important;
-  line-height: 1;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  -moz-box-shadow: 0 1px 3px #999;
-  -webkit-box-shadow: 0 1px 3px #999;
-  border-bottom: 1px solid #222;
-  position: relative;
-  cursor: pointer;
-  border: 0 !important
-}
-
-.awesome:hover {
-  background-color: #111;
-}
-
-.awesome:active {
-  top: 1px;
-}
-
-.small.awesome,
-.small.awesome:visited {
-  font-size: 11px;
-  font-weight: normal;
-}
-
-.awesome,
-.awesome:visited,
-.medium.awesome,
-.medium.awesome:visited {
-  font-size: 13px;
-  line-height: 1
-}
-
-.green.awesome,
-.green.awesome:visited {
-  color: #186912 !important;
-  background-color: #a2f99c;
-}
-
-.blue.awesome,
-.blue.awesome:visited {
-  color: #0f21f6!important;
-  background-color: #15cff0;
-}
-
-.red.awesome,
-.red.awesome:visited {
-  background-color: #e33100;
-}
-
-.red.awesome:hover,
-.blue.awesome:hover,
-.green.awesome:hover {
-  color: #000 !important;
-  background-color: #ffff00;
-}
-
-*/
-
-/* http://www.webdesignerwall.com/demo/css-buttons.html */
-
 .button {
-  /* display: inline; */
-  /* vertical-align: baseline; */
-  /* margin: 0 2px; */
   margin-top: 3px;
   outline: none;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
   padding: .5em 2em .55em;
-  /* text-shadow: 0 1px 1px rgba(0,0,0,.3); */
   -webkit-border-radius: .5em;
   -moz-border-radius: .5em;
   border-radius: .5em;
-  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
-  -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
-  box-shadow: 0 1px 2px rgba(0,0,0,.2);
 }
 
 .button:hover {
