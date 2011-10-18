@@ -18,9 +18,9 @@
 		<div id="wrap">
       <div id="area">
         <div id="img" style="left: 300px; top: 50px"> <!-- server should parse {} position, calculated for put image to center -->
-          <img alt="" src="<?php echo $file ?>" />
+          <img alt="" src="<?php echo $file ?>" <?php echo HTML::attributes(array('width' => $width, 'height' => $height)) ?> />
           <div id="overlay"></div>
-          <img alt="" id="over" src="<?php echo $file ?>" />
+          <img alt="" id="over" src="<?php echo $file ?>" <?php echo HTML::attributes(array('width' => $width, 'height' => $height)) ?> />
           <div></div>
           <div id="cropper">
             <b id="lt"><em></em></b>
