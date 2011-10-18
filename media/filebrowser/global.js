@@ -105,9 +105,7 @@
       ]
     });
 
-    $(document).bind("filebrowser_load_files", {
-      "path": ""
-    }, function() {
+    $(document).bind("filebrowser_load_files", function(e, path) {
       $("#filesRow").empty();
 
       $.getJSON(global_config.files_url+path, function(data){
@@ -123,14 +121,14 @@
       // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
       },
       "filebrowser_image_crop" : function(e){
-      // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
+      window.open("wysiwyg/filebrowser/cropresizer/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin", "width=800, height=600, location=yes");
       },
       "filebrowser_file_rename" : function(e){
-        $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).children("p:first").text(), function(data){
+        $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).find("img").attr("alt"), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
-      "filebrowser_file_delete" : function(e){
+      "filebrowser_file_delete" : function(e, path){
         $.get('wysiwyg/filebrowser/delete/'+path+$(e.target).children("p:first").text(), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
@@ -209,9 +207,7 @@
     .trigger("filebrowser_load_files", "");
 
     $("#refresh").click(function(){
-      $(document).trigger("filebrowser_load_files", {
-        "path": path
-      });
+      $(document).trigger("filebrowser_load_files", path);
       return false
     });
 
