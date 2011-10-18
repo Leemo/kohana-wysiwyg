@@ -62,7 +62,7 @@
 					if(dirP.hasClass("selected") && !dirData.filesLoaded){
 						dirP.removeClass("selected");
 					}
-					$(document).trigger("openFolderClick");
+					$(document).trigger("openFolderClick", dirData.path);
 				},
 				function(){
 					var selectedChild = dirData.open = false;
