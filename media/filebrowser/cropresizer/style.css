@@ -22,6 +22,9 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   text-align:left;
   font-family: Arial
 }
+html, body {
+  height: 100%;
+}
 
 body {
   overflow: hidden;
@@ -31,26 +34,24 @@ body {
 h2 {width: 800px; margin: 0 auto;}
 
 #wrap {
-  margin:15px;
+ position: relative;
+ min-height: 100%;
 }
 
 #area {
-  width: 90%;
   position: relative;
-  height: 500px;
   overflow: hidden;
-  margin: 0 auto;
+  min-height: 100%;
+  max-height: 100%;
 }
 
 #area #img {
   position: absolute;
-  left: 50%;
-  top: 50%;
   -moz-user-select: -moz-none;
   -webkit-user-select: none;
   z-index: 40;
   cursor: crosshair;
-  box-shadow: 0 4px 5px #666;
+  box-shadow: 0 0 10px #555;
 }
 
 #area.dragable #img {
@@ -177,14 +178,18 @@ h2 {width: 800px; margin: 0 auto;}
 
 /*---------------------------------- TOOLS STYLES ------------------------------- */
 #tools {
+  left: 0;
+  bottom: 0;
+  width: 100%;
   font: 14px/40px;
   color: #444;
-  width: 90%;
-  margin: 0 auto;
   padding: 0 20px;
   background: #ededed;
-  border-radius: 4px;
-  box-shadow: 0 4px 5px #666;
+  height:40px;
+  margin-top: -40px;
+  position: relative;
+  z-index: 100;
+  box-shadow: 0 0 5px #666;
 }
 
 #tools label {
@@ -229,8 +234,8 @@ h2 {width: 800px; margin: 0 auto;}
 
 
 #tools button {
-  margin-right: 8px;
-  padding: 4px 20px;
+  margin: 5px 8px 5px 0;
+  padding: 2px 14px;
   font-size: 13px;
   cursor: pointer;
   /* color: #333;
@@ -244,7 +249,7 @@ h2 {width: 800px; margin: 0 auto;}
 }
 
 #tools #reset {
-  margin: 0 100px 0 30px
+  margin: 0 60px 0 20px
 }
 
 button::-moz-focus-inner {

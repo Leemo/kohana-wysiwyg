@@ -14,17 +14,15 @@
 			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
 			->add_file('filebrowser/jquery.tipsy.js')
 			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
-			->add_source('$(function(){ var obj; $(window).load(function(){ obj = $("#img").cropResize() }) });')
-			->add_source('$(document).ready(function(){$(".tip-sw").tipsy({"gravity": "sw", "fade": true, "delayIn": 1000}) });');
+			->add_source('$(function(){$("#img").cropResize({width:'.$width.', height:'.$height.'});  $(".tip-sw").tipsy({"gravity": "sw", "fade": true, "delayIn": 1000}); });');
+
 		?>
 	</head>
 	<body>
-		<div id="wrap">
-      <div id="area">
-        <div id="img" style="left: 300px; top: 50px"> <!-- server should parse {} position, calculated for put image to center -->
-          <img alt="" src="<?php echo $file ?>" <?php echo HTML::attributes(array('width' => $width, 'height' => $height)) ?> />
+		  <div id="area">
+        <div id="img" <?php echo HTML::attributes(array('style' => "width: " . $width . "px; height: " . $height . "px; left: " . (900-$width)/2 . "px; top: " . (580-$height)/2 . "px")); ?>> <!-- server should parse {} position, calculated for put image to center -->
+          <img alt="" src="<?php echo $file ?>"/>
           <div id="overlay"></div>
-          <img alt="" id="over" src="<?php echo $file ?>" <?php echo HTML::attributes(array('width' => $width, 'height' => $height)) ?> />
           <div></div>
           <div id="cropper">
             <b id="lt"><em></em></b>
@@ -57,10 +55,10 @@
         <button id="plus">+</button>
         <input type="text" id="ratio" value="100" size="3" /><b>%</b>
         <button id="minus">−</button>
+				<button id="center">&rarr;&nbsp;o&nbsp;&larr;</button>
         <button id="reset"><?php echo __('Reset') ?></button>
         <button id="save"><?php echo __('Save') ?></button>
         <button id="close"><?php echo __('Exit') ?></button>
       </div>
-    </div>
-	</body>
+   </body>
 </html>
