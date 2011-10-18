@@ -216,7 +216,14 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function action_crop()
 	{
+		$file = Route::get('media')
+			->uri(array(
+				'file' => Kohana::$config->load('filebrowser.uploads_directory').'/'.$this->_path
+				));
 
+		$this->template = View::factory('wysiwyg/filebrowser/crop')
+			->bind('file', $file)
+			->bind('path', $this->_path);
 	}
 
 	public function action_resize()

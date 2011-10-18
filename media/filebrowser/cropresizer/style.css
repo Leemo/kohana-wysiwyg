@@ -2,8 +2,7 @@
     Document   : style
     Created on : 19.09.2011, 23:42:22
     Author     : Александр
-    Description:
-        Purpose of the stylesheet follows.
+    Description: Purpose of the stylesheet follows.
 */
 
 /*
@@ -12,120 +11,120 @@
 */
 
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
-	background-position:0 0;
-	background-repeat:no-repeat;
-	border:0 none;
-	font-size:100%;
-	font-style:inherit;
-	font-weight:normal;
-	margin:0;
-	padding:0;
-	text-align:left;
+  background-position:0 0;
+  background-repeat:no-repeat;
+  border:0 none;
+  font-size:100%;
+  font-style:inherit;
+  font-weight:normal;
+  margin:0;
+  padding:0;
+  text-align:left;
 }
 
 body {
-	overflow: hidden;
+  overflow: hidden;
   background: #ababab;
 }
 
 h2 {width: 800px; margin: 0 auto;}
 
 #wrap {
-	margin:15px;
+  margin:15px;
 }
 
 #area {
   width: 90%;
-	position: relative;
-	height: 500px;
-	overflow: hidden;
+  position: relative;
+  height: 500px;
+  overflow: hidden;
   margin: 0 auto;
 }
 
 #area #img {
-	position: absolute;
-	left: 50%;
-	top: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   -moz-user-select: -moz-none;
-	-webkit-user-select: none;
-	z-index: 40;
-	cursor: crosshair;
+  -webkit-user-select: none;
+  z-index: 40;
+  cursor: crosshair;
   box-shadow: 0 4px 5px #666;
 }
 
 #area.dragable #img {
-	cursor: url('img/grab.cur'), move;
+  cursor: url("../images/crop/grab.cur"), move;
 }
 
 #area #img.active.in {
-	cursor: url('img/zoom_in.cur'), crosshair;
+  cursor: url("../images/crop/zoom_in.cur"), crosshair;
 }
 #area #img.active.out {
-	cursor: url('img/zoom_out.cur'), crosshair;
+  cursor: url("../images/crop/zoom_out.cur"), crosshair;
 }
 
 #area.dragable #img.movingNow,
 #area #img #cropper.show.movingNow {
-	cursor: url('img/grabbing.cur'), move
+  cursor: url("../images/crop/grabbing.cur"), move
 }
 
 #area #img > div {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	z-index: 50;
-	top: 0;
-	left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  top: 0;
+  left: 0;
 }
 
 #area #img div#overlay {
-	z-index: 2;
-	opacity: 0.4;
-	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=40);
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=40)";
-	background: #000;
+  z-index: 2;
+  opacity: 0.4;
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=40);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=40)";
+  background: #000;
 }
 
 #area #img img#over {
-	display: block;
-	position: absolute;
-	z-index: 49;
-	top: 0;
-	left: 0;
-	clip: rect(0px,0px,0px,0px);
+  display: block;
+  position: absolute;
+  z-index: 49;
+  top: 0;
+  left: 0;
+  clip: rect(0px,0px,0px,0px);
 }
 
 #area #img #cropper {
-	display: none;
-	width: 0;
-	height: 0;
-  background: url("img/pixel.gif") 0 0;
+  display: none;
+  width: 0;
+  height: 0;
+  background: url("../images/crop/pixel.gif") 0 0;
   -moz-user-select: -moz-none;
-	-webkit-user-select: -webkit-none;
+  -webkit-user-select: -webkit-none;
 }
 
 #area #img #cropper.show {
-	display: block;
-	cursor: url('img/grab.cur'), move;
+  display: block;
+  cursor: url("../images/crop/grab.cur"), move;
 }
 
 #area #img #cropper b {
-	display: block;
-	position: absolute;
+  display: block;
+  position: absolute;
 }
 
 #area #img #cropper b:hover {
-	-moz-box-shadow: 0px 0px 1px #fff;
-	-webkit-box-shadow: 0px 0px 1px #fff;
-	box-shadow: 0px 0px 1px #fff;
+  -moz-box-shadow: 0px 0px 1px #fff;
+  -webkit-box-shadow: 0px 0px 1px #fff;
+  box-shadow: 0px 0px 1px #fff;
 }
 
 #area #img #cropper b em {
-	display: block;
-	width: 6px;
-	height: 6px;
-	background: #000;
-	margin: 3px;
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: #000;
+  margin: 3px;
 }
 
 #area #img #cropper.input b em {
@@ -154,19 +153,19 @@ h2 {width: 800px; margin: 0 auto;}
   text-align: center;
   overflow: hidden;
   cursor: text;
- }
+}
 
 #cropper div#cropsize input {
-   background: #888;
-   color: #fff;
-   width: 20px;
-   border: 0;
-   margin: 0 1px;
-   font-size: 10px;
-   height: 12px;
-   padding:0 0 2px 0;
-   text-align: center;
-   -moz-user-select: text;
+  background: #888;
+  color: #fff;
+  width: 20px;
+  border: 0;
+  margin: 0 1px;
+  font-size: 10px;
+  height: 12px;
+  padding:0 0 2px 0;
+  text-align: center;
+  -moz-user-select: text;
   -webkit-user-select: text;
 }
 
@@ -204,36 +203,37 @@ h2 {width: 800px; margin: 0 auto;}
   font-size: 17px;
   background-position: 0 100%;
   cursor: pointer;
- }
- #tools span#drag {
-   background-image: url('img/hand.jpg');
-    margin-right: 5px;
- }
- #tools span#crop {
-   background-image: url('img/crop.jpg');
-    margin-right: 30px;
- }
+}
+#tools span#drag {
+  background-image: url("../images/crop/hand.jpg");
+  margin-right: 5px;
+}
+#tools span#crop {
+  background-image: url("../images/crop/crop.jpg");
+  margin-right: 30px;
+}
 
- #tools b {
-   margin-right: 5px
- }
+#tools b {
+  margin-right: 5px
+}
 #tools input {
-	text-align: center;
+  text-align: center;
   padding: 2px;
   outline: none;
 }
 
 #tools span.active {
-	background-position: 0 0 !important;
+  background-position: 0 0 !important;
 }
 
 
 #tools button {
   margin-right: 8px;
+  padding: 4px 20px;
   font-size: 13px;
   cursor: pointer;
-  color: #333;
-  text-shadow: 1px 1px 0 #efefef;
+  /* color: #333;
+  text-shadow: 1px 1px 0 #efefef; */
 }
 
 
@@ -245,7 +245,6 @@ h2 {width: 800px; margin: 0 auto;}
 #tools #reset {
   margin: 0 100px 0 30px
 }
-
 
 button::-moz-focus-inner {
   padding: 0;
