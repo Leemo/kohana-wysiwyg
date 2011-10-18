@@ -6,12 +6,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<?php
 		echo Media::instance('css')
-			->add_file('filebrowser/cropresizer/style.css');
+			->add_file('filebrowser/cropresizer/style.css')
+			->add_file('filebrowser/tipsy.css');
 
 		echo Media::instance('js')
 			->add_file('filebrowser/jquery-1.6.2.js')
 			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
-			->add_source('$(function(){ var obj; $(window).load(function(){ obj = $("#img").cropResize() }) });');
+			->add_file('filebrowser/jquery.tipsy.js')
+			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
+			->add_source('$(function(){ var obj; $(window).load(function(){ obj = $("#img").cropResize() }) });')
+			->add_source('$(document).ready(function(){$(".tip-sw").tipsy({"gravity": "sw", "fade": true, "delayIn": 1000}) });');
 		?>
 	</head>
 	<body>
@@ -38,8 +42,8 @@
         </div>
       </div>
       <div id="tools">
-        <span id="drag">&nbsp;</span>
-        <span id="crop" class="active">&nbsp;</span>
+        <span id="drag" class="tip-sw" original-title="<?php echo __('It\'s for moving your entire image within a window') ?>">&nbsp;</span>
+        <span id="crop" original-title="<?php echo __('Allows you to select an area of an image and discard everything outside this area') ?>" class="active tip-sw">&nbsp;</span>
         <label for="croptype"><?php echo __('Proportions') ?>:</label>
         <select id="croptype">
           <option value="0"><?php echo __('Arbitrary') ?></option>
