@@ -38,7 +38,8 @@
         "left": 0,
         "clip": "rect(0px,0px,0px,0px)"
       }).insertAfter("#overlay"),
-      cropper : $("#cropper"),
+      cropper   : $("#cropper"),
+      undercoat : $("<div/>",{id: "undercoat"}).appendTo(this.parent()),
       picture : this.children("img"), //already two images
       // toolbar
       plus      : $("#plus"),
@@ -117,7 +118,7 @@
             delay = 500;
           }
           else if (mode == "wheel") { // zoom by mouse wheel
-            ratio = (direct > 0) ? 0.8 : 1.2;
+            ratio = (direct > 0) ? 0.83333 : 1.2;
             base = this.currentSize;
             delay = 0;
           }
@@ -323,6 +324,7 @@
         for(var side in this.axles) this.selection[side] = 0;
         this.clipImg.css("clip", "rect(0,0,0,0)");
         this.cropper.removeClass().removeAttr().unbind();
+        this.undercoat.removeClass();
         this.selectionRelativeCenter = {
           x: 0,
           y: 0
@@ -332,16 +334,25 @@
 
       ShowRect : function(){
         this.clipImg.css("clip","rect("+this.selection.top+"px,"+this.selection.right+"px,"+this.selection.bottom+"px,"+this.selection.left+"px)")
+        var divsSize = {w: this.selection.right - this.selection.left +"px", h: this.selection.bottom - this.selection.top +"px"}
         this.cropper.css({
           left: this.selection.left+"px",
           top: this.selection.top+"px",
-          width: this.selection.right - this.selection.left +"px",
-          height: this.selection.bottom - this.selection.top +"px"
+          width: divsSize.w,
+          height: divsSize.h
+        }).addClass("show");
+        var cropperOffset = this.cropper.offset();
+        this.undercoat.css({
+          left: cropperOffset.left+"px",
+          top: cropperOffset.top+"px",
+          width: divsSize.w,
+          height: divsSize.h
         }).addClass("show");
         this.crop_w.val(this.selection.right - this.selection.left);
         this.crop_h.val(this.selection.bottom - this.selection.top);
         return this;
       },
+
       // common methods
       Reset : function(){
         this.zoominput.addClass("moving");
@@ -363,7 +374,6 @@
       },
 
       Center : function(){
-
         this.animate({
           left: (this.area.right-this.area.left-this.currentSize.w)/2+"px",
           top: (this.area.bottom-this.area.top-this.currentSize.h)/2+"px"

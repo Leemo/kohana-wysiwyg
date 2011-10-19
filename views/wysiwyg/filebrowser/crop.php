@@ -55,7 +55,7 @@
         <button id="plus">+</button>
         <input type="text" id="ratio" value="100" size="3" /><b>%</b>
         <button id="minus">−</button>
-				<button id="center">&rarr;&nbsp;o&nbsp;&larr;</button>
+				<button id="center">&nbsp;</button>
         <button id="reset"><?php echo __('Reset') ?></button>
         <button id="save"><?php echo __('Save') ?></button>
         <button id="close"><?php echo __('Exit') ?></button>

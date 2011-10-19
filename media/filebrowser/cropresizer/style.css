@@ -105,6 +105,18 @@ h2 {width: 800px; margin: 0 auto;}
   -webkit-user-select: -webkit-none;
 }
 
+#area #undercoat {
+  position: absolute;
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+#area #undercoat.show {
+  display: block;
+  background: #c8c8c8;
+}
+
 #area #img #cropper.show {
   display: block;
   cursor: url("../images/crop/grab.cur"), move;
@@ -250,6 +262,11 @@ h2 {width: 800px; margin: 0 auto;}
 
 #tools #reset {
   margin: 0 60px 0 20px
+}
+
+#tools #center {
+  width: 30px;
+  background: url("../images/crop/center.png") 50% 50% no-repeat;
 }
 
 button::-moz-focus-inner {
