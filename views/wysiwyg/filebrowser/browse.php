@@ -1,5 +1,8 @@
+<div id="controls">
+		<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'button white small', 'rel' => 'boxed')) ?>
+		<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'button white small', 'id' => 'refresh')) ?>
+</div>
 <div id="dirs">
-	<div class="header"><span></span></div>
  	<div class="directories">
 		<div id="root" class="open">
 			<p>
@@ -14,25 +17,15 @@
 			<?php endforeach ?>
 			</div>
 		</div>
-		<div class="footer"><span></span></div>
 	</div>
 	<div id="content">
-		<div class="header">
-			<div id="controls">
-			<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'button white medium', 'rel' => 'boxed')) ?>
-			<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'button white medium', 'id' => 'refresh')) ?>
-		</div>
-		<span></span>
-	</div>
+
 	<div id="files">
 		<div id="filesRow"></div>
 	</div>
 </div>
 <div id="info_wrap">
-	<span></span>
-	<div id="info" class="rounded">
-		&nbsp;
-	</div>
+ВОТ ОН КАКОЙ
 </div>
 
 <script id="tpl-files" type="text/x-jquery-tmpl">

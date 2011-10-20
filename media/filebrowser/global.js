@@ -15,11 +15,11 @@
       }
     };
 
-    $.recountHeight();
+  $.recountHeight();
 
-    $(window).bind("resize", function(){
-      $.recountHeight();
-    });
+  $(window).bind("resize", function(){
+     $.recountHeight();
+  });
 
     $("div.directories").folderTree()
     .contextMenu({  // bind context menu to delegate for all elements in folders column
@@ -218,8 +218,8 @@
 
   $.extend({
     "recountHeight": function(){
-      $("#dirs>div.directories").height($("body").height()-70+"px");
-      $("#files").height($("body").height()- $("#content div.header").height()- $("#info_wrap").height() - 40+"px");
+      $("#dirs>div.directories").height($("body").height()-130+"px");
+      $("#files").height($("body").height()-$("#info_wrap").height() - 55+"px");
     }
   });
 })(jQuery);
