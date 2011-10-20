@@ -39,7 +39,9 @@
         "clip": "rect(0px,0px,0px,0px)"
       }).insertAfter("#overlay"),
       cropper   : $("#cropper"),
-      undercoat : $("<div/>",{id: "undercoat"}).prependTo(this),
+      undercoat : $("<div/>",{
+        id: "undercoat"
+      }).prependTo(this),
       picture : this.children("img"), //already two images
       // toolbar
       plus      : $("#plus"),
@@ -210,10 +212,15 @@
             obj._clipGetRelativeCenter().unbind(".crop").bind("contextmenu", function(){
               obj.ClipDelete().unbind("contextmenu");
               return false;
-            }).cropper.addClass("created").bind("mousedown.clipmovestart", function(e){
-              e.stopPropagation();
-              obj.ClipMove(e);
-            }).bind("selectstart", function(){return false}).children("b").bind(
+            }).cropper.addClass("created").bind({
+              "mousedown.clipmovestart" : function(e){
+                e.stopPropagation();
+                obj.ClipMove(e);
+              },
+              "selectstart" : function(){
+                return false
+              }
+            }).children("b").bind(
               "mousedown.clipresizestart", function(e){
                 e.stopPropagation();
                 obj.ClipResize(e, $(this));
@@ -335,7 +342,10 @@
 
       ShowRect : function(){
         this.clipImg.css("clip","rect("+this.selection.top+"px,"+this.selection.right+"px,"+this.selection.bottom+"px,"+this.selection.left+"px)")
-        var divsSize = {w: this.selection.right - this.selection.left +"px", h: this.selection.bottom - this.selection.top +"px"}
+        var divsSize = {
+          w: this.selection.right - this.selection.left +"px",
+          h: this.selection.bottom - this.selection.top +"px"
+        }
         this.cropper.css({
           left: this.selection.left+"px",
           top: this.selection.top+"px",
@@ -395,13 +405,20 @@
     if($.browser.msie && parseInt($.browser.version) < 9) this.addClass("inIE");
 
     this.picture.load(function(){
-      obj.css({width: "auto", height: "auto"});
+      obj.css({
+        width: "auto",
+        height: "auto"
+      });
     });
 
-    this.bind(
-      "mousedown.setcrop", function(e){ // begin crop on image
+    this.bind({
+      "mousedown.setcrop" : function(e){ // begin crop on image
         obj.Crop(e);
-      });
+      },
+      "selectstart" : function(){
+        return false
+      }
+    });
 
 
     this.drag.click(function(){ // drag image button
