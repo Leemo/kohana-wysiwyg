@@ -2,6 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <base href="<?php echo URL::base(TRUE, TRUE) ?>" />
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" />
     <title><?php echo __('Crop and resize image :path', array(':path' => $path)) ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<?php

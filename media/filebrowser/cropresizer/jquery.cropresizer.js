@@ -39,7 +39,7 @@
         "clip": "rect(0px,0px,0px,0px)"
       }).insertAfter("#overlay"),
       cropper   : $("#cropper"),
-      undercoat : $("<div/>",{id: "undercoat"}).appendTo(this.parent()),
+      undercoat : $("<div/>",{id: "undercoat"}).prependTo(this),
       picture : this.children("img"), //already two images
       // toolbar
       plus      : $("#plus"),
@@ -77,6 +77,7 @@
 
       //pictupe methods
       Drag : function(e) {
+
         var shift = {
           X : e.clientX-this.position().left,
           Y : e.clientY-this.position().top
@@ -212,7 +213,7 @@
             }).cropper.addClass("created").bind("mousedown.clipmovestart", function(e){
               e.stopPropagation();
               obj.ClipMove(e);
-            }).children("b").bind(
+            }).bind("selectstart", function(){return false}).children("b").bind(
               "mousedown.clipresizestart", function(e){
                 e.stopPropagation();
                 obj.ClipResize(e, $(this));
@@ -341,10 +342,10 @@
           width: divsSize.w,
           height: divsSize.h
         }).addClass("show");
-        var cropperOffset = this.cropper.offset();
+
         this.undercoat.css({
-          left: cropperOffset.left+"px",
-          top: cropperOffset.top+"px",
+          left: this.selection.left+"px",
+          top: this.selection.top+"px",
           width: divsSize.w,
           height: divsSize.h
         }).addClass("show");
@@ -390,6 +391,8 @@
       }
     });
     // end of object-----------------------------------------------
+
+    if($.browser.msie && parseInt($.browser.version) < 9) this.addClass("inIE");
 
     this.picture.load(function(){
       obj.css({width: "auto", height: "auto"});

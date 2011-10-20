@@ -87,8 +87,11 @@ h2 {width: 800px; margin: 0 auto;}
   background: #000;
 }
 
-#area #img img#over {
+#area #img img {
   display: block;
+}
+
+#area #img img#over {
   position: absolute;
   z-index: 49;
   top: 0;
@@ -103,16 +106,19 @@ h2 {width: 800px; margin: 0 auto;}
   background: url("../images/crop/pixel.gif") 0 0;
   -moz-user-select: -moz-none;
   -webkit-user-select: -webkit-none;
+  -moz-box-shadow: 0px 0px 2px #fff;
+  -webkit-box-shadow: 0px 0px 2px #fff;
+  box-shadow: 0 0 2px #fff;
 }
 
-#area #undercoat {
-  position: absolute;
+#area #img #undercoat {
   display: none;
   width: 0;
   height: 0;
+  z-index: 1 !important;
 }
 
-#area #undercoat.show {
+#area #img #undercoat.show {
   display: block;
   background: #c8c8c8;
 }
@@ -125,11 +131,12 @@ h2 {width: 800px; margin: 0 auto;}
 #area #img #cropper b {
   display: block;
   position: absolute;
+  z-index: 100;
 }
 
 #area #img #cropper b:hover {
   -moz-box-shadow: 0px 0px 1px #fff;
-  -webkit-box-shadow: 0px 0px 1px #fff;
+  -webkit-box-shadow: 0px 0px 2px #fff;
   box-shadow: 0px 0px 1px #fff;
 }
 
@@ -139,6 +146,9 @@ h2 {width: 800px; margin: 0 auto;}
   height: 6px;
   background: #000;
   margin: 3px;
+  -moz-box-shadow: 0 0 1px #efefef;
+  -webkit-box-shadow: 0 0 2px #fff;
+  box-shadow: 0 0 1px #efefef;
 }
 
 #area #img #cropper.input b em {
@@ -187,6 +197,19 @@ h2 {width: 800px; margin: 0 auto;}
   color: #770000
 }
 
+/*---------------------------- IE < 9 styles for crop area --------------------------- */
+
+#area #img.inIE #cropper {
+  border: 1px dashed #b0b0b0
+}
+
+#area #img.inIE #cropper b:hover {
+  outline: 1px dotted #b0b0b0
+}
+
+#area #img.inIE #cropper b em {
+  outline: 1px solid #999
+}
 
 /*---------------------------------- TOOLS STYLES ------------------------------- */
 #tools {
