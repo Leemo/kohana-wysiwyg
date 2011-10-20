@@ -121,6 +121,7 @@
       // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
       },
       "filebrowser_image_crop" : function(e){
+      if(window.cropresizerWin)cropresizerWin.close();
       window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin", "width=900, height=600, location=yes, resizable=no");
       },
       "filebrowser_file_rename" : function(e){
