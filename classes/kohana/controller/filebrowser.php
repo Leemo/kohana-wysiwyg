@@ -216,12 +216,34 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function action_crop()
 	{
-		if ( ! (list($width, $height) =
-			getimagesize(APPPATH.$this->_directory.$this->_path)))
+		$file = APPPATH.$this->_directory.$this->_path;
+
+		if ( ! is_file($file) OR
+			! (list($width, $height) = getimagesize($file)))
 		{
 			return $this
 				->request
 				->redirect(Route::get('wysiwyg/filebrowser')->uri());
+		}
+
+		if ($_POST)
+		{
+			$_POST = Arr::extract($_POST, array(
+				'filename',
+				'image_width',
+				'image_height',
+				'crop_width',
+				'crop_height',
+				'offset_x',
+				'offset_y'
+				));
+
+			$extension = pathinfo($file, PATHINFO_EXTENSION);
+
+			return Image::factory($file)
+				->resize($_POST['image_width'], $_POST['image_height'])
+				->crop($_POST['crop_width'], $_POST['crop_height'], $_POST['offset_x'], $_POST['offset_y'])
+				->save($_POST['filename'].'.'.$extension);
 		}
 
 		$file = Route::get('media')

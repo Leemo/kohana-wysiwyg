@@ -8,19 +8,22 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<?php
 		echo Media::instance('css')
-			->add_file('filebrowser/cropresizer/style.css')
+			->add_file('filebrowser/cropresizer/global.css')
+			->add_file('filebrowser/fancybox.css')
 			->add_file('filebrowser/tipsy.css');
 
 		echo Media::instance('js')
 			->add_file('filebrowser/jquery-1.6.2.js')
-			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
 			->add_file('filebrowser/jquery.tipsy.js')
 			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
-			->add_source('$(function(){$("#img").cropResize({width:'.$width.', height:'.$height.'});  $(".tip-sw").tipsy({"gravity": "sw", "fade": true, "delayIn": 1000}); });');
+			->add_file('filebrowser/jquery.fancybox.js')
+			->add_file('filebrowser/cropresizer/global.js')
+			->add_source('$(function(){$("#img").cropResize({"width":'.$width.', "height":'.$height.'})});');
 
 		?>
 	</head>
 	<body>
+			<div id="crop-form"><?php echo View::factory('wysiwyg/filebrowser/crop/form')->set('path', $path) ?></div>
 		  <div id="area">
         <div id="img" <?php echo HTML::attributes(array('style' => "width: " . $width . "px; height: " . $height . "px; left: " . (900-$width)/2 . "px; top: " . (580-$height)/2 . "px")); ?>> <!-- server should parse {} position, calculated for put image to center -->
           <img alt="" src="<?php echo $file ?>"/>
@@ -52,7 +55,6 @@
           <option value="3">16 : 9</option>
           <option value="4">1 : 2</option>
         </select>
-
 
         <button id="plus">+</button>
         <input type="text" id="ratio" value="100" size="3" /><b>%</b>
