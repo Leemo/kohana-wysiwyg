@@ -17,7 +17,21 @@
       $("#crop-form input[name=offset_x]").val(e.selection.left);
       $("#crop-form input[name=offset_y]").val(e.selection.top);
 
-      $.fancybox($("#crop-form").html())
+      $.fancybox($("#crop-form").html(), {
+        "overlayOpacity":     0.4,
+        "hideOnOverlayClick": false,
+        "showCloseButton":    false,
+        "speedIn":            100,
+        "speedOut":           100,
+        "onComplete": function(){
+          $(document).trigger("fancybox_ready")
+        }
+      })
+    }).bind("fancybox_ready", function(){
+      $("#fancybox-content .close").click(function(){
+        $.fancybox.close();
+        return false;
+      });
     })
   })
 })(jQuery);

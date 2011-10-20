@@ -1,3 +1,4 @@
+<h1><?php echo __('Save selection') ?></h1>
 <?php echo Form::open() ?>
 	<?php echo Form::hidden('image_width', NULL) ?>
 	<?php echo Form::hidden('image_height', NULL) ?>
@@ -10,7 +11,7 @@
 		<dt><?php echo Form::input('filename', pathinfo($path, PATHINFO_FILENAME).'_crop') ?></dt>
 	</dl>
 	<dl>
-		<dt class="right">
+		<dt class="submit">
 			<?php echo Form::button('save', __('Save')) ?>
 			<?php echo Form::button('cancel', __('Cancel'), array('class' => 'close')) ?>
 		</dt>

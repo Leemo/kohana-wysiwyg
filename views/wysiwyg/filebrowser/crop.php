@@ -17,6 +17,7 @@
 			->add_file('filebrowser/jquery.tipsy.js')
 			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
 			->add_file('filebrowser/jquery.fancybox.js')
+			->add_file('filebrowser/jquery.form.js')
 			->add_file('filebrowser/cropresizer/global.js')
 			->add_source('$(function(){$("#img").cropResize({"width":'.$width.', "height":'.$height.'})});');
 
