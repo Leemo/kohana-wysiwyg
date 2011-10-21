@@ -1,6 +1,7 @@
 (function($){
   $(function(){
 
+    // Modal dialog window settings
     var fancyboxSettings = {
       "overlayOpacity":     0.4,
       "hideOnOverlayClick": false,

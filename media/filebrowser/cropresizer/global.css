@@ -265,6 +265,7 @@ h2 {
 #tools b {
   margin-right: 5px
 }
+
 #tools input {
   text-align: center;
   padding: 2px;
@@ -273,13 +274,6 @@ h2 {
 
 #tools span.active {
   background-position: 0 0 !important;
-}
-
-
-#tools button {
-  margin: 5px 8px 5px 0;
-  padding: 2px 14px;
-  cursor: pointer;
 }
 
 #tools #plus,
@@ -305,12 +299,9 @@ button::-moz-focus-inner {
   display: none
 }
 
-form input[type=text] {
-  padding: 3px;
-  width: 250px
-}
+/* ------------------- Buttons ------------------- */
 
-form button,
+button,
 .button {
   text-decoration: none;
   border-width: 0;
@@ -330,13 +321,32 @@ form button,
   -webkit-box-shadow: inset 0 1px #fff,0 1px #a7a7a7;
 }
 
-form button:hover,
+button:hover,
 .button:hover {
   color: #000;
   cursor: pointer;
   box-shadow: 0 1px #fff inset,0 -1px #a7a7a7 inset,0 0 1px 1px #c0c0c0;
   -moz-box-shadow: 0 1px #fff inset,0 -1px #a7a7a7 inset,0 0 1px 1px #c0c0c0;
   -webkit-box-shadow: 0 1px #fff inset,0 -1px #a7a7a7 inset,0 0 1px 1px #c0c0c0;
+}
+
+.pressed {
+  color: #fff;
+  text-decoration: none;
+  background: #4d4d4d;
+  background-image: -moz-linear-gradient(top,#474747,#5a5a5a);
+  background-image: -o-linear-gradient(top,#474747,#5a5a5a);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#474747),to(#5a5a5a));
+  box-shadow: inset 0 1px #222,0 1px #fff;
+  -webkit-box-shadow: inset 0 1px #222,0 1px #fff;
+  -moz-box-shadow: inset 0 1px #222,0 1px #fff;
+}
+
+/* ------------------- Forms ------------------- */
+
+form input[type=text] {
+  padding: 3px;
+  width: 250px
 }
 
 form dl {
