@@ -1,6 +1,6 @@
 <div id="controls">
-		<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'button white small', 'rel' => 'boxed')) ?>
-		<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'button white small', 'id' => 'refresh')) ?>
+		<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'button', 'rel' => 'boxed')) ?>
+		<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'button', 'id' => 'refresh')) ?>
 </div>
 <div id="dirs">
  	<div class="directories">
