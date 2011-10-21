@@ -218,8 +218,8 @@
 
   $.extend({
     "recountHeight": function(){
-      $("#dirs>div.directories").height($("body").height()-130+"px");
-      $("#files").height($("body").height()-$("#info_wrap").height() - 55+"px");
+      $("#dirs>div.directories").height($("body").height()-85+"px");
+      $("#files").height($("body").height()-$("#info_wrap").height() - 45+"px");
     }
   });
 })(jQuery);

@@ -1,13 +1,10 @@
 ;(function($){
 	$.fn.folderTree = function(opt){
 		var opt = $.extend({
-			root : "wysiwyg/filebrowser/",
-			getDirs : "dirs", //link suffix for folders json getting
-			getFiles : "files", //link suffix for files json getting
 			cacheTime : 0, //during this time (minutes) folder opening show last loaded inner
 			autoTurnTree : true, //auto open tree to folder which files is currently opened in browser
-			filesPathLine : "#files h3", //jQuery selector of outher html element has showing files path
-			filesPathDelimiter : "<span> / </span>",
+			filesPathLine : "#header h2", //jQuery selector of outher html element has showing files path
+			filesPathDelimiter : " / ",
 			container : this //don't change!
 		}, opt);
 
@@ -32,14 +29,14 @@
 		else {
 			$("b", this.children("p")).toggle(
 				function(){
-					if(!dirData.lastResponce || new Date().getMinutes()- dirData.lastResponce > opt.cacheTime){
+          	if(!dirData.lastResponce || new Date().getMinutes()- dirData.lastResponce > opt.cacheTime){
 						var parentPath = dirData.path;
 						$(dir).addClass("process");
-						$.getJSON(parentPath, function(data){
+						$.getJSON(global_config.dirs_url+parentPath, function(data){
 							$(dir).removeClass("process").addClass("open").getD().open = true;
 							$("div", dir).remove();
 							for(var dirName in data.dirs){
-								$('<div name="'+data.dirs[dirName]+'"><p><b><span></span></b><a href="">'+dirName+'</a></p></div>').appendTo(dir).setPath(parentPath,opt);
+								$('<div name="'+data.dirs[dirName]+'"><p><b><span></span></b><a href="">'+dirName+'</a><em></em></p></div>').appendTo(dir).setPath(parentPath,opt);
 							}
 							if(opt.cacheTime) dirData.lastResponce = new Date().getMinutes();
 
@@ -77,7 +74,7 @@
 		} // end add handlers to click on triangle
 
 		var $link = $("a", this.children("p"));
-		var href = (!isRoot) ? global_config.files_url+'/'+$link.text() : global_config.files_url;
+		var href = (!isRoot) ? '/'+global_config.files_url+this.getD().path : global_config.files_url;
 		$link.attr("href", href);
 		$link.click(function(){
 			$.getJSON(this.href, function(data){
@@ -91,7 +88,7 @@
 				dirData.filesLoaded = true;
 				$(dir).addPathToParent();
 				$(opt.filesPathLine).buildFullPath(dir);
-			});
+      	});
 			return false;
 		});
 	};
@@ -108,7 +105,7 @@
 	};
 
 		$("div",this).each(function(){
-			$(this).setPath(opt.root+opt.getDirs, opt);
+			$(this).setPath("", opt);
 		});
 
 		$.fn.buildFullPath = function(dir){
@@ -116,8 +113,8 @@
 		var parent = function(folder){
 			if(folder.getD()){
 				fullPath.prepend((fullPath.children().length > 0)
-					?'<a href="">'+folder.getD().name+'</a><span>'+opt.filesPathDelimiter+'</span>'
-					: '<b>'+folder.getD().name+'</b>');
+					?'<em>'+folder.getD().name+'</em><span>'+opt.filesPathDelimiter+'</span>'
+					:'<em>'+folder.getD().name+'</em>');
 				return parent(folder.parent());
 			}
 			else return;

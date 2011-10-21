@@ -19,50 +19,115 @@ h1, h2, h3 {
 
 a,
 a:visited {
-  color: blue
+  color: #1e4c77
 }
 
 a:hover {
-  color: red
+  color: black
 }
 
-#controls {
+#header {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
-  height: 33px;
-  background: url('/media/filebrowser/images/bar.png') 0 0 repeat-x;
+  height: 40px;
+  background-color: #555;
+  background: -moz-linear-gradient(top, #777 0%, #454545 100%);
+  background: -webkit-gradient(linear,top, color-start(0%,#777), color-stop(100%,#454545));
+  background: -webkit-linear-gradient(top, #777 0%, #454545 100%);
+  background: -o-linear-gradient(top, #777 0%, #454545 100%);
+  background: -ms-linear-gradient(left top, #777777 0%, #454545 100%);
+  background: linear-gradient(top, #777 0%, #454545 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7777777', endColorstr='#454545',GradientType=0);
+  background: linear-gradient(top, #777 0%, #454545 100%);
   box-shadow: 0 2px 3px #888;
   z-index: 10;
-  line-height: 33px;
-  text-align: right
 }
+
+#header h2 {
+  position: absolute;
+  left: 15px; top: 0;
+  line-height: 40px;
+  font-weight: normal;
+  font-size: 17px;
+  color: #888;
+  text-shadow: -1px -1px 0 #444;
+  white-space: nowrap;
+}
+
+#header h2 em {
+  font-style: normal;
+  color: #ccc;
+}
+
+#controls {
+  position: absolute;
+  line-height: 40px;
+  top: 0;
+  right: 0;
+  z-index: 3;
+
+}
+
+
+
 
 #dirs {
   width: 220px;
   float: left;
   min-height: 100%;
   position: relative;
-  background: #fff;
-  padding: 0 0 0 10px;
-  box-shadow: 2px 0 2px #888;
+  background: #d3d3d3;
+  box-shadow: 2px 0 4px #888;
   z-index:5;
-  margin-bottom: -40px
+
+
 }
 
 #content {
-  margin: 0 0 -30px 0px;
   min-height: 100%;
   position: relative;
-  background: #d3d3d3;
+  background: #fff;
   overflow: hidden;
 }
+#content>em {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height:15px;
+
+  left: 10px;
+  z-index: 8;
+
+}
+
+#content>em#top_smog {
+  top: 40px;
+  background: -moz-linear-gradient(bottom, rgba(255,255,255,0) 0%, rgba(255,255,255, 1) 100%);
+  background: -webkit-gradient(linear, bottom,color-start(0%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255, 1)));
+  background: -webkit-linear-gradient(bottom, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: -o-linear-gradient(bottom, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: -ms-linear-gradient(bottom, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: linear-gradient(bottom, rgba(255,255,255,0) 0%, rgba(255,255,255, 1) 100%);
+}
+
+#content>em#bottom_smog {
+  bottom: 2px;
+  background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255, 1) 100%);
+  background: -webkit-gradient(linear, top,color-start(0%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255, 1)));
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: -o-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: -ms-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255, 1) 100%);
+}
+
+
 
 #files {
   padding: 0 15px;
   margin: 40px 5px 0 0;
-  overflow-y: auto
+  overflow-y: auto;
 }
 
 #files #filesRow {
@@ -92,20 +157,6 @@ a:hover {
   height: 20px;
   margin: 10px 0 0 0;
   padding: 8px;
-}
-
-#info_wrap {
-  clear: both;
-  height: 30px;
-  position: relative;
-  background: #2b2b2b;
-  color: #969696;
-  padding: 0 20px;
-  z-index: 10;
-  font: 18px/30px Arial;
-  text-align: right;
-  text-shadow: -1px -1px 0 #000;
-
 }
 
 a.file {
@@ -157,12 +208,12 @@ a.file {
   top: 0;
   right: 0;
   z-index: 2;
-  background: -moz-linear-gradient(left, rgba(211,211,211,0) 0%, rgba(211,211,211, 1) 100%);
-  background: -webkit-gradient(linear, left top, right top, color-start(0%,rgba(211,211,211,0)), color-stop(100%,rgba(211,211,211, 1)));
-  background: -webkit-linear-gradient(left, rgba(211,211,211,0) 0%,rgba(211,211,211, 1) 100%);
-  background: -o-linear-gradient(left, rgba(211,211,211,0) 0%,rgba(211,211,211, 1) 100%);
-  background: -ms-linear-gradient(left, rgba(211,211,211,0) 0%,rgba(211,211,211, 1) 100%);
-  background: linear-gradient(left, rgba(211,211,211,0) 0%, rgba(211,211,211, 1) 100%);
+  background: -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255, 1) 100%);
+  background: -webkit-gradient(linear, left top, right top, color-start(0%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255, 1)));
+  background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: -o-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: -ms-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255, 1) 100%);
+  background: linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255, 1) 100%);
 }
 
 .file:hover p i {
