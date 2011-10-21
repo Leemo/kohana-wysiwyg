@@ -238,12 +238,35 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				'offset_y'
 				));
 
-			$extension = pathinfo($file, PATHINFO_EXTENSION);
+			$validation = Validation::factory($_POST)
+				->rules('filename', array(
+					array('not_empty'),
+					array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$='))
+				))
+				->label('filename', __('Filename'));
 
-			return Image::factory($file)
+			if ( ! $validation->check())
+			{
+				$errors = $validation
+					->errors('feedback');
+
+				$errors =
+					array_merge($errors, (isset($errors['_external']) ? $errors['_external'] : array()));
+
+				return $this->template->content =
+					View::factory('wysiwyg/filebrowser/crop/form', $_POST)
+						->bind('errors', $errors);
+			}
+
+			$extension = pathinfo($file, PATHINFO_EXTENSION);
+/*
+			Image::factory($file)
 				->resize($_POST['image_width'], $_POST['image_height'])
 				->crop($_POST['crop_width'], $_POST['crop_height'], $_POST['offset_x'], $_POST['offset_y'])
 				->save($_POST['filename'].'.'.$extension);
+*/
+			return $this->template->content =
+				View::factory('wysiwyg/filebrowser/crop/choise', $_POST);
 		}
 
 		$file = Route::get('media')

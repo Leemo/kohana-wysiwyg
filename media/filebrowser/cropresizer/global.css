@@ -20,7 +20,8 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   margin:0;
   padding:0;
   text-align:left;
-  font-family: Arial
+  font-family: Arial;
+  font-size: 13px
 }
 
 html, body {
@@ -180,7 +181,6 @@ h2 {
   line-height: 14px;
   background: #888;
   color: #fff;
-  font-size: 13px;
   white-space: nowrap;
   text-align: center;
   overflow: hidden;
@@ -279,12 +279,8 @@ h2 {
 #tools button {
   margin: 5px 8px 5px 0;
   padding: 2px 14px;
-  font-size: 13px;
   cursor: pointer;
-  /* color: #333;
-  text-shadow: 1px 1px 0 #efefef; */
 }
-
 
 #tools #plus,
 #tools #minus {
@@ -314,7 +310,9 @@ form input[type=text] {
   width: 250px
 }
 
-form button {
+form button,
+.button {
+  text-decoration: none;
   border-width: 0;
   color: #333;
   margin: 3px;
@@ -332,7 +330,8 @@ form button {
   -webkit-box-shadow: inset 0 1px #fff,0 1px #a7a7a7;
 }
 
-form button:hover {
+form button:hover,
+.button:hover {
   color: #000;
   cursor: pointer;
   box-shadow: 0 1px #fff inset,0 -1px #a7a7a7 inset,0 0 1px 1px #c0c0c0;
@@ -344,7 +343,18 @@ form dl {
   margin-top: 15px;
 }
 
-form dl dt.submit {
+form dt.spinner {
+  background-image: url("../images/directories/spinner.gif");
+  background-repeat: no-repeat;
+  background-position: 0 50%
+}
+
+form .error {
+  color: red;
+  font-size: 11px
+}
+
+dl dt.submit {
   margin-bottom: 4px;
   white-space: nowrap;
   text-align: right
