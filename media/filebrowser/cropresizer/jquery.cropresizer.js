@@ -77,7 +77,7 @@
         bottom : "Y"
       },
 
-      //pictupe methods
+      //-------------------- pictupe methods -----------------------------------------
       Drag : function(e) {
 
         var shift = {
@@ -225,11 +225,29 @@
                 e.stopPropagation();
                 obj.ClipResize(e, $(this));
               });
+            obj.save.removeAttr("disabled");
           }
         });
         return this;
       },
-      // selection methods
+
+      Center : function(){
+        this.animate({
+          left: (this.area.right-this.area.left-this.currentSize.w)/2+"px",
+          top: (this.area.bottom-this.area.top-this.currentSize.h)/2+"px"
+        },300);
+      },
+
+      _updateSize : function(){
+        this.currentSize = {
+          w: this.picture.width()*1,
+          h: this.picture.height()*1
+        };
+        this.zoominput.removeClass("moving").val(parseInt(this.picture.width()/this.init.w*100));
+        return this;
+      },
+
+      // ----------------------  selection methods  ----------------------------------
       ClipResize : function(e, $point){
         var resizer = this.resizers[$point.attr("id")], start = {};
         for(var i in resizer)	start[this.axles[resizer[i]]] = e["page"+this.axles[resizer[i]]] - this.selection[resizer[i]];
@@ -337,6 +355,7 @@
           x: 0,
           y: 0
         };
+        this.save.attr("disabled","disabled");
         return this;
       },
 
@@ -382,28 +401,18 @@
           }
         });
         return this.ClipDelete();
-      },
-
-      Center : function(){
-        this.animate({
-          left: (this.area.right-this.area.left-this.currentSize.w)/2+"px",
-          top: (this.area.bottom-this.area.top-this.currentSize.h)/2+"px"
-        },300);
-      },
-
-      _updateSize : function(){
-        this.currentSize = {
-          w: this.picture.width()*1,
-          h: this.picture.height()*1
-        };
-        this.zoominput.removeClass("moving").val(parseInt(this.picture.width()/this.init.w*100));
-        return this;
       }
+
     });
     // end of object-----------------------------------------------
 
     if($.browser.msie && parseInt($.browser.version) < 9) this.addClass("inIE");
 
+    obj.css ({
+      left: (obj.win.width()-obj.init.w)/2+"px",
+      top: (obj.win.height()-obj.init.h)/2+"px"
+    }).currentPos = obj.position();
+    
     this.picture.load(function(){
       obj.css({
         width: "auto",
@@ -472,7 +481,7 @@
         resize: obj.currentSize,
         selection: obj.selection
       });
-    });
+    }).attr("disabled","disabled");
 
     this.win.bind('mousewheel DOMMouseScroll',  function(e){
       e.preventDefault();
@@ -505,6 +514,10 @@
       }
     });
 
+    $(window).resize(function(){ // update area values on resize window
+      obj.area = obj.win[0].getBoundingClientRect();
+      obj.currentPos = obj.position();
+    });
 
     return obj;
   }

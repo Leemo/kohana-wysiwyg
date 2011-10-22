@@ -47,7 +47,7 @@
       $("#fancybox-content form").ajaxForm({
         "success": function(responseText) {
           try {
-            data = $.parseJSON(responseText);
+            var data = $.parseJSON(responseText);
             location.replace(data.redirect);
             return
           } catch(e) {

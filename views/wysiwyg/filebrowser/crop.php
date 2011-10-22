@@ -26,7 +26,7 @@
 	<body>
 		<div id="crop-form"><?php echo View::factory('wysiwyg/filebrowser/crop/form', Arr::extract(array(), array('image_width', 'image_height', 'crop_width', 'crop_height', 'offset_x', 'offset_y')))->set('filename', pathinfo($path, PATHINFO_FILENAME).'_crop') ?></div>
 		  <div id="area">
-        <div id="img" <?php echo HTML::attributes(array('style' => "width: " . $width . "px; height: " . $height . "px; left: " . (900-$width)/2 . "px; top: " . (580-$height)/2 . "px")); ?>> <!-- server should parse {} position, calculated for put image to center -->
+        <div id="img" <?php echo HTML::attributes(array('style' => "width: " . $width . "px; height: " . $height . "px;")); ?>> <!-- server should parse {} position, calculated for put image to center -->
           <img alt="" src="<?php echo $file ?>"/>
           <div id="overlay"></div>
           <div></div>

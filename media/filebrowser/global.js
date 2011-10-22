@@ -122,7 +122,7 @@
       },
       "filebrowser_image_crop" : function(e){
       if(window.cropresizerWin)cropresizerWin.close();
-      window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin", "width=900, height=600, location=yes, resizable=no");
+      window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin", "width=900, height=600, location=yes, resizable=yes");
       },
       "filebrowser_file_rename" : function(e){
         $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).find("img").attr("alt"), function(data){
