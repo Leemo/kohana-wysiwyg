@@ -74,7 +74,7 @@ class Kohana_Filebrowser {
 
 						$filename = $directory.$fileinfo->getFilename();
 
-						if (self::is_image($filename))
+						if ($dimensions = self::is_image($filename))
 						{
 							$dir = APPPATH
 								.Kohana::$config->load('media.media_directory')
@@ -82,11 +82,17 @@ class Kohana_Filebrowser {
 								.Kohana::$config->load('filebrowser.uploads_directory')
 								.DIRECTORY_SEPARATOR;
 
-							$return[$fileinfo->getFilename()]['thumb'] = Route::get('wysiwyg/filebrowser')
+							$thumb = Route::get('wysiwyg/filebrowser')
 								->uri(array(
 									'action' => 'thumb',
 									'path'   => str_replace(array($dir, DIRECTORY_SEPARATOR), array('', '/'), $filename)
 									));
+
+							$return[$fileinfo->getFilename()] = Arr::merge($return[$fileinfo->getFilename()], array(
+								'thumb'  => $thumb,
+								'width'  => $dimensions[0],
+								'height' => $dimensions[1]
+								));
 						}
 						else
 						{
@@ -118,7 +124,7 @@ class Kohana_Filebrowser {
 
 	/**
 	 * Checks whether the image file.
-	 * If it's image - returns dimentions, if isn't - returns FALSE
+	 * If it's image - returns dimensions, if isn't - returns FALSE
 	 *
 	 * @param   string  $path  Path to file
 	 * @return  mixed
@@ -135,16 +141,16 @@ class Kohana_Filebrowser {
 
 		try
 		{
-			// If it's image file - get dimentions
-			$dimentions = getimagesize($path);
+			// If it's image file - get dimensions
+			$dimensions = getimagesize($path);
 		}
 		catch (Exception $e)
 		{
 			// If isn't - do nothing
-			$dimentions = FALSE;
+			$dimensions = FALSE;
 		}
 
-		return $dimentions;
+		return $dimensions;
 	}
 
 	/**
