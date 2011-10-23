@@ -40,7 +40,11 @@
             <b id="lb"><em></em></b>
             <b id="lm"><em></em></b>
             <div id="cropsize">
-              <input id="crop_w" type="text" name="w" value="0" size="3" />×<input id="crop_h" type="text" name="h" value="0" size="3" />
+							<em><ins></ins></em>
+              <div>
+								<input type="text" id="crop_w" name="w" value="" size="4" />
+								<i>×</i>
+								<input type="text" id="crop_h" name="h" value="" size="4"/>
             </div>
           </div>
         </div>
@@ -48,7 +52,7 @@
       <div id="tools">
         <span id="drag" class="tip-sw" original-title="<?php echo __('It\'s for moving your entire image within a window') ?>">&nbsp;</span>
         <span id="crop" original-title="<?php echo __('Allows you to select an area of an image and discard everything outside this area') ?>" class="active tip-sw">&nbsp;</span>
-        <label for="croptype"><?php echo __('Proportions') ?>:</label>
+        <label contenteditable="true" for="croptype"><?php echo __('Proportions') ?>:</label>
         <select id="croptype">
           <option value="0"><?php echo __('Arbitrary') ?></option>
           <option value="1"><?php echo __('Square') ?></option>

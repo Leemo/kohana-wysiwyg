@@ -15,11 +15,11 @@
       }
     };
 
-  $.recountHeight();
+    $.recountHeight();
 
-  $(window).bind("resize", function(){
-     $.recountHeight();
-  });
+    $(window).bind("resize", function(){
+      $.recountHeight();
+    });
 
     $("div.directories").folderTree()
     .contextMenu({  // bind context menu to delegate for all elements in folders column
@@ -121,8 +121,15 @@
       // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
       },
       "filebrowser_image_crop" : function(e){
-      if(window.cropresizerWin)cropresizerWin.close();
-      window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin", "width=900, height=600, location=yes, resizable=yes");
+        if(window.cropresizerWin)cropresizerWin.close();
+        var imgSize = Function("var c = new Object(); c="+$(e.target).attr("rel")+"; return c")();
+        var openSize = {
+          w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
+          h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
+          };
+        console.log(imgSize, openSize);
+        window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin",
+        "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
       "filebrowser_file_rename" : function(e){
         $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).find("img").attr("alt"), function(data){

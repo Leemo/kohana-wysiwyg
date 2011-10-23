@@ -176,10 +176,7 @@ h2 {
 #cropper div#cropsize {
   position: absolute;
   left:6px;
-  bottom: -14px;
-  height: 14px;
-  line-height: 14px;
-  background: #888;
+  font-size: 10px;
   color: #fff;
   white-space: nowrap;
   text-align: center;
@@ -187,22 +184,48 @@ h2 {
   cursor: text;
 }
 
+#cropper div#cropsize div {
+   background: #888;
+   font-size: inherit;
+}
 #cropper div#cropsize input {
-  background: #888;
-  color: #fff;
-  width: 20px;
-  border: 0;
-  margin: 0 1px;
-  font-size: 10px;
-  height: 12px;
-  padding:0 0 2px 0;
-  text-align: center;
+   width: 25px;
+   background: none;
+   border: 0;
+   padding:1px;
+   font-size: inherit;
+   text-align: center;
+   color: #fff;
   -moz-user-select: text;
   -webkit-user-select: text;
+
 }
 
 #cropper div#cropsize input.over {
   color: #770000
+}
+
+#cropper div#cropsize i {
+  padding-top:2px;
+}
+
+#cropper div#cropsize em {
+  display: none;
+  float: right;
+  width: 15px;
+  height: 15px;
+  border-radius: 6px;
+  background: #0066CC;
+}
+
+#cropper div#cropsize em ins {
+  display: block;
+  width: 0;
+  height: 0;
+  margin: 4px 0 0 6px;
+  border: 4px solid #0066cc;
+  border-left-color: #fff;
+  border-right:0;
 }
 
 /*---------------------------- IE < 9 styles for crop area --------------------------- */
@@ -374,7 +397,8 @@ form .error {
 dl dt.submit {
   margin: 15px 0 4px;
   white-space: nowrap;
-  text-align: right
+  text-align: right;
+  line-height: 24px;
 }
 
 #fancybox-content>div {

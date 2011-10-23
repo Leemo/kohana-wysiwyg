@@ -44,6 +44,7 @@
       }).prependTo(this),
       picture : this.children("img"), //already two images
       // toolbar
+      toolbar   : $("#tools"),
       plus      : $("#plus"),
       minus     : $("#minus"),
       reset     : $("#reset"),
@@ -170,12 +171,12 @@
         }
 
         else { // handle hight presite zoom by click
-          this.currentSize.w += mode*2;
+          this.currentSize.w += direct*2;
           this.picture.css("width", this.currentSize.w+"px");
           obj._updateSize();
           if(hasSelection) obj.ClipHoldCenter();
         }
-
+        return this;
       },
 
       ZoomStop : function(){
@@ -195,11 +196,13 @@
           x: e.pageX,
           y: e.pageY
         };
-        //			this.clipImg.removeAttr("style");
-        this.cropper.removeAttr("style").removeClass();
-        this.clipImg.css("clip", "(0,0,0,0)");
+        var previousEvent = e.type;
         this.bind({
           "mousemove.crop" : function(e){ // creating clip
+            if(previousEvent == "mousedown") {
+              obj.ClipDelete();
+              previousEvent = e.type;
+            }
             obj.selection = {
               left: parseInt((start.x <= e.pageX ? start.x : e.pageX)-delta.x),
               top : parseInt((start.y <= e.pageY ? start.y : e.pageY)-delta.y),
@@ -231,11 +234,18 @@
         return this;
       },
 
-      Center : function(){
+      Center : function(fullReset){
         this.animate({
           left: (this.area.right-this.area.left-this.currentSize.w)/2+"px",
-          top: (this.area.bottom-this.area.top-this.currentSize.h)/2+"px"
-        },300);
+          top: (this.area.bottom-this.area.top-this.toolbar.height()-this.currentSize.h)/2+"px"
+        }, {
+          duration: 300,
+          complete: function(){
+            obj.currentPos = obj.position();
+            if(fullReset) obj.ZoomStart("input", 100, true, 150);
+          }
+        });
+        return this;
       },
 
       _updateSize : function(){
@@ -249,13 +259,17 @@
 
       // ----------------------  selection methods  ----------------------------------
       ClipResize : function(e, $point){
-        var resizer = this.resizers[$point.attr("id")], start = {};
+        var resizer = this.resizers[$point.attr("id")], start = {}, tempSel = new Object;
         for(var i in resizer)	start[this.axles[resizer[i]]] = e["page"+this.axles[resizer[i]]] - this.selection[resizer[i]];
 
         this.bind({
           'mousemove.clipresize' : function(e){
-            for(var i in resizer)	obj.selection[resizer[i]] = parseInt(e["page"+obj.axles[resizer[i]]]-start[obj.axles[resizer[i]]]);
-            obj.ShowRect();
+            tempSel = obj.selection;
+            for(var i in resizer)	tempSel[resizer[i]] = parseInt(e["page"+obj.axles[resizer[i]]]-start[obj.axles[resizer[i]]]);
+            if (tempSel.right-tempSel.left > 15 && tempSel.bottom-tempSel.top > 15){
+              for(var i in obj.selection) obj.selection[i] = tempSel[i];
+              obj.ShowRect();
+            }
             return false;
           },
           "mouseup.clipresize" : function(){
@@ -271,21 +285,26 @@
           w: this.win.width(),
           h: this.win.height()
         }
+
         elem.bind({
           "keyup" : function(){
             var value = parseInt($(this).val());
-            if((!isNaN(value) && value > 0 && value < winsize[$(this).attr("name")]-20)) {
-              if (this == obj.crop_w[0]) {
+            if((!isNaN(value) && value > 15 && value < winsize[$(this).attr("name")]-20)) {
+              var input = this.removeClass("over");
+              obj.cropsize.children("em").fadeIn().click(function(){
+              if (input == obj.crop_w[0]) {
                 obj.selection.left = parseInt((obj.selection.right + obj.selection.left - value)/2);
                 obj.selection.right = obj.selection.left + value;
               }
-              if (this == obj.crop_h[0]) {
+              if (input == obj.crop_h[0]) {
                 obj.selection.top = parseInt((obj.selection.bottom + obj.selection.top - value)/2);
                 obj.selection.bottom = obj.selection.top + value;
               }
               obj.ShowRect();
+              $(this).fadeOut();
+             });
             }
-            else $(this).val("");
+            else $(this).addClass("over");
           },
 
           "focus": function(){
@@ -342,7 +361,6 @@
           right : pos.x + w,
           bottom : pos.y + h
         };
-        console.log(w,h);
         this.ShowRect();
       },
 
@@ -380,29 +398,9 @@
         }).addClass("show");
         this.crop_w.val(this.selection.right - this.selection.left);
         this.crop_h.val(this.selection.bottom - this.selection.top);
+        this.cropsize.css("top",this.crop_h.val()+"px");
         return this;
-      },
-
-      // common methods
-      Reset : function(){
-        this.zoominput.addClass("moving");
-        this.picture.animate({
-          width: this.init.w+"px"
-        },300);
-        this.animate({
-          left: this.init.left+"px",
-          top: this.init.top+"px"
-        },300, function(){
-          obj.zoominput.removeClass("moving").val("100");
-          obj.currentPos = $(this).position();
-          obj.currentSize = {
-            w: obj.init.w,
-            h: obj.init.h
-          }
-        });
-        return this.ClipDelete();
       }
-
     });
     // end of object-----------------------------------------------
 
@@ -410,9 +408,8 @@
 
     obj.css ({
       left: (obj.win.width()-obj.init.w)/2+"px",
-      top: (obj.win.height()-obj.init.h)/2+"px"
+      top: (obj.win.height()-obj.init.h-obj.toolbar.height())/2+"px"
     }).currentPos = obj.position();
-    
     this.picture.load(function(){
       obj.css({
         width: "auto",
@@ -428,7 +425,6 @@
         return false
       }
     });
-
 
     this.drag.click(function(){ // drag image button
       $(this).addClass("active");
@@ -463,12 +459,12 @@
       });
     });
 
-    this.reset.click(function(){ // resr button
-      obj.Reset();
+    this.reset.click(function(){ // reset button
+        obj.Center(true).ClipDelete();
     });
 
     this.center.click(function(){
-      obj.Center()
+      obj.Center(false)
     });
 
     this.close.click(function(){
