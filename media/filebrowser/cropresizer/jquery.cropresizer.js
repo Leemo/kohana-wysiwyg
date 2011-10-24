@@ -27,6 +27,7 @@
         y: 0
       },
       wheelTiks : 0,
+      cropRatio : 0,
 
       // structure elements
       win : this.parent(),
@@ -54,6 +55,7 @@
       zoominput : $("#ratio"),
       drag      : $("#drag"),
       crop      : $("#crop"),
+      proportion: $("#proportion"),
       cropsize  : $("#cropsize"),
       crop_w    : $("#crop_w"),
       crop_h    : $("#crop_h"),
@@ -150,8 +152,8 @@
           });
 
           this.delay(delay).animate({ // div#img hold center
-            left: parseInt(this.currentPos.left*1 + (this.currentSize.w - base.w*ratio)/2)+"px",
-            top: parseInt(this.currentPos.top*1 + (this.currentSize.h - base.h*ratio)/2)+"px"
+            left: (this.currentPos.left*1 + (this.currentSize.w - base.w*ratio)/2)+"px",
+            top: (this.currentPos.top*1 + (this.currentSize.h - base.h*ratio)/2)+"px"
           },
           {
             duration : timestep,
@@ -203,11 +205,12 @@
               obj.ClipDelete();
               previousEvent = e.type;
             }
+            var y = (obj.cropRatio > 0) ? start.y + (e.pageX-start.x)*obj.cropRatio : e.pageY;
             obj.selection = {
               left: parseInt((start.x <= e.pageX ? start.x : e.pageX)-delta.x),
-              top : parseInt((start.y <= e.pageY ? start.y : e.pageY)-delta.y),
+              top : parseInt((start.y <= y ? start.y : y)-delta.y),
               right: parseInt((start.x >= e.pageX ? start.x : e.pageX)-delta.x),
-              bottom : parseInt((start.y >= e.pageY ? start.y : e.pageY)-delta.y)
+              bottom : parseInt((start.y >= y ? start.y : y)-delta.y)
             };
             obj.ShowRect();
           },
@@ -290,21 +293,31 @@
           "keyup" : function(){
             var value = parseInt($(this).val());
             if((!isNaN(value) && value > 15 && value < winsize[$(this).attr("name")]-20)) {
-              var input = this.removeClass("over");
-              obj.cropsize.children("em").fadeIn().click(function(){
-              if (input == obj.crop_w[0]) {
-                obj.selection.left = parseInt((obj.selection.right + obj.selection.left - value)/2);
-                obj.selection.right = obj.selection.left + value;
-              }
-              if (input == obj.crop_h[0]) {
-                obj.selection.top = parseInt((obj.selection.bottom + obj.selection.top - value)/2);
-                obj.selection.bottom = obj.selection.top + value;
-              }
-              obj.ShowRect();
-              $(this).fadeOut();
-             });
+              var input = this;
+              obj.cropsize.children("em").fadeIn().bind({
+                click :function(){
+                  if (input == obj.crop_w[0]) {
+                    obj.selection.left = parseInt((obj.selection.right + obj.selection.left - value)/2);
+                    obj.selection.right = obj.selection.left + value;
+                  }
+                  if (input == obj.crop_h[0]) {
+                    obj.selection.top = parseInt((obj.selection.bottom + obj.selection.top - value)/2);
+                    obj.selection.bottom = obj.selection.top + value;
+                  }
+                  obj.ShowRect();
+                  $(this).fadeOut();
+                },
+                mousedown : function(){
+                  $(this).addClass("onpress");
+                },
+                mouseup : function(){
+                  $(this).removeClass("onpress");
+                }
+              });
             }
-            else $(this).addClass("over");
+
+            else obj.cropsize.children("em").fadeOut()
+
           },
 
           "focus": function(){
@@ -459,8 +472,13 @@
       });
     });
 
+    this.proportion.bind("change", function(){
+      obj.cropRatio = this.options[this.selectedIndex].value*1;
+      console.log (obj.cropRatio);
+    });
+
     this.reset.click(function(){ // reset button
-        obj.Center(true).ClipDelete();
+      obj.Center(true).ClipDelete();
     });
 
     this.center.click(function(){
