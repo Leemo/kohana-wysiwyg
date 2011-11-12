@@ -63,6 +63,11 @@
 	border-top-color: #777;
 }
 
+.directories div p.overDrop a{
+  background-color: #444;
+  color: #fff;
+}
+
 .directories div a {
 	background: url(images/directories/folder.png) 0 1px no-repeat;
 	padding-left: 20px;

@@ -19,11 +19,13 @@
 			"hasChild" : this.attr("name")*1,
 			"lastResponce" : false,
 			"filesLoaded" : false,
-			"pathToSelected" : false
+			"pathToSelected" : false,
+      "folderRect" : dirP[0].getBoundingClientRect()
 		});
 
 		$.fn.getD = function(){return this.data("data");};
 
+    $(opt.filesPathLine).data("path", $(opt.filesPathLine).text());
 		var dirData = $(dir).getD();
 		if($(this).getD().hasChild == 0) $("b", this.children("p")).css("visibility", "hidden");
 		else {
@@ -77,6 +79,8 @@
 		var href = (!isRoot) ? '/'+global_config.files_url+this.getD().path : global_config.files_url;
 		$link.attr("href", href);
 		$link.click(function(){
+      path = $(this).parent().parent().getD().path;
+      console.log (path);
 			$.getJSON(this.href, function(data){
 				$("#filesRow").empty().append($("#tpl-files").tmpl(data));
 				$("p", opt.container).removeClass("selected");
@@ -87,7 +91,7 @@
 				dirP.addClass("selected");
 				dirData.filesLoaded = true;
 				$(dir).addPathToParent();
-				$(opt.filesPathLine).buildFullPath(dir);
+			  $(opt.filesPathLine).buildFullPath(dir);
       	});
 			return false;
 		});
@@ -109,15 +113,19 @@
 		});
 
 		$.fn.buildFullPath = function(dir){
-		var fullPath = this.empty();
+		var fullPath = this.empty(), pathTxt = '';
 		var parent = function(folder){
 			if(folder.getD()){
 				fullPath.prepend((fullPath.children().length > 0)
 					?'<em>'+folder.getD().name+'</em><span>'+opt.filesPathDelimiter+'</span>'
 					:'<em>'+folder.getD().name+'</em>');
+         pathTxt = folder.getD().name+"/" + pathTxt;
 				return parent(folder.parent());
 			}
-			else return;
+			else {
+        $(this).data("path", pathTxt);
+        return this;
+      }
 		};
 		parent($(dir));
 	};

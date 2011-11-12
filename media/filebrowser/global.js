@@ -1,8 +1,7 @@
+;
 (function($) {
   $(function(){
-
-    var path = "";
-
+    path = "";
     var fancyBoxOptions = {
       "overlayOpacity": 0,
       "hideOnOverlayClick": false,
@@ -60,7 +59,7 @@
     });
 
     $("#filesRow").contextMenu({ // bind context menu to delegate for all elements in files area
-      targetSelector : "a.file",
+      targetSelector : "div.file",
       list: [
       {
         text: __("Select"),
@@ -126,9 +125,9 @@
         var openSize = {
           w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
           h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
-          };
+        };
         window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin",
-        "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
+          "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
       "filebrowser_file_rename" : function(e){
         $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).find("img").attr("alt"), function(data){
@@ -140,6 +139,13 @@
           $.fancybox(data, fancyBoxOptions);
         });
       },
+      "filebrowser_startFileMove" : function(){
+        $("div.directories div").each(function(){
+          $(this).getD().folderRect = $(this).children("p")[0].getBoundingClientRect();
+        });
+      },
+
+      // begin "fancybox_ready" handler
       "fancybox_ready" : function(){
         $("#fancybox-content .close").click(function(){
           $.fancybox.close();
@@ -205,6 +211,8 @@
 
         });
       },
+      // end "fancybox_ready" handler
+
       onOpenContextMenu : function(e){
         if($(e.target).parent().parent().attr("id") == "root") $(e.menu).pointToggleActive(3);
       }
@@ -220,7 +228,88 @@
 
     $("a[rel=boxed]").fancybox(fancyBoxOptions);
 
+    // drag files to folders
+
+    $("#filesRow").delegate("div.file", "mousedown", function(event){
+      if(event.which == 1) { // left button down only
+        var draggedFile = $(this).addClass("replacing");
+
+        var clone = $("<div>", {
+          "class" : "file clone",
+          "css"   : {
+            "left" :draggedFile.offset().left+"px",
+            "top"  : draggedFile.offset().top+"px"
+          },
+          "html" : draggedFile.html(),
+          "selectstart" : function(){
+            return false;
+          }
+        }).appendTo("body").append("<div class='cloneOverlay'></div>");
+
+        var shift = {
+          X : event.clientX-clone.position().left,
+          Y : event.clientY-clone.position().top
+        };
+
+        var overFolder = false;
+        var prevMove = false;
+
+        $(document).bind({
+          mousemove : function(e){
+            if(!prevMove) {
+              $(document).trigger("filebrowser_startFileMove");
+              prevMove = true;
+            }
+            clone.css({
+              left: e.clientX-shift.X+"px",
+              top : e.clientY-shift.Y+"px"
+            });
+            overFolder = false;
+            $("div.directories div").each(function(){ // on each move check panels for find panel under during mouse position
+              if($(this).draggingOver(e) && !$(this).getD().filesLoaded) {
+                overFolder = $(this);
+                $(this).children("p").addClass("overDrop");
+              }
+              else $(this).children("p").removeClass("overDrop");
+            });
+          },
+
+          mouseup   : function(e){
+            $(document).unbind("mousemove");
+            if(overFolder) {
+              clone.animate({
+                width: "5px",
+                height: "5px",
+                left:   overFolder.getD().folderRect.left*1+10+"px",
+                top:   overFolder.getD().folderRect.top+"px"
+              },function(){
+                $(this).remove();
+                draggedFile.removeClass("replacing");
+                $(document).unbind("mouseup");
+              });
+
+              var post = {
+                "fileName" : clone.children("p.fileName").children("span").text(),
+                "path" : path,
+                "toFolder" : overFolder.getD().path+"/0"+overFolder.getD().name
+              };
+              $.post("filebrowser.php", post, function(data){
+                }, "json");
+              overFolder.children("p").removeClass("overDrop");
+            }
+            else {
+              clone.fadeOut(function(){
+                $(this).remove();
+                draggedFile.removeClass("replacing");
+                $(document).unbind("mouseup");
+              });
+            }
+          }
+        }); // end of mouse events handlers
+      }
+    });
   });
+  // end document ready
 
   $.extend({
     "recountHeight": function(){
@@ -228,4 +317,11 @@
       $("#files").height($("body").height()-$("#info_wrap").height() - 45+"px");
     }
   });
+
+  $.fn.draggingOver = function(ev){
+    var area = this.getD().folderRect;
+    return (area.left < ev.clientX && area.right > ev.clientX &&
+      area.top < ev.clientY && area.bottom > ev.clientY) ? true : false;
+  }
+
 })(jQuery);

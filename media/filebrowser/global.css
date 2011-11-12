@@ -40,7 +40,6 @@ a:hover {
   background: -ms-linear-gradient(left top, #777777 0%, #454545 100%);
   background: linear-gradient(top, #777 0%, #454545 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7777777', endColorstr='#454545',GradientType=0);
-  background: linear-gradient(top, #777 0%, #454545 100%);
   box-shadow: 0 2px 3px #888;
   z-index: 10;
 }
@@ -70,9 +69,6 @@ a:hover {
 
 }
 
-
-
-
 #dirs {
   width: 220px;
   float: left;
@@ -81,8 +77,6 @@ a:hover {
   background: #d3d3d3;
   box-shadow: 2px 0 4px #888;
   z-index:5;
-
-
 }
 
 #content {
@@ -91,6 +85,7 @@ a:hover {
   background: #fff;
   overflow: hidden;
 }
+
 #content>em {
   display: block;
   position: absolute;
@@ -99,7 +94,6 @@ a:hover {
 
   left: 10px;
   z-index: 8;
-
 }
 
 #content>em#top_smog {
@@ -159,7 +153,7 @@ a:hover {
   padding: 8px;
 }
 
-a.file {
+.file {
   display: block;
   width: 120px;
   height: 120px;
@@ -175,6 +169,7 @@ a.file {
   text-decoration: none;
   overflow: hidden;
   position: relative;
+  -moz-user-select: none;
 }
 
 .file .icon {
@@ -187,12 +182,14 @@ a.file {
   position: relative;
   text-align: center;
   vertical-align: middle;
+  -moz-user-select: none;
 }
 
 .file .icon img {
   -moz-box-shadow: 0 0 8px #ababab;
   -webkit-box-shadow: 0 0 8px #ababab;
   box-shadow: 0 0 8px #ababab;
+  -moz-user-select: none;
 }
 
 .file p {
@@ -256,7 +253,7 @@ a.file {
   font-size: 9px;
 }
 
-a.file:hover {
+.file:hover {
   background: -moz-linear-gradient(top, rgba(114,159,207,0.5) 0%, rgba(32,74,135,0.5) 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(114,159,207,0.5)), color-stop(100%,rgba(32,74,135,0.5)));
   background: -webkit-linear-gradient(top, rgba(114,159,207,0.5) 0%,rgba(32,74,135,0.5) 100%);
@@ -266,12 +263,39 @@ a.file:hover {
   background: linear-gradient(top, rgba(114,159,207,0.5) 0%,rgba(32,74,135,0.5) 100%);
 }
 
-a.file:hover p.size {
+.file:hover p.size {
   color: #fff
 }
 
 .file:hover .img_size {
   color: #f0f0ff;
+ }
+
+ .file.clone {
+   position: absolute;
+   z-index: 100;
+   -mos-user-select: none;
+   background: rgb(154,170,252);
+   opacity: 0.6;
+   filter: progid:DXImageTransform.Microsoft.Alpha(opacity=60);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=60)";
+ }
+
+ .file.clone p i {
+   display: none;
+ }
+
+ .file .fileOverlay {
+   position: absolute;
+   left: 0;
+   top: 0;
+   width: 100%;
+   height: 100%;
+   background: url('/media/filebrowser/images/crop/pixel.gif') 0 0 repeat;
+ }
+
+ .file.replacing {
+   background: #FFF6BF;
  }
 
 #controls a {

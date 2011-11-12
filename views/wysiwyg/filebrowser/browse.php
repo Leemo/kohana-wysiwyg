@@ -4,7 +4,7 @@
 		<?php echo HTML::anchor(Route::get('wysiwyg/filebrowser')->uri(array('action' => 'upload')), __('Upload files...'), array('class' => 'button', 'rel' => 'boxed')) ?>
 		<?php echo HTML::anchor('#', __('Refresh'), array('class' => 'button', 'id' => 'refresh')) ?>
 	</div>
-	<h2></h2>
+	<h2><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></h2>
 </div>
 <div id="dirs">
 
@@ -34,13 +34,14 @@
 
 <script id="tpl-files" type="text/x-jquery-tmpl">
 	{{each(key, value) files}}
-	<a class="file" href="#" title="${key}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
+	<div class="file" title="${key}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
 		<div class="icon{{if value.type}} ${value.type}{{/if}}">
 			  {{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
+				<div class="fileOverlay"></div>
 		</div>
-		<p><span>${key}</span><i></i></p>
+		<p class="fileName"><span>${key}</span><i></i></p>
 		<p class="size">${value.size}</p>
 		{{if value.width && value.height}}<p class="img_size">img. size: ${value.width}×${value.height}</p>{{/if}}
-	</a>
+	</div>
 	{{/each}}
 </script>

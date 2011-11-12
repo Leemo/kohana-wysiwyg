@@ -11,7 +11,10 @@
         }
       }
 
-      $(env.selector).ckeditor(env.config)
+      $(env.selector).ckeditor(env.config);
+      CKEDITOR.on( 'instanceReady', function(e) {
+                   alert("loaded")
+           });
     }
   })
 }(jQuery));
