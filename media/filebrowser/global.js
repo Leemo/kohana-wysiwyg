@@ -1,7 +1,9 @@
 ;
 (function($) {
   $(function(){
+
     path = "";
+
     var fancyBoxOptions = {
       "overlayOpacity": 0,
       "hideOnOverlayClick": false,
@@ -288,12 +290,16 @@
                 $(document).unbind("mouseup");
               });
 
+              var fileName = clone.children("p.fileName").children("span").text();
+
               var post = {
-                "fileName" : clone.children("p.fileName").children("span").text(),
-                "path" : path,
-                "toFolder" : overFolder.getD().path+"/0"+overFolder.getD().name
+                "to": overFolder.getD().path
               };
-              $.post("filebrowser.php", post, function(data){
+
+              $.post(global_config.move_url+path+"/"+fileName, post, function(data){
+                  if (data.result == "ok") {
+                    $(document).trigger("filebrowser_load_files", path);
+                  }
                 }, "json");
               overFolder.children("p").removeClass("overDrop");
             }

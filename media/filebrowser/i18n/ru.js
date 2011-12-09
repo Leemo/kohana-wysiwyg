@@ -4,7 +4,7 @@ var i18n = {
   "Cancel":        "Отменить",
   "Crop":          "Обрезать",
   "Delete":        "Удалить",
-  "Download":      "Скачать",
+  "Download":      "Сохранить",
   "Retry":         "Повторить",
   "Rotate left":   "Повернуть влево",
   "Rotate right":  "Повернуть вправо",

@@ -52,7 +52,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			.Kohana::$config->load('filebrowser.uploads_directory')
 			.DIRECTORY_SEPARATOR;
 
-		$this->_path = $this->request->param('path');
+		$this->_path = str_replace('/', DIRECTORY_SEPARATOR, $this->request->param('path'));
 	}
 
 	public function action_browse()
@@ -157,7 +157,40 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		$content = View::factory('wysiwyg/filebrowser/upload');
 
-		return $this->response->body($content);
+		return $this
+			->response
+			->body($content);
+	}
+
+	public function action_move()
+	{
+		$this->auto_render = FALSE;
+
+		$response = array();
+
+		// TODO: file checking
+
+		if (isset($_POST['to']))
+		{
+			$from = APPPATH.$this->_directory.$this->_path;
+			$to   = APPPATH.$this->_directory.$_POST['to'].DIRECTORY_SEPARATOR.pathinfo($this->_path, PATHINFO_BASENAME);
+
+			try
+			{
+				copy($from, $to);
+				unlink($from);
+
+				$response['result'] = 'ok';
+			}
+			catch(Exception $e)
+			{
+				$response['error'] = __('Something\'s wrong');
+			}
+		}
+
+		return $this
+			->response
+			->body(json_encode($response));
 	}
 
 	public function action_download()
@@ -383,6 +416,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			(
 				'dirs_url'  => $route->uri(array('action' => 'dirs')),
 				'files_url' => $route->uri(array('action' => $this->request->action())),
+				'move_url'  => $route->uri(array('action' => 'move'))
 			);
 		}
 
