@@ -64,7 +64,8 @@
       },
       {
         text: __("Download"),
-        itemClass: "download"
+        itemClass: "download",
+        event: "filebrowser_file_download"
       },
       "break",
       {
@@ -123,26 +124,29 @@
           w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
           h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
         };
-        window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin",
+        window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("p.fileName span").text(), "cropresizerWin",
           "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
       "filebrowser_image_rotate_left" : function(e){
-        $.get('wysiwyg/filebrowser/rotate_left/'+path+$(e.target).find("img").attr("alt"), function(data){
+        $.get('wysiwyg/filebrowser/rotate_left/'+path+$(e.target).find("p.fileName span").text(), function(data){
           $(document).trigger('filebrowser_load_files', path)
         });
       },
       "filebrowser_image_rotate_right" : function(e){
-        $.get('wysiwyg/filebrowser/rotate_right/'+path+$(e.target).find("img").attr("alt"), function(data){
+        $.get('wysiwyg/filebrowser/rotate_right/'+path+$(e.target).find("p.fileName span").text(), function(data){
           $(document).trigger('filebrowser_load_files', path)
         });
       },
       "filebrowser_file_rename" : function(e){
-        $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).find("img").attr("alt"), function(data){
+        $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).find("p.fileName span").text(), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
+      "filebrowser_file_download" : function(e){
+        location.replace('wysiwyg/filebrowser/download/'+path+$(e.target).find("p.fileName span").text());
+      },
       "filebrowser_file_delete" : function(e){
-        $.get('wysiwyg/filebrowser/delete/'+path+$(e.target).find("img").attr("alt"), function(data){
+        $.get('wysiwyg/filebrowser/delete/'+path+$(e.target).find("p.fileName span").text(), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
