@@ -354,7 +354,6 @@ a:hover {
 .button {
   border-width: 0;
   color: #333 !important;
-  padding: 5px 15px;
   background-color: whiteSmoke;
   background-image: -moz-linear-gradient(top,#f5f5f5,#e2e2e2);
   background-image: -o-linear-gradient(top,#f5f5f5,#e2e2e2);

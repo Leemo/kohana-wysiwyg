@@ -230,8 +230,8 @@
 
     $("a[rel=boxed]").fancybox(fancyBoxOptions);
 
-    // drag files to folders
 
+    // drag files to folders
     $("#filesRow").delegate("div.file", "mousedown", function(event){
       if(event.which == 1) { // left button down only
         var draggedFile = $(this).addClass("replacing");
@@ -279,15 +279,18 @@
           mouseup   : function(e){
             $(document).unbind("mousemove");
             if(overFolder) {
-              clone.animate({
+              clone.empty().animate({
                 width: "5px",
                 height: "5px",
                 left:   overFolder.getD().folderRect.left*1+10+"px",
                 top:   overFolder.getD().folderRect.top+"px"
-              },function(){
-                $(this).remove();
-                draggedFile.removeClass("replacing");
-                $(document).unbind("mouseup");
+              },{
+                complete: function(){
+                  $(this).remove();
+                  draggedFile.removeClass("replacing");
+                  $(document).unbind("mouseup");
+                },
+                duration: 200
               });
 
               var fileName = clone.children("p.fileName").children("span").text();
@@ -297,10 +300,10 @@
               };
 
               $.post(global_config.move_url+path+"/"+fileName, post, function(data){
-                  if (data.result == "ok") {
-                    $(document).trigger("filebrowser_load_files", path);
-                  }
-                }, "json");
+                if (data.result == "ok") {
+                  $(document).trigger("filebrowser_load_files", path);
+                }
+              }, "json");
               overFolder.children("p").removeClass("overDrop");
             }
             else {
