@@ -21,6 +21,13 @@
       $.recountHeight();
     });
 
+     $("#refresh").click(function(){
+      $(document).trigger("filebrowser_load_files", path);
+      return false;
+    });
+
+    $("a[rel=boxed]").fancybox(fancyBoxOptions);
+
     $("div.directories").folderTree()
     .contextMenu({  // bind context menu to delegate for all elements in folders column
       //title : "Folder menu",
@@ -54,9 +61,8 @@
       ]
     });
 
-    $("#filesRow").contextMenu({ // bind context menu to delegate for all elements in files area
-      targetSelector : "div.file",
-      list: [
+    // files context menu lines
+    var filesMenu = [
       {
         text: __("Select"),
         itemClass: "select",
@@ -99,7 +105,15 @@
         itemClass: "delete",
         event: "filebrowser_file_delete"
       }
-      ]
+      ];
+
+
+    $("#filesRow").contextMenu({ // bind context menu to delegate for picture file elements in files area
+      targetSelector : "div.picture",
+      list: filesMenu
+    }).contextMenu({ // bind context menu to delegate for non-picture file elements in files area
+      targetSelector : "div.non_picture",
+      list: filesMenu.slice(0,2).concat(filesMenu.slice(8))
     });
 
     $(document).bind("filebrowser_load_files", function(e, path) {
@@ -111,7 +125,7 @@
     }).bind(
     {
       "filebrowser_file_select" : function(e) {
-        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), 'wysiwyg/filebrowser/download/'+path+$(e.target).find("p.fileName span").text());
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), 'wysiwyg/filebrowser/download'+$.getSelectedFilePath(e));
         window.close();
       },
 
@@ -132,29 +146,29 @@
       },
 
       "filebrowser_image_rotate_left" : function(e){
-        $.get('wysiwyg/filebrowser/rotate_left/'+$.getSelectedFilePath(e), function(data){
+        $.get('wysiwyg/filebrowser/rotate_left'+$.getSelectedFilePath(e), function(data){
           $(document).trigger('filebrowser_load_files', path)
         });
       },
 
       "filebrowser_image_rotate_right" : function(e){
-        $.get('wysiwyg/filebrowser/rotate_right/'+$.getSelectedFilePath(e), function(data){
+        $.get('wysiwyg/filebrowser/rotate_right'+$.getSelectedFilePath(e), function(data){
           $(document).trigger('filebrowser_load_files', path)
         });
       },
 
       "filebrowser_file_rename" : function(e){
-        $.get('wysiwyg/filebrowser/rename/'+$.getSelectedFilePath(e), function(data){
+        $.get('wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
 
       "filebrowser_file_download" : function(e){
-        location.replace('wysiwyg/filebrowser/download/'+$.getSelectedFilePath(e));
+        location.replace('wysiwyg/filebrowser/download'+$.getSelectedFilePath(e));
       },
 
       "filebrowser_file_delete" : function(e){
-        $.get('wysiwyg/filebrowser/delete/'+$.getSelectedFilePath(e), function(data){
+        $.get('wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
@@ -167,7 +181,7 @@
 
       // Folder menu events
       "filebrowser_folder_rename" : function(e){
-        $.get("wysiwyg/filebrowser/rename/"+path+$(e.target).text(), function(data){
+        $.get("wysiwyg/filebrowser/rename"+path+$(e.target).text(), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
@@ -268,13 +282,6 @@
     }) // end of bind events to document
     .trigger("filebrowser_load_dirs", "")
     .trigger("filebrowser_load_files", "");
-
-    $("#refresh").click(function(){
-      $(document).trigger("filebrowser_load_files", path);
-      return false
-    });
-
-    $("a[rel=boxed]").fancybox(fancyBoxOptions);
 
 
     // drag files to folders
@@ -386,7 +393,7 @@
   }
 
   $.getSelectedFilePath = function(contextMenuEvent) {
-   return path+$(contextMenuEvent.target).find("p.fileName span").text()
+   return path+"/"+$(contextMenuEvent.target).find("p.fileName span").text()
   }
 
 })(jQuery);

@@ -262,10 +262,10 @@
 
 #fancybox-content .buttons {
   text-align: right;
-  padding: 0 3px 4px 0;
+  padding: 8px 0;
   white-space: nowrap;
-  margin-bottom: 3px;
-  height: 17px;
+  overflow: hidden;
+
 }
 
 #fancybox-content .buttons * {

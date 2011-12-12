@@ -126,7 +126,7 @@
 
 			return false;
 		});
-
+    return this;
 	};
 
 	$.fn.pointToggleActive = function(n){ // public method for menu points

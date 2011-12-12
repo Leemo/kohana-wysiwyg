@@ -3,6 +3,13 @@
   margin: 0
 }
 
+input[type=button]::-moz-focus-inner,
+input[type=submit]::-moz-focus-inner,
+button::-moz-focus-inner {
+  padding: 0 !important;
+  border: 0 !important;
+}
+
 body,
 html {
   height:100%;
@@ -323,6 +330,10 @@ a:hover {
   border-radius: .5em;
 }
 
+input.button {
+  font-family: Arial;
+}
+
 .button:hover {
   text-decoration: none;
 }
@@ -339,8 +350,12 @@ a:hover {
 }
 
 .medium {
-  font-size: 12px;
+  font-size: 12px !important;
   padding: .4em 1.5em .42em;
+}
+
+input.medium {
+
 }
 
 .small {
