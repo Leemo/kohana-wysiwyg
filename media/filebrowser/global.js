@@ -39,12 +39,7 @@
       {
         text : __("Rename"),
         itemClass : "rename",
-        event : "onRenameFolderClick",
-        handler : function(){
-          console.log(this);
-          return false;
-        },
-        href : "http://ya.ru"
+        event : "filebrowser_folder_rename"
       },
       "break",
       {
@@ -144,6 +139,13 @@
       "filebrowser_startFileMove" : function(){
         $("div.directories div").each(function(){
           $(this).getD().folderRect = $(this).children("p")[0].getBoundingClientRect();
+        });
+      },
+
+      // Folder menu events
+      "filebrowser_folder_rename" : function(e){
+        $.get("wysiwyg/filebrowser/rename/"+path+$(e.target).text(), function(data){
+          $.fancybox(data, fancyBoxOptions);
         });
       },
 
