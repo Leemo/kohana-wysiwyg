@@ -149,6 +149,18 @@
 
       // begin "fancybox_ready" handler
       "fancybox_ready" : function(){
+        $("#fancybox-content form").ajaxForm({
+          "success": function(responseText, statusText, xhr, $form) {
+            if(responseText === "") {
+              $(document).trigger("filebrowser_load_files", path);
+              $.fancybox.close()
+            } else {
+              $form.parent().html(responseText);
+              $(document).trigger("fancybox_ready")
+            }
+          }
+        });
+
         $("#fancybox-content .close").click(function(){
           $.fancybox.close();
           return false;

@@ -28,6 +28,7 @@
 		->add_file('filebrowser/jquery.tmpl.js')
 		->add_file('filebrowser/jquery.contextmenu.js')
 		->add_file('filebrowser/jquery.fancybox.js')
+		->add_file('filebrowser/jquery.form.js')
 		->add_file('filebrowser/jquery.transmit.js')
 		->add_file('filebrowser/directories.js')
 		->add_file('filebrowser/global.js');

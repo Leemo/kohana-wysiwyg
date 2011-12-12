@@ -1,5 +1,5 @@
 <h1><?php echo __('Rename file') ?></h1>
-<?php echo Form::open() ?>
+<?php echo Form::open(Request::current()) ?>
 <dl>
 	<dt><?php echo Form::input('filename', $filename) ?>.<?php echo $extension ?></dt>
 <?php if($error): ?>

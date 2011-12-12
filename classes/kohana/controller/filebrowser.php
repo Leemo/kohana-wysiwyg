@@ -221,12 +221,20 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				->status(404);
 		}
 
-		$is_file = is_file($file);
-
-		$template = ($is_file) ? 'wysiwyg/filebrowser/file/rename' : 'wysiwyg/filebrowser/directory/rename';
-
 		$filename  = pathinfo($file, PATHINFO_FILENAME);
 		$extension = pathinfo($file, PATHINFO_EXTENSION);
+
+		$is_file = is_file($file);
+
+		if ($_POST)
+		{
+			// TODO: path checking
+			rename($file, str_replace($filename, $_POST['filename'], $file));
+
+			return;
+		}
+
+		$template = ($is_file) ? 'wysiwyg/filebrowser/file/rename' : 'wysiwyg/filebrowser/directory/rename';
 
 		$content = View::factory($template)
 			->bind('filename', $filename)
