@@ -348,9 +348,16 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$file = $this->_directory.$this->_path;
+		$file = APPPATH.$this->_directory.$this->_path;
 
 		$filename = pathinfo($file, PATHINFO_BASENAME);
+
+		if (Arr::get($_GET, 'agree', FALSE))
+		{
+			unlink($file);
+
+			return;
+		}
 
 		$content = View::factory('wysiwyg/filebrowser/file/delete')
 			->bind('filename', $filename);

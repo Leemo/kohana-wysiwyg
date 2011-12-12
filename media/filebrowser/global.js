@@ -131,8 +131,8 @@
           $.fancybox(data, fancyBoxOptions);
         });
       },
-      "filebrowser_file_delete" : function(e, path){
-        $.get('wysiwyg/filebrowser/delete/'+path+$(e.target).children("p:first").text(), function(data){
+      "filebrowser_file_delete" : function(e){
+        $.get('wysiwyg/filebrowser/delete/'+path+$(e.target).find("img").attr("alt"), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
@@ -166,6 +166,15 @@
         $("#fancybox-content .close").click(function(){
           $.fancybox.close();
           return false;
+        });
+
+        $("#fancybox-content .ajaxed").each(function(){
+          $(this).click(function(){
+            $.get(this.href);
+            $(document).trigger("filebrowser_load_files", path);
+            $.fancybox.close();
+            return false;
+          })
         });
 
         window.addEvent('domready', function() {
