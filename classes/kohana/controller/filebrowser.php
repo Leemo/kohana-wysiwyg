@@ -221,12 +221,20 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				->status(404);
 		}
 
-		$is_file = is_file($file);
-
-		$template = ($is_file) ? 'wysiwyg/filebrowser/file/rename' : 'wysiwyg/filebrowser/directory/rename';
-
 		$filename  = pathinfo($file, PATHINFO_FILENAME);
 		$extension = pathinfo($file, PATHINFO_EXTENSION);
+
+		$is_file = is_file($file);
+
+		if ($_POST)
+		{
+			// TODO: path checking
+			rename($file, str_replace($filename, $_POST['filename'], $file));
+
+			return;
+		}
+
+		$template = ($is_file) ? 'wysiwyg/filebrowser/file/rename' : 'wysiwyg/filebrowser/directory/rename';
 
 		$content = View::factory($template)
 			->bind('filename', $filename)
@@ -319,7 +327,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	}
 
-	protected function _rotate($degress)
+	protected function _rotate($degrees)
 	{
 		$this->auto_render = FALSE;
 
@@ -340,9 +348,16 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$file = $this->_directory.$this->_path;
+		$file = APPPATH.$this->_directory.$this->_path;
 
 		$filename = pathinfo($file, PATHINFO_BASENAME);
+
+		if (Arr::get($_GET, 'agree', FALSE))
+		{
+			unlink($file);
+
+			return;
+		}
 
 		$content = View::factory('wysiwyg/filebrowser/file/delete')
 			->bind('filename', $filename);
