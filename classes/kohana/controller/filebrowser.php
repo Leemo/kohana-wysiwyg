@@ -327,7 +327,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	}
 
-	protected function _rotate($degress)
+	protected function _rotate($degrees)
 	{
 		$this->auto_render = FALSE;
 

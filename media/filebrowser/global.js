@@ -126,6 +126,16 @@
         window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("img").attr("alt"), "cropresizerWin",
           "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
+      "filebrowser_image_rotate_left" : function(e){
+        $.get('wysiwyg/filebrowser/rotate_left/'+path+$(e.target).find("img").attr("alt"), function(data){
+          $(document).trigger('filebrowser_load_files', path)
+        });
+      },
+      "filebrowser_image_rotate_right" : function(e){
+        $.get('wysiwyg/filebrowser/rotate_right/'+path+$(e.target).find("img").attr("alt"), function(data){
+          $(document).trigger('filebrowser_load_files', path)
+        });
+      },
       "filebrowser_file_rename" : function(e){
         $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).find("img").attr("alt"), function(data){
           $.fancybox(data, fancyBoxOptions);
