@@ -2,7 +2,7 @@
 (function($) {
   $(function(){
 
-    path = "";
+    path = ""; // this global variable get value on each selecting of folders by execute code in directories.js
 
     var fancyBoxOptions = {
       "overlayOpacity": 0,
@@ -17,7 +17,6 @@
     };
 
     $.recountHeight();
-
     $(window).bind("resize", function(){
       $.recountHeight();
     });
@@ -60,7 +59,8 @@
       list: [
       {
         text: __("Select"),
-        itemClass: "select"
+        itemClass: "select",
+        event: "filebrowser_file_select"
       },
       {
         text: __("Download"),
@@ -110,13 +110,16 @@
       });
     }).bind(
     {
-      "filebrowser_file_download" : function(e){
-        alert($(e.target).children("p:first").text());
+      "filebrowser_file_select" : function(e) {
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), 'wysiwyg/filebrowser/download/'+path+$(e.target).find("p.fileName span").text());
+        window.close();
       },
+
       "filebrowser_image_resize" : function(e){
         alert($(e.target).children("p:first").text());
       // Need to open URI wysiwyg/filebrowser/resize/<path> in fancybox
       },
+
       "filebrowser_image_crop" : function(e){
         if(window.cropresizerWin)cropresizerWin.close();
         var imgSize = Function("var c = new Object(); c="+$(e.target).attr("rel")+"; return c")();
@@ -124,32 +127,38 @@
           w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
           h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
         };
-        window.open("/wysiwyg/filebrowser/crop/"+path+$(e.target).find("p.fileName span").text(), "cropresizerWin",
+        window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
           "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
+
       "filebrowser_image_rotate_left" : function(e){
-        $.get('wysiwyg/filebrowser/rotate_left/'+path+$(e.target).find("p.fileName span").text(), function(data){
+        $.get('wysiwyg/filebrowser/rotate_left/'+$.getSelectedFilePath(e), function(data){
           $(document).trigger('filebrowser_load_files', path)
         });
       },
+
       "filebrowser_image_rotate_right" : function(e){
-        $.get('wysiwyg/filebrowser/rotate_right/'+path+$(e.target).find("p.fileName span").text(), function(data){
+        $.get('wysiwyg/filebrowser/rotate_right/'+$.getSelectedFilePath(e), function(data){
           $(document).trigger('filebrowser_load_files', path)
         });
       },
+
       "filebrowser_file_rename" : function(e){
-        $.get('wysiwyg/filebrowser/rename/'+path+$(e.target).find("p.fileName span").text(), function(data){
+        $.get('wysiwyg/filebrowser/rename/'+$.getSelectedFilePath(e), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
+
       "filebrowser_file_download" : function(e){
-        location.replace('wysiwyg/filebrowser/download/'+path+$(e.target).find("p.fileName span").text());
+        location.replace('wysiwyg/filebrowser/download/'+$.getSelectedFilePath(e));
       },
+
       "filebrowser_file_delete" : function(e){
-        $.get('wysiwyg/filebrowser/delete/'+path+$(e.target).find("p.fileName span").text(), function(data){
+        $.get('wysiwyg/filebrowser/delete/'+$.getSelectedFilePath(e), function(data){
           $.fancybox(data, fancyBoxOptions);
         });
       },
+
       "filebrowser_startFileMove" : function(){
         $("div.directories div").each(function(){
           $(this).getD().folderRect = $(this).children("p")[0].getBoundingClientRect();
@@ -270,7 +279,7 @@
 
     // drag files to folders
     $("#filesRow").delegate("div.file", "mousedown", function(event){
-      if(event.which == 1) { // left button down only
+      if(event.which == 1) { // left button down only to drag file
         var draggedFile = $(this).addClass("replacing");
 
         var clone = $("<div>", {
@@ -352,8 +361,8 @@
             }
           }
         }); // end of mouse events handlers
-      }
-    });
+      } // end of if
+    }); // end of delegate
   });
   // end document ready
 
@@ -368,6 +377,16 @@
     var area = this.getD().folderRect;
     return (area.left < ev.clientX && area.right > ev.clientX &&
       area.top < ev.clientY && area.bottom > ev.clientY) ? true : false;
+  }
+
+  $.getUrlParam = function(paramName){
+    var reParam = new RegExp('(?:[\?&]|&amp;)' + paramName + '=([^&]+)', 'i') ;
+    var match = window.location.search.match(reParam) ;
+    return (match && match.length > 1) ? match[1] : '' ;
+  }
+
+  $.getSelectedFilePath = function(contextMenuEvent) {
+   return path+$(contextMenuEvent.target).find("p.fileName span").text()
   }
 
 })(jQuery);
