@@ -119,7 +119,7 @@ FancyUpload3.Attach.File = new Class({
 
 		this.ui = {};
 
-		this.ui.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
+		this.ui.element = new Element('li', {'class': 'attachment', id: 'file-' + this.id});
 		this.ui.title = new Element('span', {'class': 'file-title', text: this.name});
 		this.ui.size = new Element('span', {'class': 'file-size', text: Swiff.Uploader.formatUnit(this.size, 'b')});
 
@@ -179,6 +179,8 @@ FancyUpload3.Attach.File = new Class({
 
 		var response = this.response.text || '';
 		this.base.fireEvent('fileSuccess', [this, response]);
+
+    jQuery(document).trigger("filebrowser_load_files", path);
 	},
 
 	onError: function() {

@@ -143,12 +143,13 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		if ($_POST)
+		if ($_FILES)
 		{
 			Kohana::$log
-				->add(Log::INFO, serialize($_POST))
-				->add(Log::INFO, serialize($_FILES))
+				->add(Log::INFO, APPPATH.$this->_directory.$this->_path)
 				->write();
+
+			Upload::save($_FILES['Filedata'], $_FILES['Filedata']['name'], APPPATH.$this->_directory.$this->_path);
 
 			$this->response->body('Ok');
 

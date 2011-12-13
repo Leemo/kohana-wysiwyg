@@ -17,28 +17,28 @@
   padding: 1px;
 }
 
-#upload .file {
+#upload .attachment {
   line-height: 2em;
   padding-left: 22px;
   background: url(attach.png) no-repeat 1px 50%;
 }
 
-#upload .file span,
-#upload .file a {
+#upload .attachment span,
+#upload .attachment a {
   padding: 0 4px;
 }
 
-#upload .file .file-size {
+#upload .attachment .file-size {
   color: #666;
 }
 
-#upload .file .file-error {
+#upload .attachment .file-error {
   color: #8a1f11;
 }
 
-#upload .file .file-progress {
+#upload .attachment .file-progress {
   width: 125px;
   height: 12px;
   vertical-align: middle;
-  background-image: url(progress.gif);
+  background-image: url(progressbar/progress.gif);
 }
