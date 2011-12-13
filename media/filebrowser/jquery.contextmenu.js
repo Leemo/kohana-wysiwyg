@@ -6,7 +6,7 @@
  * context menu open to left or right or up or down from clicked object to be full visible whithout scrolling.
  * Also supported non-active (visible but not clicable) point of menu, delimiter of points group, set method and events list of closing popup, call individual handlers or(and) start user events for click each menu points.
  *
- * Plugin should be binded to parent element of objects which need context menu. It use progressive method 'delegate', and delegete right click event to child elements,
+ * Plugin should be binded to parent element of objects which need context menu. Progressive method 'delegate' use, and delegete right click event to child elements,
  * so it possible to save in memory only one function-handler on parent element, without many handlers for all elements. Parameter 'targetSelector' set child elements need context menu.
  * Context menu also will work for all future child elements in this parent container.
  *
@@ -61,7 +61,7 @@
 		}, opt);
 
 		return this.delegate(opt.targetSelector, "contextmenu", function(e){
-
+      $("div."+opt.cssClass).remove();
 			var $p = $('<div class = "'+opt.cssClass+'"></div>').appendTo(document.body);
 			if(opt.title) $p.append("<h3>"+opt.title+"</h3>");
 			var $li, $menu = $("<ul/>").appendTo($p), opener = $(e.target);
@@ -114,7 +114,7 @@
 					$(this).unbind(e);
 				});
 			});
-			$("a").bind('click contextmenu', function(e){ // for clicks which have stopPropagation or return false (for Crome, IE)
+			$("a").bind('click contextmenu', function(e){ // for clicks which have stopPropagation or return false (for Chrome, IE)
 				$p.remove();
 				$(this).unbind(e);
 			});
@@ -152,7 +152,6 @@
 
 	$.fn.pointToggleShow = function(){
 	var list = $("li", this);
-		console.log(list);
 		if(list.length > 0 && typeof(list[n]) != 'undefined'){
 			if(!$(list[n]).hasClass("delimiter")) list[n].toggle();
 			else console.warn("pointToggleShow: element number "+n+" is delemiter, not menu point");

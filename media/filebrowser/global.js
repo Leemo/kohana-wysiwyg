@@ -124,8 +124,8 @@
       });
     }).bind(
     {
-      "filebrowser_file_select" : function(e) {
-        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), 'wysiwyg/filebrowser/download'+$.getSelectedFilePath(e));
+      "filebrowser_file_select" : function(e){
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), 'media'+$.getSelectedFilePath(e));
         window.close();
       },
 
