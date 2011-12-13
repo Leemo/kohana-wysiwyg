@@ -89,7 +89,7 @@ class Kohana_Filebrowser {
 									));
 
 							$return[$fileinfo->getFilename()] = Arr::merge($return[$fileinfo->getFilename()], array(
-								'thumb'  => $thumb,
+								'thumb'  => $thumb.'?'.Media::compress($fileinfo->getMTime()),
 								'width'  => $dimensions[0],
 								'height' => $dimensions[1]
 								));
