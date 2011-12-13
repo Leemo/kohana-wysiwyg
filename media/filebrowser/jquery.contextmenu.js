@@ -61,7 +61,7 @@
 		}, opt);
 
 		return this.delegate(opt.targetSelector, "contextmenu", function(e){
-
+      $("div."+opt.cssClass).remove();
 			var $p = $('<div class = "'+opt.cssClass+'"></div>').appendTo(document.body);
 			if(opt.title) $p.append("<h3>"+opt.title+"</h3>");
 			var $li, $menu = $("<ul/>").appendTo($p), opener = $(e.target);
@@ -114,7 +114,7 @@
 					$(this).unbind(e);
 				});
 			});
-			$("a").bind('click contextmenu', function(e){ // for clicks which have stopPropagation or return false (for Crome, IE)
+			$("a").bind('click contextmenu', function(e){ // for clicks which have stopPropagation or return false (for Chrome, IE)
 				$p.remove();
 				$(this).unbind(e);
 			});
@@ -152,7 +152,6 @@
 
 	$.fn.pointToggleShow = function(){
 	var list = $("li", this);
-		console.log(list);
 		if(list.length > 0 && typeof(list[n]) != 'undefined'){
 			if(!$(list[n]).hasClass("delimiter")) list[n].toggle();
 			else console.warn("pointToggleShow: element number "+n+" is delemiter, not menu point");
