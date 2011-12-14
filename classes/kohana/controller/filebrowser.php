@@ -319,6 +319,31 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			->bind('height', $height);
 	}
 
+	public function action_add()
+	{
+		$this->auto_render = FALSE;
+
+		$directory = APPPATH.$this->_directory.$this->_path;
+
+		if ( ! is_dir($directory))
+		{
+			return $this->response
+				->status(404);
+		}
+
+		if ($_POST)
+		{
+			return;
+		}
+
+		$content = View::factory('wysiwyg/filebrowser/directory/add')
+			->bind('dirname', $dirname)
+			->bind('error', $error);
+
+		$this->response
+			->body($content);
+	}
+
 	public function action_resize()
 	{
 

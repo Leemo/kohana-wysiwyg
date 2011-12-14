@@ -39,8 +39,7 @@
       {
         text : __("Add subfolder"),
         itemClass : "add",
-        event : "onAddFolderClick",
-        href : "http://www.google.com"
+        event : "filebrowser_folder_add"
       },
       {
         text : __("Rename"),
@@ -180,6 +179,12 @@
       },
 
       // Folder menu events
+      "filebrowser_folder_add" : function(e){
+        $.get("wysiwyg/filebrowser/add/"+path+$(e.target).text(), function(data){
+          $.fancybox(data, fancyBoxOptions);
+        });
+      },
+
       "filebrowser_folder_rename" : function(e){
         $.get("wysiwyg/filebrowser/rename"+path+$(e.target).text(), function(data){
           $.fancybox(data, fancyBoxOptions);

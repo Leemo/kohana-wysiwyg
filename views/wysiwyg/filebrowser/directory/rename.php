@@ -1,4 +1,4 @@
-<h1><?php echo __('Rename file') ?></h1>
+<h1><?php echo __('Rename directory') ?></h1>
 <?php echo Form::open(Request::current()) ?>
 <dl>
 	<dt><?php echo Form::input('filename', $filename) ?></dt>

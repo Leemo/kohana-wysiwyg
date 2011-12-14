@@ -8,7 +8,7 @@ Route::set('media/wysiwyg', $public_directory.'/wysiwyg/<file>(?<mtime>)', array
 		'action'     => 'plain'
 	));
 
-Route::set('wysiwyg/filebrowser', 'wysiwyg/filebrowser/<action>(/<path>)', array('action' => '(browse|crop|delete|dirs|download|flash|images|move|rename|resize|rotate_left|rotate_right|thumb|upload)', 'path' => '.*'))
+Route::set('wysiwyg/filebrowser', 'wysiwyg/filebrowser/<action>(/<path>)', array('action' => '(add|browse|crop|delete|dirs|download|flash|images|move|rename|resize|rotate_left|rotate_right|thumb|upload)', 'path' => '.*'))
 	->defaults(array(
 		'controller' => 'filebrowser',
 		'action'     => 'browse'
