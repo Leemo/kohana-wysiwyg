@@ -4,7 +4,7 @@
 
     path = ""; // this global variable get value on each selecting of folders by execute code in directories.js
 
-    var fancyBoxOptions = {
+    var fancyOpts = {
       "overlayOpacity": 0,
       "hideOnOverlayClick": false,
       "showCloseButton": false,
@@ -12,21 +12,24 @@
       "speedIn": 100,
       "speedOut": 100,
       "onComplete": function(){
-        $(document).trigger("fancybox_ready")
+        $(document).trigger("fancybox_ready", {
+          mission: "file"
+        })
       }
     };
+
 
     $.recountHeight();
     $(window).bind("resize", function(){
       $.recountHeight();
     });
 
-     $("#refresh").click(function(){
+    $("#refresh").click(function(){
       $(document).trigger("filebrowser_load_files", path);
       return false;
     });
 
-    $("a[rel=boxed]").fancybox(fancyBoxOptions);
+    $("a[rel=boxed]").fancybox(fancyOpts);
 
     $("div.directories").folderTree()
     .contextMenu({  // bind context menu to delegate for all elements in folders column
@@ -35,76 +38,66 @@
         zone : 'any',
         events : 'closeFolderClick,openFolderClick'
       },
+      targetSelector : "div",
       list : [
       {
         text : __("Add subfolder"),
         itemClass : "add",
-        event : "filebrowser_folder_add"
+        event : {type: "filebrowser_folder", mission: "add"}
       },
       {
         text : __("Rename"),
         itemClass : "rename",
-        event : "filebrowser_folder_rename"
-      },
-      "break",
-      {
-        text : __("Delete"),
-        itemClass : "delete",
-        event : "onDelFolderClick",
-        handler : function(){
-          alert("сработала функция-обработчик клика по пункту меню ");
-          return false;
-        },
-        href : "/delfolder"
+        event : {type: "filebrowser_folder", mission: "rename"}
       }
       ]
     });
 
     // files context menu lines
     var filesMenu = [
-      {
-        text: __("Select"),
-        itemClass: "select",
-        event: "filebrowser_file_select"
-      },
-      {
-        text: __("Download"),
-        itemClass: "download",
-        event: "filebrowser_file_download"
-      },
-      "break",
-      {
-        text: __("Resize"),
-        itemClass: "resize",
-        event: "filebrowser_image_resize"
-      },
-      {
-        text: __("Crop"),
-        itemClass: "crop",
-        event: "filebrowser_image_crop"
-      },
-      {
-        text: __("Rotate right"),
-        itemClass: "rotate-right",
-        event: "filebrowser_image_rotate_right"
-      },
-      {
-        text: __("Rotate left"),
-        itemClass: "rotate-left",
-        event: "filebrowser_image_rotate_left"
-      },
-      "break",
-      {
-        text: __("Rename"),
-        itemClass: "rename",
-        event: "filebrowser_file_rename"
-      },
-      {
-        text: __("Delete"),
-        itemClass: "delete",
-        event: "filebrowser_file_delete"
-      }
-      ];
+    {
+      text: __("Select"),
+      itemClass: "select",
+      event: "filebrowser_file_select"
+    },
+    {
+      text: __("Download"),
+      itemClass: "download",
+      event: "filebrowser_file_download"
+    },
+    "break",
+    {
+      text: __("Resize"),
+      itemClass: "resize",
+      event: "filebrowser_image_resize"
+    },
+    {
+      text: __("Crop"),
+      itemClass: "crop",
+      event: "filebrowser_image_crop"
+    },
+    {
+      text: __("Rotate right"),
+      itemClass: "rotate-right",
+      event: "filebrowser_image_rotate_right"
+    },
+    {
+      text: __("Rotate left"),
+      itemClass: "rotate-left",
+      event: "filebrowser_image_rotate_left"
+    },
+    "break",
+    {
+      text: __("Rename"),
+      itemClass: "rename",
+      event: "filebrowser_file_rename"
+    },
+    {
+      text: __("Delete"),
+      itemClass: "delete",
+      event: "filebrowser_file_delete"
+    }
+    ];
 
 
     $("#filesRow").contextMenu({ // bind context menu to delegate for picture file elements in files area
@@ -158,7 +151,7 @@
 
       "filebrowser_file_rename" : function(e){
         $.get('wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e), function(data){
-          $.fancybox(data, fancyBoxOptions);
+          $.fancybox(data, fancyOpts);
         });
       },
 
@@ -168,7 +161,7 @@
 
       "filebrowser_file_delete" : function(e){
         $.get('wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e), function(data){
-          $.fancybox(data, fancyBoxOptions);
+          $.fancybox(data, fancyOpts);
         });
       },
 
@@ -179,28 +172,42 @@
       },
 
       // Folder menu events
-      "filebrowser_folder_add" : function(e){
-        $.get("wysiwyg/filebrowser/add/"+path+$(e.target).text(), function(data){
-          $.fancybox(data, fancyBoxOptions);
-        });
-      },
-
-      "filebrowser_folder_rename" : function(e){
-        $.get("wysiwyg/filebrowser/rename"+path+$(e.target).text(), function(data){
-          $.fancybox(data, fancyBoxOptions);
+      "filebrowser_folder" : function(e){
+         $.get("wysiwyg/filebrowser/"+e.mission+$(e.target).buildFullPath(), function(data){
+          $.fancybox(data, $.extend(fancyOpts, {
+            "onComplete": function(){
+              $(document).trigger("fancybox_ready", {
+                mission: e.mission+"Dir",
+                targetFolder : e.target
+              });
+            }
+          }));
         });
       },
 
       // begin "fancybox_ready" handler
-      "fancybox_ready" : function(){
+      "fancybox_ready" : function(e, eventData){
         $("#fancybox-content form").ajaxForm({
           "success": function(responseText, statusText, xhr, $form) {
             if(responseText === "") {
-              $(document).trigger("filebrowser_load_files", path);
+              switch(eventData.mission){
+                case "file":
+                  $(document).trigger("filebrowser_load_files", path);
+                  break;
+                case "addDir":
+                  $(eventData.targetFolder).addFolder();
+                  break;
+                case "renameDir":
+                  $(eventData.targetFolder).renameFolder("name"); // debug value
+                  break;
+              }
+
               $.fancybox.close()
             } else {
               $form.parent().html(responseText);
-              $(document).trigger("fancybox_ready")
+              $(document).trigger("fancybox_ready", {
+                mission: data.mission
+              })
             }
           }
         });
@@ -280,7 +287,7 @@
       },
       // end "fancybox_ready" handler
 
-      onOpenContextMenu : function(e){
+      "onOpenContextMenu" : function(e){
         if($(e.target).parent().parent().attr("id") == "root") $(e.menu).pointToggleActive(3);
       }
 
@@ -398,7 +405,7 @@
   }
 
   $.getSelectedFilePath = function(contextMenuEvent) {
-   return path+"/"+$(contextMenuEvent.target).find("p.fileName span").text()
+    return path+"/"+$(contextMenuEvent.target).find("p.fileName span").text()
   }
 
 })(jQuery);

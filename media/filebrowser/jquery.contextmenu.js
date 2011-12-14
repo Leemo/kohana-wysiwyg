@@ -32,7 +32,7 @@
  *       {
  *				text:'someText',            // the text of this menu point, empty make this point ignored (irrespective of other parameters)
  *				itemClass:'classOfpoint',   // the css class directly for this point contain for example bkg-color, bkg-icon, text-color
- *				event: 'eventName',         // user event starting on click this menu point, WARNING! event start on element which has opened contextmenu, not on menu point! you can get opener as event.target
+ *				event: 'eventName' | {} ,  // user event (name or event object) starting on click this menu point, WARNING! event start on element which has opened contextmenu, not on menu point! you can get opener as event.target
  *				handler: function(){},      // anonymous function which will call on click this menu point. WARNING! It will called "as is" like "<a>" onClick handler, it's 'return' will transport to link, you should controll return value
  *				href: 'http://somelink',    // link to some url will put to point 'href' attribute, link behaviour should be coordinate to handler function if it exist (for ex. handler can return 'false' and this 'href' not be processed)
  *			  nonActive : false,          // (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain overlay <span> over <a> and have no class ".active"
@@ -131,7 +131,6 @@
 
 	$.fn.pointToggleActive = function(n){ // public method for menu points
 		var list = $("li", this);
-		console.log(list);
 		if(list.length > 0 && typeof(list[n]) != 'undefined'){
 			if(!$(list[n]).hasClass("delimiter")){
 				var $li = $(list[n]), $link = $li.children("a");
@@ -150,7 +149,7 @@
 		return this;
 	}
 
-	$.fn.pointToggleShow = function(){
+	$.fn.pointToggleShow = function(n){
 	var list = $("li", this);
 		if(list.length > 0 && typeof(list[n]) != 'undefined'){
 			if(!$(list[n]).hasClass("delimiter")) list[n].toggle();
