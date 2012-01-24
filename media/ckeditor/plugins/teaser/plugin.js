@@ -6,17 +6,16 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 /**
  * @file Plugin for inserting teasers.
  */
-CKEDITOR.plugins.add( 'drupalbreaks',
+CKEDITOR.plugins.add( 'teaser',
 {
   requires  : [ 'fakeobjects', 'htmldataprocessor' ],
 
-  init : function( editor )
-  {
+  init : function( editor ) {
     // Add the styles that renders our fake objects.
     editor.addCss(
-      'img.cke_drupal_pagebreak,img.cke_drupal_break' +
+      'img.teaser' +
       '{' +
-      'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/pagebreak.gif' ) + ');' +
+      'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/teaser.gif' ) + ');' +
       'background-position: center center;' +
       'background-repeat: no-repeat;' +
       'clear: both;' +
@@ -35,67 +34,51 @@ CKEDITOR.plugins.add( 'drupalbreaks',
       );
 
     // Register the toolbar buttons.
-    if ( Drupal.ckeditorTeaserInfo(editor.name) || Drupal.settings.ckeditor.teaser == editor.name ) {
-      editor.ui.addButton( 'Teaser',
-      {
-        label : Drupal.t('Insert Teaser Break'),
-        icon : this.path + 'images/drupalbreak.gif',
-        command : 'drupalbreak'
-      });
 
-      if ( Drupal.settings.ckeditor.pagebreak ) {
-        editor.ui.addButton( 'DrupalPageBreak',
-        {
-          label : Drupal.t( 'Insert Page Break' ),
-          icon : this.path + 'images/drupalpagebreak.gif',
-          command : 'drupalpagebreak'
-        });
-      }
-    }
-
-    // Register the commands.
-
-    editor.addCommand( 'drupalbreak',
+    editor.ui.addButton( 'Teaser',
     {
-      exec : function()
-      {
+      label : 'Insert Teaser Break',
+      icon : this.path + 'images/teaser.gif',
+      command : 'teaser'
+    });
+
+    editor.addCommand( 'teaser',
+    {
+      exec : function() {
         // There should be only one <!--break--> in document. So, look
         // for an image with class "cke_drupal_break" (the fake element).
         var images = editor.document.getElementsByTag( 'img' );
         for ( var i = 0, len = images.count() ; i < len ; i++ )
         {
           var img = images.getItem( i );
-          if ( img.hasClass( 'cke_drupal_break' ) )
-          {
-            if ( confirm( Drupal.t( 'The document already contains a teaser break. Do you want to proceed by removing it first?' ) ) )
+          if ( img.hasClass( 'teaser' ) ) {
+            if ( confirm('The document already contains a teaser break. Do you want to proceed by removing it first?' ))
             {
               img.remove();
               break;
             }
-            else
-              return;
+            else return;
           }
         }
 
-        insertComment( 'break' );
+        insertComment( 'teaser' );
       }
-    } );
-
-    editor.addCommand( 'drupalpagebreak',
-    {
-      exec : function()
-      {
-        insertComment( 'pagebreak' );
-      }
-    } );
+    });
 
     // This function effectively inserts the comment into the editor.
-    function insertComment( text )
-    {
+    function insertComment( text ) {
       // Create the fake element that will be inserted into the document.
       // The trick is declaring it as an <hr>, so it will behave like a
       // block element (and in effect it behaves much like an <hr>).
-      var fakeElement = editor.createFakeElement( new CKEDITOR.dom.comment( text ), 'cke_drupal_' + text, 'hr' );
+      if ( !CKEDITOR.dom.comment.prototype.getAttribute ) {
+        CKEDITOR.dom.comment.prototype.getAttribute = function() {
+          return '';
+        };
+        CKEDITOR.dom.comment.prototype.attributes = {
+          align : ''
+        };
+      }
+      var fakeElement = editor.createFakeElement( new CKEDITOR.dom.comment( text ), text, 'hr' );
 
       // This is the trick part. We can't use editor.insertElement()
       // because we need to put the comment directly at <body> level.
@@ -110,8 +93,7 @@ CKEDITOR.plugins.add( 'drupalbreaks',
       // If we're not in <body> go moving the position to after the
       // elements until reaching it. This may happen when inside tables,
       // lists, blockquotes, etc.
-      while ( element && element.getName() != 'body' )
-      {
+      while (element && element.getName() != 'body') {
         range.moveToPosition( element, CKEDITOR.POSITION_AFTER_END );
         hasMoved = 1;
         element = element.getParent();
@@ -129,7 +111,6 @@ CKEDITOR.plugins.add( 'drupalbreaks',
       var next = fakeElement;
       while ( ( next = next.getNext() ) && !range.moveToElementEditStart( next ) )
       {}
-
       range.select();
     }
   },
@@ -142,9 +123,16 @@ CKEDITOR.plugins.add( 'drupalbreaks',
     {
       comment : function( value )
       {
-        if ( value == 'break' || value == 'pagebreak' )
-          return editor.createFakeParserElement( new CKEDITOR.htmlParser.comment( value ), 'cke_drupal_' + value, 'hr' );
+        if ( !CKEDITOR.htmlParser.comment.prototype.getAttribute ) {
+          CKEDITOR.htmlParser.comment.prototype.getAttribute = function() {
+            return '';
+          };
+          CKEDITOR.htmlParser.comment.prototype.attributes = {
+            align : ''
+          };
+        }
 
+        if ( value == 'teaser') return editor.createFakeParserElement( new CKEDITOR.htmlParser.comment( value ), value, 'hr' );
         return value;
       }
     });
