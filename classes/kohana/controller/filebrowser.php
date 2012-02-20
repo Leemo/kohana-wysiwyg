@@ -451,6 +451,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 			$this->template->global_config = array
 			(
+				'root'      => $this->_config['media_directory'].'/'.Kohana::$config->load('filebrowser.uploads_directory'),
 				'dirs_url'  => $route->uri(array('action' => 'dirs')),
 				'files_url' => $route->uri(array('action' => $this->request->action())),
 				'move_url'  => $route->uri(array('action' => 'move'))

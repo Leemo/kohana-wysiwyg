@@ -117,7 +117,7 @@
     }).bind(
     {
       "filebrowser_file_select" : function(e){
-        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), 'media'+$.getSelectedFilePath(e));
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root + $.getSelectedFilePath(e));
         window.close();
       },
 
