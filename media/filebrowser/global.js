@@ -226,7 +226,7 @@
           })
         });
 
-        window.addEvent('domready', function() {
+       if($("#fancybox-content .attach").length > 0) {
           /**
            * Uploader instance
            */
@@ -283,7 +283,7 @@
 
           });
 
-        });
+        };
       },
       // end "fancybox_ready" handler
 
