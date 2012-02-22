@@ -1,3 +1,4 @@
+
 ;
 (function($) {
   $(function(){
@@ -25,7 +26,7 @@
     });
 
     $("#refresh").click(function(){
-      $(document).trigger("filebrowser_load_files", path);
+      $(document).trigger("filebrowser_load_files");
       return false;
     });
 
@@ -43,12 +44,18 @@
       {
         text : __("Add subfolder"),
         itemClass : "add",
-        event : {type: "filebrowser_folder", mission: "add"}
+        event : {
+          type: "filebrowser_folder",
+          mission: "add"
+        }
       },
       {
         text : __("Rename"),
         itemClass : "rename",
-        event : {type: "filebrowser_folder", mission: "rename"}
+        event : {
+          type: "filebrowser_folder",
+          mission: "rename"
+        }
       }
       ]
     });
@@ -108,12 +115,8 @@
       list: filesMenu.slice(0,2).concat(filesMenu.slice(8))
     });
 
-    $(document).bind("filebrowser_load_files", function(e, path) {
-      $("#filesRow").empty();
-
-      $.getJSON(global_config.files_url+path, function(data){
-        $("#tpl-files").tmpl(data).appendTo("#filesRow");
-      });
+    $(document).bind("filebrowser_load_files", function() {
+      $.upDateFilesRow();
     }).bind(
     {
       "filebrowser_file_select" : function(e){
@@ -139,13 +142,13 @@
 
       "filebrowser_image_rotate_left" : function(e){
         $.get('wysiwyg/filebrowser/rotate_left'+$.getSelectedFilePath(e), function(data){
-          $(document).trigger('filebrowser_load_files', path)
+          $(document).trigger('filebrowser_load_files')
         });
       },
 
       "filebrowser_image_rotate_right" : function(e){
         $.get('wysiwyg/filebrowser/rotate_right'+$.getSelectedFilePath(e), function(data){
-          $(document).trigger('filebrowser_load_files', path)
+          $(document).trigger('filebrowser_load_files')
         });
       },
 
@@ -173,7 +176,7 @@
 
       // Folder menu events
       "filebrowser_folder" : function(e){
-         $.get("wysiwyg/filebrowser/"+e.mission+$(e.target).buildFullPath(), function(data){
+        $.get("wysiwyg/filebrowser/"+e.mission+$(e.target).buildFullPath(), function(data){
           $.fancybox(data, $.extend(fancyOpts, {
             "onComplete": function(){
               $(document).trigger("fancybox_ready", {
@@ -192,7 +195,7 @@
             if(responseText === "") {
               switch(eventData.mission){
                 case "file":
-                  $(document).trigger("filebrowser_load_files", path);
+                  $(document).trigger("filebrowser_load_files");
                   break;
                 case "addDir":
                   $(eventData.targetFolder).addFolder();
@@ -220,13 +223,13 @@
         $("#fancybox-content .ajaxed").each(function(){
           $(this).click(function(){
             $.get(this.href);
-            $(document).trigger("filebrowser_load_files", path);
+            $(document).trigger("filebrowser_load_files");
             $.fancybox.close();
             return false;
           })
         });
 
-       if($("#fancybox-content .attach").length > 0) {
+        if($("#fancybox-content .attach").length > 0) {
           /**
            * Uploader instance
            */
@@ -293,7 +296,7 @@
 
     }) // end of bind events to document
     .trigger("filebrowser_load_dirs", "")
-    .trigger("filebrowser_load_files", "");
+    .trigger("filebrowser_load_files");
 
 
     // drag files to folders
@@ -366,7 +369,7 @@
 
               $.post(global_config.move_url+path+"/"+fileName, post, function(data){
                 if (data.result == "ok") {
-                  $(document).trigger("filebrowser_load_files", path);
+                  $(document).trigger("filebrowser_load_files");
                 }
               }, "json");
               overFolder.children("p").removeClass("overDrop");
@@ -391,6 +394,13 @@
       $("#files").height($("body").height()-$("#info_wrap").height() - 45+"px");
     }
   });
+
+  $.upDateFilesRow = function(){
+    $("#filesRow").empty();
+    $.getJSON(global_config.files_url+path, function(data){
+      $("#tpl-files").tmpl(data).appendTo("#filesRow");
+    });
+  }
 
   $.fn.draggingOver = function(ev){
     var area = this.getD().folderRect;

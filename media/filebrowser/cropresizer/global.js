@@ -40,8 +40,9 @@
       });
 
       $("#fancybox-content .exit").click(function(){
+        window.opener.jQuery.upDateFilesRow();
         window.close();
-        return false
+        return false;
       })
     }).bind("process_form", function(){
       $("#fancybox-content form").ajaxForm({
