@@ -1,0 +1,44 @@
+#upload {
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+
+#upload .file-invalid {
+  cursor: pointer;
+  color: #514721;
+  padding-left: 48px;
+  line-height: 24px;
+  background: url(assets/error.png) no-repeat 24px 5px;
+  margin-bottom: 1px;
+}
+#upload .file-invalid span {
+  background-color: #fff6bf;
+  padding: 1px;
+}
+
+#upload .attachment {
+  line-height: 2em;
+  padding-left: 22px;
+  background: url(attach.png) no-repeat 1px 50%;
+}
+
+#upload .attachment span,
+#upload .attachment a {
+  padding: 0 4px;
+}
+
+#upload .attachment .file-size {
+  color: #666;
+}
+
+#upload .attachment .file-error {
+  color: #8a1f11;
+}
+
+#upload .attachment .file-progress {
+  width: 125px;
+  height: 12px;
+  vertical-align: middle;
+  background-image: url(progressbar/progress.gif);
+}

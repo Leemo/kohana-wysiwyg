@@ -6,6 +6,8 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <?php
 	echo $css
+		->add_file('filebrowser/bootstrap/bootstrap.css')
+		->add_file('filebrowser/bootstrap/bootstrap-responsive.css')
 		->add_file('filebrowser/global.css')
 		->add_file('filebrowser/directories.css')
 		->add_file('filebrowser/contextmenu.css')
@@ -14,7 +16,7 @@
 ?>
 <?php
 	echo $js
-		->add_file('filebrowser/jquery-1.6.2.js')
+		->add_file('filebrowser/jquery-1.7.1.js')
 		->add_source('jQuery.noConflict();')
 		->add_source('var global_config = '.json_encode($global_config).';');
 
@@ -27,10 +29,10 @@
 		->add_file('filebrowser/fancyupload/FancyUpload3.Attach.js')
 		->add_file('filebrowser/jquery.tmpl.js')
 		->add_file('filebrowser/jquery.contextmenu.js')
-		->add_file('filebrowser/jquery.fancybox.js')
 		->add_file('filebrowser/jquery.form.js')
-		->add_file('filebrowser/jquery.transmit.js')
 		->add_file('filebrowser/directories.js')
+		->add_file('filebrowser/bootstrap/bootstrap.js')
+		->add_file('filebrowser/bootstrap/bootstrap-modal.js')
 		->add_file('filebrowser/global.js');
 ?>
 	</head>
