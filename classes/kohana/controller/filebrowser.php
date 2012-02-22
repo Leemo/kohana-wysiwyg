@@ -297,12 +297,12 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			}
 
 			$extension = pathinfo($file, PATHINFO_EXTENSION);
-/*
+
 			Image::factory($file)
 				->resize($_POST['image_width'], $_POST['image_height'])
 				->crop($_POST['crop_width'], $_POST['crop_height'], $_POST['offset_x'], $_POST['offset_y'])
-				->save($_POST['filename'].'.'.$extension);
-*/
+				->save(pathinfo($file, PATHINFO_DIRNAME).DIRECTORY_SEPARATOR.$_POST['filename'].'.'.$extension);
+
 			return $this->template->content =
 				View::factory('wysiwyg/filebrowser/crop/choise', $_POST);
 		}
