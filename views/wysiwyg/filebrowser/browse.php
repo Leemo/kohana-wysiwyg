@@ -178,8 +178,8 @@
 {{/if}}
 		<?php echo Form::open() ?>
 		<div class="control-group">
-			<?php echo Form::label('dirname', '{{if rename}}'.__('New directory name').'{{else}}'.__('Directory name').'{{/if}}:') ?>
-			<?php echo Form::input('dirname') ?>
+			<?php echo Form::label('filename', '{{if rename}}'.__('New directory name').'{{else}}'.__('Directory name').'{{/if}}:') ?>
+			<?php echo Form::input('filename') ?>
 		</div>
 		<?php echo Form::close() ?>
 	</div>

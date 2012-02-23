@@ -224,6 +224,12 @@
           });
       })
 
+      // When we select file
+      .bind("Filebrowser:file:select", function(e) {
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+$.getSelectedFilePath(e));
+        window.close();
+      })
+
       // Add new directory
       .bind("Filebrowser:dir:add", function(e) {
         $("#tpl-dir-modal")
@@ -239,15 +245,46 @@
 
       // Change directory name
       .bind("Filebrowser:dir:rename", function(e) {
+        var dirname = $(e.target).find("a").text();
+
         $("#tpl-dir-modal")
           .tmpl({rename: true})
           .appendTo("#dir-modal");
 
         $("#dir-modal")
+          .find("input")
+          .val(dirname);
+
+        $("#dir-modal")
           .on("hide", function() {
             $(this).html("");
           })
-          .modal();
+          .modal()
+          .find("a.btn-success")
+          .click(function() {
+            $("#dir-modal form").ajaxSubmit({
+              url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
+              dataType: "json",
+              success:  function(data, statusText, xhr, $form) {
+                if(data.ok !== undefined) {
+                  $(document).trigger("Filebrowser:loadDirs", path);
+                  $("#dir-modal").modal("hide");
+                } else if (data.error !== undefined) {
+                  $($form)
+                    .find(".help-inline")
+                    .remove();
+
+                  $($form)
+                    .find(".control-group")
+                    .removeClass("error")
+                    .addClass("error")
+                    .append('<span class="help-inline">'+data.error+"</span>");
+                }
+              }
+            });
+
+            return false;
+          });
       })
       .trigger("Filebrowser:loadFiles", path);
     // End global events

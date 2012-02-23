@@ -348,6 +348,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			->bind('height', $height);
 	}
 
+	/**
+	 * Directory adding action
+	 *
+	 * @return type
+	 */
 	public function action_add()
 	{
 		$this->auto_render = FALSE;
@@ -365,12 +370,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			return;
 		}
 
-		$content = View::factory('wysiwyg/filebrowser/directory/add')
-			->bind('dirname', $dirname)
-			->bind('error', $error);
-
-		$this->response
-			->body($content);
+		$this->response->ok();
 	}
 
 	public function action_resize()
