@@ -79,7 +79,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			$dirs[$key] = sizeof($subdirs);
 		}
 
-		return $this->response->body(json_encode(array('dirs' => $dirs)));
+		return $this->response->json(array('dirs' => $dirs));
 	}
 
 	public function action_images()
@@ -109,9 +109,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		{
 			$this->auto_render = FALSE;
 
-			return $this->response->body(json_encode(array(
+			return $this->response->json(array(
 				'files' => Filebrowser::list_files($path, $filter)
-				)));
+				));
 		}
 		else
 		{
@@ -210,36 +210,51 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$file = APPPATH.$this->_directory.$this->_path;
+		$path  = rtrim(APPPATH.$this->_directory
+			.pathinfo($this->_path, PATHINFO_DIRNAME), '.');
 
-		if ( ! file_exists($file))
+		$extension = pathinfo($this->_path, PATHINFO_EXTENSION);
+
+		$_POST = Arr::extract($_POST, array('filename'));
+
+		$validation = Validation::factory($_POST)
+			->rules('filename', array(
+				array('not_empty'),
+				array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')), // Check filename
+				array('fb_file_not_exists', array($path, ':value', $extension))
+				))
+			->label('filename', 'File name');
+
+		$current_fname = APPPATH.$this->_directory.$this->_path;
+		$new_fname     = $path.$_POST['filename'].'.'.$extension;
+
+		if ($current_fname == $new_fname)
+			return $this->response->ok();
+
+		if ( ! $validation->check())
 		{
-			return $this->response
-				->status(404);
+			return $this->response->json(array(
+				'errors' => $validation->errors('wysiwyg')
+				));
 		}
 
-		$filename  = pathinfo($file, PATHINFO_FILENAME);
-		$extension = pathinfo($file, PATHINFO_EXTENSION);
-
-		$is_file = is_file($file);
-
-		if ($_POST)
+		try
 		{
-			// TODO: path checking
-			rename($file, str_replace($filename, $_POST['filename'], $file));
-
-			return;
+			// Try to rename a file
+			rename($current_fname, $new_fname);
+		}
+		catch (Exception $e)
+		{
+			// If something's wrong,
+			// return error message
+			return $this->response->json(array(
+				'errors' => array(
+					'filename' => __('Server error. Message: :message', array(
+						':message' => $e->getMessage()
+						)))));
 		}
 
-		$template = ($is_file) ? 'wysiwyg/filebrowser/file/rename' : 'wysiwyg/filebrowser/directory/rename';
-
-		$content = View::factory($template)
-			->bind('filename', $filename)
-			->bind('extension', $extension)
-			->bind('error', $error);
-
-		$this->response
-			->body($content);
+		return $this->response->ok();
 	}
 
 	public function action_rotate_right()

@@ -6,3 +6,17 @@ body {
 .sidebar-nav {
   padding: 9px 0;
 }
+
+.modal form {
+  margin-bottom: 0
+}
+
+.modal-footer .spinner {
+  width: 18px;
+  height: 18px;
+  background-image: url("images/spinner.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  float: left;
+  display: block
+}

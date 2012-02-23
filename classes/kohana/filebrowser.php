@@ -69,7 +69,9 @@ class Kohana_Filebrowser {
 					{
 						$return[$fileinfo->getFilename()] = array
 						(
-							'size' => self::prepare_size($fileinfo->getSize())
+							'size'      => self::prepare_size($fileinfo->getSize()),
+							'filename'  => pathinfo($fileinfo->getFilename(), PATHINFO_FILENAME),
+							'extension' => pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION)
 						);
 
 						$filename = $directory.$fileinfo->getFilename();
