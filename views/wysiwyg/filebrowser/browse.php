@@ -25,8 +25,7 @@
 	</div>
 	<div class="modal-body">
 		<?php echo Form::open(NULL, array('class' => 'form-horizontal')) ?>
-		<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('Renaming a file will cause the file is unavailable at the old URL-address.') ?>
-		</div>
+		<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('It action will cause the file is unavailable at the old URL-address.') ?></div>
 		<div class="control-group">
 			<?php echo Form::label('filename', __('New file name').':') ?>
 			<div class="input-append">
@@ -50,8 +49,14 @@
 		<h3><?php echo __('Delete file') ?></h3>
 	</div>
 	<div class="modal-body">
-		<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('Renaming a file will cause the file is unavailable at the old URL-address.') ?></div>
+		<div class="alert alert-danger"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('Restore deleted file will be impossible.') ?></div>
+		<div class="alert alert-info"><strong><?php echo __('By the way.') ?></strong><br /><?php echo __('If you are unsure, you can just put this file into a temporary folder. This will help to save the file. All sorts of things.') ?></div>
 		<p><?php echo __('Are you sure you want to delete this file without the possibility of his recovery?') ?></p>
+		<?php echo Form::open() ?>
+			<div class="control-group">
+				<?php echo Form::hidden('agree', 1) ?>
+			</div>
+		<?php echo Form::close() ?>
 	</div>
 	<div class="modal-footer">
 		<?php echo HTML::anchor("#", __('Delete file'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
@@ -67,6 +72,7 @@
 		<div class="container-fluid">
 			<div class="nav-collapse">
 				<ul class="nav pull-right">
+					<li class="divider-vertical"></li>
 					<li><?php echo HTML::anchor('#', '<i class="icon-upload icon-white"></i>&nbsp;'.__('Upload files'), array('id' => 'upload-link')) ?></li>
 					<li class="divider-vertical"></li>
 					<li><?php echo HTML::anchor('#', '<i class="icon-refresh icon-white"></i>&nbsp;'.__('Refresh'), array('id' => 'refresh-link')) ?></li>
@@ -83,6 +89,24 @@
 		<div class="span3">
 			<div class="well sidebar-nav">
 				<!-- Directories tree -->
+				<div id="dirs">
+
+					<div class="directories">
+						<div id="root" class="open">
+							<p>
+								<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
+							</p>
+							<?php foreach ($dirs as $dir => $parents): ?>
+								<div name="<?php echo $parents ?>">
+									<p>
+										<b><span></span></b><a href=""><?php echo $dir ?></a>
+										<em></em>
+									</p>
+								</div>
+							<?php endforeach ?>
+						</div>
+					</div>
+				</div>
 				<!-- /Directories tree -->
 			</div>
 		</div>
@@ -137,46 +161,3 @@
 </script>
 <!-- /Files list -->
 <!-- /jQuery.tmpl templates collection -->
-
-<!--
-<div id="dirs">
-
- 	<div class="directories">
-		<div id="root" class="open">
-			<p>
-				<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
-			</p>
-<?php foreach ($dirs as $dir => $parents): ?>
-								<div name="<?php echo $parents ?>">
-									<p>
-										<b><span></span></b><a href=""><?php echo $dir ?></a>
-										<em></em>
-									</p>
-								</div>
-<?php endforeach ?>
-		</div>
-	</div>
-</div>
-<div id="content">
-  <em id="top_smog"></em>
-	<em id="bottom_smog"></em>
-	<div id="files">
-		<div id="filesRow"></div>
-	</div>
-</div>
-
-<script id="tpl-files" type="text/x-jquery-tmpl">
-	{{each(key, value) files}}
-	<div class="file {{if value.type}}non_{{/if}}picture" title="${key}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
-			 <div class="icon{{if value.type}} ${value.type}{{/if}}">
-			{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
-			<div class="fileOverlay"></div>
-		</div>
-		<p class="fileName"><span>${key}</span><i></i></p>
-		<p class="size">${value.size}</p>
-		{{if value.width && value.height}}<p class="img_size">img. size: ${value.width}×${value.height}</p>{{/if}}
-	</div>
-	{{/each}}
-</script>
-
--->

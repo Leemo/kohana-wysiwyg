@@ -206,6 +206,16 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			->send_file($file);
 	}
 
+	/**
+	 * File rename action.
+	 * There is processing POST array, validation and renaming.
+	 *
+	 * If everything's ok,
+	 * returns JSON `{ok: true}`.
+	 *
+	 * If something's wrong,
+	 * returns JSON `{errors: {filename: <error message>}}`.
+	 */
 	public function action_rename()
 	{
 		$this->auto_render = FALSE;
@@ -217,19 +227,22 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		$_POST = Arr::extract($_POST, array('filename'));
 
-		$validation = Validation::factory($_POST)
-			->rules('filename', array(
-				array('not_empty'),
-				array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')), // Check filename
-				array('fb_file_not_exists', array($path, ':value', $extension))
-				))
-			->label('filename', 'File name');
-
 		$current_fname = APPPATH.$this->_directory.$this->_path;
 		$new_fname     = $path.$_POST['filename'].'.'.$extension;
 
+		// This means that the user doesn't enter anything,
+		// and we just need to pretend that everything's OK
 		if ($current_fname == $new_fname)
 			return $this->response->ok();
+
+		// Then we need to check filename
+		$validation = Validation::factory($_POST)
+			->rules('filename', array(
+				array('not_empty'),
+				array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
+				array('fb_file_not_exists', array($path, ':value', $extension))
+				))
+			->label('filename', 'File name');
 
 		if ( ! $validation->check())
 		{
@@ -238,6 +251,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				));
 		}
 
+		// If everything's ok
 		try
 		{
 			// Try to rename a file
@@ -381,25 +395,38 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			->save($file);
 	}
 
+	/**
+	 * File delete action.
+	 *
+	 * If everything's ok,
+	 * returns JSON `{ok: true}`.
+	 *
+	 * If something's wrong,
+	 * returns JSON `{error: <error message>}`.
+	 */
 	public function action_delete()
 	{
 		$this->auto_render = FALSE;
 
-		$file = APPPATH.$this->_directory.$this->_path;
-
-		$filename = pathinfo($file, PATHINFO_BASENAME);
-
-		if (Arr::get($_GET, 'agree', FALSE))
+		if (Arr::get($_POST, 'agree'))
 		{
-			unlink($file);
+			try
+			{
+				unlink(APPPATH.$this->_directory.$this->_path);
+			}
+			catch(Exception $e)
+			{
+				$message = explode(':', $e->getMessage());
+				$message = trim($message[sizeof($message) - 1]);
 
-			return;
+				return $this->response->json(array(
+					'error' => __('Server error. Message: :message', array(
+						':message' => $message
+						))));
+			}
 		}
 
-		$content = View::factory('wysiwyg/filebrowser/file/delete')
-			->bind('filename', $filename);
-
-		$this->response->body($content);
+		$this->response->ok();
 	}
 
 	/**

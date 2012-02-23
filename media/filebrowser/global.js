@@ -160,7 +160,44 @@
 
       // Delete file
       .bind("Filebrowser:file:delete", function(e) {
-        $("#file-delete-modal").modal();
+        $("#file-delete-modal")
+          .on("hide", function(){
+            $(this).find("a.btn-success").unbind("click");
+            $(this).find("form").unbind("submit");
+          })
+          .on("show", function(){
+            $(this)
+              .find(".control-group")
+              .removeClass("error")
+              .find(".help-inline")
+              .remove();
+          })
+          .modal()
+          .find("a.btn-success")
+          .click(function() {
+            $("#file-delete-modal form").ajaxSubmit({
+              url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
+              dataType: "json",
+              success:  function(data, statusText, xhr, $form) {
+                if(data.ok !== undefined) {
+                  $(document).trigger("Filebrowser:loadFiles", path);
+                  $("#file-delete-modal").modal("hide");
+                } else if (data.error !== undefined) {
+                  $($form)
+                    .find(".help-inline")
+                    .remove();
+
+                  $($form)
+                    .find(".control-group")
+                    .removeClass("error")
+                    .addClass("error")
+                    .append('<span class="help-inline">'+data.error+"</span>");
+                }
+              }
+            });
+
+            return false;
+          });
       })
       .trigger("Filebrowser:loadFiles", "");
     // End global events
