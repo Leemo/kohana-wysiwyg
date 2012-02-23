@@ -21,6 +21,30 @@
       return false;
     });
 
+    // Init folders tree and bind context menu
+    // to delegate for all elements in folders column
+    $("div.directories").folderTree()
+      .contextMenu({
+        //title : "Folder menu",
+        closeType: {
+          zone:   'any',
+          events: 'closeFolderClick,openFolderClick'
+        },
+        targetSelector : "div",
+        list: [
+        {
+          text:      __("Add subfolder"),
+          itemClass: "add",
+          event:     "Filebrowser:dir:add"
+        },
+        {
+          text:      __("Rename"),
+          itemClass: "rename",
+          event:     "Filebrowser:dir:rename"
+        }
+        ]
+      });
+
     // Files context menu lines
     var filesMenu = [
     {
@@ -199,7 +223,33 @@
             return false;
           });
       })
-      .trigger("Filebrowser:loadFiles", "");
+
+      // Add new directory
+      .bind("Filebrowser:dir:add", function(e) {
+        $("#tpl-dir-modal")
+          .tmpl({rename: false})
+          .appendTo("#dir-modal");
+
+        $("#dir-modal")
+          .on("hide", function() {
+            $(this).html("");
+          })
+          .modal();
+      })
+
+      // Change directory name
+      .bind("Filebrowser:dir:rename", function(e) {
+        $("#tpl-dir-modal")
+          .tmpl({rename: true})
+          .appendTo("#dir-modal");
+
+        $("#dir-modal")
+          .on("hide", function() {
+            $(this).html("");
+          })
+          .modal();
+      })
+      .trigger("Filebrowser:loadFiles", path);
     // End global events
 
     // Modal windows

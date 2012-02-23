@@ -53,9 +53,9 @@
 		<div class="alert alert-info"><strong><?php echo __('By the way.') ?></strong><br /><?php echo __('If you are unsure, you can just put this file into a temporary folder. This will help to save the file. All sorts of things.') ?></div>
 		<p><?php echo __('Are you sure you want to delete this file without the possibility of his recovery?') ?></p>
 		<?php echo Form::open() ?>
-			<div class="control-group">
-				<?php echo Form::hidden('agree', 1) ?>
-			</div>
+		<div class="control-group">
+			<?php echo Form::hidden('agree', 1) ?>
+		</div>
 		<?php echo Form::close() ?>
 	</div>
 	<div class="modal-footer">
@@ -64,6 +64,11 @@
 	</div>
 </div>
 <!-- /File delete modal window -->
+
+<!-- Directory add/rename modal window -->
+<div id="dir-modal" class="modal hide fade">
+</div>
+<!-- /Directory add/rename modal window -->
 <!-- /Modal windows -->
 
 <!-- Navigation bar -->
@@ -160,4 +165,28 @@
 	{{/each}}
 </script>
 <!-- /Files list -->
+
+<!-- Dir modal -->
+<script id="tpl-dir-modal" type="text/x-jquery-tmpl">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">&times;</a>
+		<h3>{{if rename}}<?php echo __('Rename directory') ?>{{else}}<?php echo __('Add directory') ?>{{/if}}</h3>
+	</div>
+	<div class="modal-body">
+{{if rename}}
+		<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('It action will cause the file is unavailable at the old URL-address.') ?></div>
+{{/if}}
+		<?php echo Form::open() ?>
+		<div class="control-group">
+			<?php echo Form::label('dirname', '{{if rename}}'.__('New directory name').'{{else}}'.__('Directory name').'{{/if}}:') ?>
+			<?php echo Form::input('dirname') ?>
+		</div>
+		<?php echo Form::close() ?>
+	</div>
+	<div class="modal-footer">
+		<?php echo HTML::anchor("#", '{{if rename}}'.__('Rename directory').'{{else}}'.__('Add directory').'{{/if}}', array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
+		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+	</div>
+</script>
+<!-- /Dir modal -->
 <!-- /jQuery.tmpl templates collection -->
