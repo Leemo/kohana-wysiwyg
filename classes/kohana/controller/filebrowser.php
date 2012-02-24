@@ -207,7 +207,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	}
 
 	/**
-	 * File rename action.
+	 * File or directory rename action.
 	 * There is processing POST array, validation and renaming.
 	 *
 	 * If everything's ok,
@@ -228,7 +228,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$_POST = Arr::extract($_POST, array('filename'));
 
 		$current_fname = APPPATH.$this->_directory.$this->_path;
-		$new_fname     = $path.$_POST['filename'].'.'.$extension;
+		$new_fname     = $path.$_POST['filename']
+			.( ! empty($extension) ? '.'.$extension : '');
+
+		$is_directory = is_dir($current_fname);
 
 		// This means that the user doesn't enter anything,
 		// and we just need to pretend that everything's OK
@@ -242,7 +245,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
 				array('fb_file_not_exists', array($path, ':value', $extension))
 				))
-			->label('filename', 'File name');
+			->label('filename', ($is_directory ? 'Directory name' : 'File name'));
 
 		if ( ! $validation->check())
 		{

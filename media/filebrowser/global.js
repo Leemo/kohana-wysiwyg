@@ -245,7 +245,8 @@
 
       // Change directory name
       .bind("Filebrowser:dir:rename", function(e) {
-        var dirname = $(e.target).find("a").text();
+        var dir     = $(e.target).find("a");
+        var dirname = dir.text();
 
         $("#tpl-dir-modal")
           .tmpl({rename: true})
@@ -263,13 +264,14 @@
           .find("a.btn-success")
           .click(function() {
             $("#dir-modal form").ajaxSubmit({
-              url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
+              url:      'wysiwyg/filebrowser/rename/'+dirname, // TO-DO!!!!!!!!!!
               dataType: "json",
               success:  function(data, statusText, xhr, $form) {
                 if(data.ok !== undefined) {
                   $(document).trigger("Filebrowser:loadDirs", path);
+                  dir.text($("#dir-modal").find("input").val());
                   $("#dir-modal").modal("hide");
-                } else if (data.error !== undefined) {
+                } else if (data.errors !== undefined) {
                   $($form)
                     .find(".help-inline")
                     .remove();
@@ -278,7 +280,7 @@
                     .find(".control-group")
                     .removeClass("error")
                     .addClass("error")
-                    .append('<span class="help-inline">'+data.error+"</span>");
+                    .append('<span class="help-inline">'+data.errors.filename+"</span>");
                 }
               }
             });
@@ -287,10 +289,9 @@
           });
       })
       .trigger("Filebrowser:loadFiles", path);
-    // End global events
+      // End global events
 
     // Modal windows
-
     $(document).ready(function(){
 
       // Initialize all modal windows
@@ -368,20 +369,20 @@
   });
 
   $.extend({
-    recalculateHeight: function(){
+    recalculateHeight: function() {
       $("#dirs>div.directories").height($("body").height()-85+"px");
-      $("#files").height($("body").height()-$("#info_wrap").height() - 45+"px");
+      $("#files").height($("body").height()-$("#info_wrap").height()-45+"px");
     }
   });
 
-  $.fn.draggingOver = function(ev){
+  $.fn.draggingOver = function(ev) {
     var area = this.getD().folderRect;
     return (area.left < ev.clientX && area.right > ev.clientX &&
       area.top < ev.clientY && area.bottom > ev.clientY) ? true : false;
   }
 
-  $.getUrlParam = function(paramName){
-    var reParam = new RegExp('(?:[\?&]|&amp;)' + paramName + '=([^&]+)', 'i') ;
+  $.getUrlParam = function(paramName) {
+    var reParam = new RegExp("(?:[\?&]|&amp;)"+paramName+"=([^&]+)", "i") ;
     var match = window.location.search.match(reParam) ;
     return (match && match.length > 1) ? match[1] : '' ;
   }
