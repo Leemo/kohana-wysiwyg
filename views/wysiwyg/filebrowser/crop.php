@@ -8,24 +8,93 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<?php
 		echo Media::instance('css')
-			->add_file('filebrowser/cropresizer/global.css')
-			->add_file('filebrowser/fancybox.css')
-			->add_file('filebrowser/tipsy.css');
+			->add_file('filebrowser/bootstrap/bootstrap.css')
+			->add_file('filebrowser/bootstrap/bootstrap-responsive.css')
+			->add_file('filebrowser/cropresizer/global.css');
 
 		echo Media::instance('js')
-			->add_file('filebrowser/jquery-1.6.2.js')
-			->add_file('filebrowser/jquery.tipsy.js')
-			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
-			->add_file('filebrowser/jquery.fancybox.js')
+			->add_file('filebrowser/jquery-1.7.1.js')
 			->add_file('filebrowser/jquery.form.js')
+			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
+			->add_file('filebrowser/bootstrap/bootstrap.js')
+			->add_file('filebrowser/bootstrap/bootstrap-modal.js')
+			->add_file('filebrowser/bootstrap/bootstrap-dropdown.js')
 			->add_file('filebrowser/cropresizer/global.js')
-			->add_source('$(function(){$("#img").cropResize({"width":'.$width.', "height":'.$height.'})});');
+			->add_source('$(function(){$("#img").cropResize({"width":'.$width.', "height":'.$height.'}); })');
 		?>
 	</head>
 	<body>
+<!-- Modal windows -->
+		<!-- Save dialog -->
+		<div id="save-modal" class="modal hide fade">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">&times;</a>
+				<h3><?php echo __('Rename file') ?></h3>
+			</div>
+			<div class="modal-body">
+				<?php echo Form::open(NULL, array('class' => 'form-horizontal')) ?>
+				<div class="control-group">
+					<?php echo Form::label('filename', __('File name').':') ?>
+					<div class="input-append">
+						<?php echo Form::input('filename') ?>
+						<span class="add-on" id="file-extension">.jpg</span>
+					</div>
+				</div>
+				<?php echo Form::close() ?>
+			</div>
+			<div class="modal-footer">
+				<?php echo HTML::anchor("#", __('Save file'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
+				<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+			</div>
+		</div>
+		<!-- /Save dialog -->
+
+		<!-- What's now -->
+		<div id="save-modal" class="modal hide fade">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">&times;</a>
+				<h3><?php echo __('What\'s now') ?></h3>
+			</div>
+			<div class="modal-body">
+			</div>
+			<div class="modal-footer">
+				<?php echo HTML::anchor("#", __('Close window'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+				<?php echo HTML::anchor('#', __('Return'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+			</div>
+		</div>
+		<!-- /What's now -->
+<!-- /Modal windows -->
+
+		<!-- Navigation bar -->
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<div class="nav-collapse">
+						<ul class="nav pull-left">
+							<li class="divider-vertical"></li>
+							<li><?php echo HTML::anchor('#', __('Upload files')) ?></li>
+							<li class="divider-vertical"></li>
+							<li><?php echo HTML::anchor('#', '<i class="icon-refresh icon-white"></i>&nbsp;'.__('Refresh'), array('id' => 'refresh-link')) ?></li>
+						</ul>
+						<ul class="nav pull-right">
+							<li class="divider-vertical"></li>
+							<li><?php echo HTML::anchor('#', '<i class="icon-refresh icon-white"></i>&nbsp;'.__('Reset')) ?></li>
+							<li><?php echo HTML::anchor('#', '<i class="icon-ok icon-white"></i>&nbsp;'.__('Save')) ?></li>
+							<li class="divider-vertical"></li>
+							<li><?php echo HTML::anchor('#', '<i class="icon-remove icon-white"></i>&nbsp;'.__('Exit')) ?></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Navigation bar -->
+
+
+
+<!--
 		<div id="crop-form"><?php echo View::factory('wysiwyg/filebrowser/crop/form', Arr::extract(array(), array('image_width', 'image_height', 'crop_width', 'crop_height', 'offset_x', 'offset_y')))->set('filename', pathinfo($path, PATHINFO_FILENAME).'_crop') ?></div>
 		<div id="area">
-			<div id="img" <?php echo HTML::attributes(array('style' => "width: ".$width."px; height: ".$height."px;")); ?>> <!-- server should parse {} position, calculated for put image to center -->
+			<div id="img" <?php echo HTML::attributes(array('style' => "width: ".$width."px; height: ".$height."px;")); ?>>
 				<img alt="" src="<?php echo $file ?>"/>
 				<div id="overlay"></div>
 				<div></div>
@@ -69,5 +138,6 @@
 			<button id="save"><?php echo __('Save') ?></button>
 			<button id="close"><?php echo __('Exit') ?></button>
 		</div>
+-->
 	</body>
 </html>
