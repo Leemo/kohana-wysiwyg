@@ -352,9 +352,14 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	}
 
 	/**
-	 * Directory adding action
+	 * Add new directory action.
+	 * There is processing POST array, validation and renaming.
 	 *
-	 * @return type
+	 * If everything's ok,
+	 * returns JSON `{ok: true}`.
+	 *
+	 * If something's wrong,
+	 * returns JSON `{errors: {filename: <error message>}}`.
 	 */
 	public function action_add()
 	{
@@ -363,14 +368,41 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$directory = APPPATH.$this->_directory.$this->_path;
 
 		if ( ! is_dir($directory))
-		{
-			return $this->response
-				->status(404);
-		}
+			return $this->response->status(404);
 
 		if ($_POST)
 		{
-			return;
+			// Then we need to check filename
+			$validation = Validation::factory($_POST)
+				->rules('filename', array(
+					array('not_empty'),
+					array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
+					array('fb_file_not_exists', array($path, ':value', $extension))
+					))
+				->label('filename', 'Directory name');
+
+			if ( ! $validation->check())
+			{
+				return $this->response->json(array(
+					'errors' => $validation->errors('wysiwyg')
+					));
+			}
+
+			// Ok, let's try to create a new directory
+			try
+			{
+				mkdir($directory.DIRECTORY_SEPARATOR.$_POST['filename']);
+			}
+			catch(Exception $e)
+			{
+				// If something's wrong,
+				// return error message
+				return $this->response->json(array(
+					'errors' => array(
+						'filename' => __('Server error. Message: :message', array(
+							':message' => $e->getMessage()
+							)))));
+			}
 		}
 
 		$this->response->ok();
