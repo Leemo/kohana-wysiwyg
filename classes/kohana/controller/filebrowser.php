@@ -276,12 +276,12 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function action_rotate_right()
 	{
-		$this->_rotate(90);
+		return $this->_rotate(90);
 	}
 
 	public function action_rotate_left()
 	{
-		$this->_rotate(-90);
+		return $this->_rotate(-90);
 	}
 
 	public function action_crop()
@@ -513,11 +513,6 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		// Send thumbnail content
 		$this->response
 			->body($image);
-	}
-
-	protected function _upload()
-	{
-
 	}
 
 	public function after()

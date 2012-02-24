@@ -224,10 +224,27 @@
           });
       })
 
+      // Download file
+      .bind("Filebrowser:file:download", function(e) {
+        location.replace("wysiwyg/filebrowser/download"+$.getSelectedFilePath(e));
+      })
+
       // When we select file
       .bind("Filebrowser:file:select", function(e) {
         window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+$.getSelectedFilePath(e));
         window.close();
+      })
+
+      // Crop and resize image
+      .bind("Filebrowser:image:crop", function(e) {
+        if(window.cropresizerWin)cropresizerWin.close();
+        var imgSize = Function("var c = new Object(); c="+$(e.target).attr("rel")+"; return c")();
+        var openSize = {
+          w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
+          h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
+        };
+        window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
+          "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       })
 
       // Add new directory
