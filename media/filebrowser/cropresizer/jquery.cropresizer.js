@@ -46,19 +46,19 @@
       picture : this.children("img"), //already two images
       // toolbar
       toolbar   : $("#tools"),
-      plus      : $("#plus"),
-      minus     : $("#minus"),
-      reset     : $("#reset"),
-      center    : $("#center"),
-      close     : $("#close"),
-      save      : $("#save"),
-      zoominput : $("#ratio"),
-      drag      : $("#drag"),
-      crop      : $("#crop"),
-      proportion: $("#proportion"),
-      cropsize  : $("#cropsize"),
-      crop_w    : $("#crop_w"),
-      crop_h    : $("#crop_h"),
+      plus      : $("#buton-plus"),
+      minus     : $("#buton-#minus"),
+      reset     : $("#buton-#reset"),
+      center    : $("#buton-#center"),
+      close     : $("#buton-#close"),
+      save      : $("#buton-#save"),
+      zoominput : $("#buton-#ratio"),
+      drag      : $("#buton-#drag"),
+      crop      : $("#buton-#crop"),
+      proportion: $("#buton-#proportion"),
+      cropsize  : $("#buton-#cropsize"),
+      crop_w    : $("#buton-#crop_w"),
+      crop_h    : $("#buton-#crop_h"),
 
       // other
 

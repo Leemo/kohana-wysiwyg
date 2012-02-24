@@ -1,19 +1,33 @@
 (function($){
   $(function(){
 
-    // Modal dialog window settings
-    var fancyboxSettings = {
-      "overlayOpacity":     0.4,
-      "hideOnOverlayClick": false,
-      "showCloseButton":    false,
-      "speedIn":            0,
-      "speedOut":           0,
-      "onComplete":         function(){
-        $(document).trigger("fancybox_ready")
-      }
-    };
+    // Initialize dropdown menus
+    $(".dropdown-toggle").dropdown();
 
-    // Save croped image
+    // Bind global actions
+    $(document).bind({
+      // Save croped file
+      "Filebrowser:crop:save": function(e) {
+        $("#crop-form input[name=image_width]").val(e.resize.w);
+        $("#crop-form input[name=image_height]").val(e.resize.h);
+        $("#crop-form input[name=crop_width]").val(e.selection.right-e.selection.left);
+        $("#crop-form input[name=crop_height]").val(e.selection.bottom-e.selection.top);
+        $("#crop-form input[name=offset_x]").val(e.selection.left);
+        $("#crop-form input[name=offset_y]").val(e.selection.top);
+      },
+
+      // Close cropresize window
+      "Filebrowser:crop:exit": function() {
+        window.close()
+      }
+    });
+
+    // Close cropresizer window on click to "Exit" button
+    $("#button-close").click(function() {
+      $(document).trigger("Filebrowser:crop:exit");
+    });
+
+/*
     $(document).bind("Filebrowser:crop:save", function(e){
       $("#crop-form input[name=image_width]").val(e.resize.w);
       $("#crop-form input[name=image_height]").val(e.resize.h);
@@ -55,5 +69,6 @@
         }
       })
     })
+*/
   })
 })(jQuery);
