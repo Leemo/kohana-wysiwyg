@@ -76,16 +76,6 @@ a:hover {
 
 }
 
-#dirs {
-  width: 220px;
-  float: left;
-  min-height: 100%;
-  position: relative;
-  background: #d3d3d3;
-  box-shadow: 2px 0 4px #888;
-  z-index:5;
-}
-
 #content {
   min-height: 100%;
   position: relative;

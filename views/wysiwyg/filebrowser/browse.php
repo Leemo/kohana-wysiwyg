@@ -72,30 +72,22 @@
 <!-- /Modal windows -->
 
 <!-- Navigation bar -->
-<div class="navbar navbar-fixed-top">
+<div class="navbar">
 	<div class="navbar-inner">
 		<div class="container-fluid">
-			<div class="nav-collapse">
 				<ul class="nav pull-right">
 					<li class="divider-vertical"></li>
 					<li><?php echo HTML::anchor('#', '<i class="icon-upload icon-white"></i>&nbsp;'.__('Upload files'), array('id' => 'upload-link')) ?></li>
 					<li class="divider-vertical"></li>
 					<li><?php echo HTML::anchor('#', '<i class="icon-refresh icon-white"></i>&nbsp;'.__('Refresh'), array('id' => 'refresh-link')) ?></li>
 				</ul>
-			</div>
 		</div>
 	</div>
 </div>
 <!-- /Navigation bar -->
 
-<div class="container-fluid">
-
-	<div class="row-fluid">
-		<div class="span3">
-			<div class="well sidebar-nav">
+			<div id="dirs" class="well sidebar-nav">
 				<!-- Directories tree -->
-				<div id="dirs">
-
 					<div class="directories">
 						<div id="root" class="open">
 							<p>
@@ -104,18 +96,16 @@
 							<?php foreach ($dirs as $dir => $parents): ?>
 								<div name="<?php echo $parents ?>">
 									<p>
-										<b><span></span></b><a href=""><?php echo $dir ?></a>
+										<i class="icon-chevron-right"></i><a href=""><?php echo $dir ?></a>
 										<em></em>
 									</p>
 								</div>
 							<?php endforeach ?>
 						</div>
-					</div>
-				</div>
 				<!-- /Directories tree -->
 			</div>
 		</div>
-		<div class="span9">
+		<div id="files" class="span9">
 			<!-- breadcrumb -->
 			<div id="breadcrumb"></div>
 			<!-- /breadcrumb -->
@@ -124,8 +114,8 @@
 			<div id="files-row"></div>
 			<!-- /Files list -->
 		</div>
-	</div>
-</div>
+
+
 
 <!-- jQuery.tmpl templates collection -->
 <!-- breadcrumb -->

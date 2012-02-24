@@ -1,5 +1,11 @@
 ;
 (function($) {
+  // When filebrowser window resized,
+  // recalculate new window height
+  $(window).bind("load resize", function(){
+    $.recalculateHeight();
+  });
+
   $(function(){
 
     // This global variable gets value
@@ -7,43 +13,35 @@
     // by execute code in directories.js
     path = "";
 
-    // When filebrowser window resized,
-    // recalculate new window height
-    $.recalculateHeight();
-
-    $(window).bind("resize", function(){
-      $.recalculateHeight();
-    });
-
     // Refresh files of current directory
     $("#refresh-link").click(function(){
-      $(document).trigger("Filebrowser:loadFiles", path);
+      $(document).trigger("Filebrowser:loadFiles");
       return false;
     });
 
     // Init folders tree and bind context menu
     // to delegate for all elements in folders column
     $("div.directories").folderTree()
-      .contextMenu({
-        //title : "Folder menu",
-        closeType: {
-          zone:   'any',
-          events: 'closeFolderClick,openFolderClick'
-        },
-        targetSelector : "div",
-        list: [
-        {
-          text:      __("Add subfolder"),
-          itemClass: "add",
-          event:     "Filebrowser:dir:add"
-        },
-        {
-          text:      __("Rename"),
-          itemClass: "rename",
-          event:     "Filebrowser:dir:rename"
-        }
-        ]
-      });
+    .contextMenu({
+      //title : "Folder menu",
+      closeType: {
+        zone:   'any',
+        events: 'closeFolderClick,openFolderClick'
+      },
+      targetSelector : "div",
+      list: [
+      {
+        text:      __("Add subfolder"),
+        itemClass: "add",
+        event:     "Filebrowser:dir:add"
+      },
+      {
+        text:      __("Rename"),
+        itemClass: "rename",
+        event:     "Filebrowser:dir:rename"
+      }
+      ]
+    });
 
     // Files context menu lines
     var filesMenu = [
@@ -92,221 +90,227 @@
     ];
 
     $("#files-row")
-      // Bind context menu to delegate
-      // for picture file elements in files area
-      .contextMenu({
-        targetSelector: "div.picture",
-        list:           filesMenu
-      })
-      // Bind context menu to delegate
-      // for non-picture file elements in files area
-      .contextMenu({
-        targetSelector: "div.non_picture",
-        list:           filesMenu.slice(0,2).concat(filesMenu.slice(8))
-      });
+    // Bind context menu to delegate
+    // for picture file elements in files area
+    .contextMenu({
+      targetSelector: "div.picture",
+      list:           filesMenu
+    })
+    // Bind context menu to delegate
+    // for non-picture file elements in files area
+    .contextMenu({
+      targetSelector: "div.non_picture",
+      list:           filesMenu.slice(0,2).concat(filesMenu.slice(8))
+    });
 
     // Global events
     $(document)
 
-      // Reload files list of current directory
-      .bind("Filebrowser:loadFiles", function(e, path) {
-        $("#files-row").empty();
+    // Reload files list of current directory
+    .bind("Filebrowser:loadFiles", function() {
+      $("#files-row").empty();
 
-        // Reload files list from server
-        $.getJSON(global_config.files_url+path, function(data){
-          $("#tpl-files")
-            .tmpl(data)
-            .appendTo("#files-row");
+      // Reload files list from server
+      $.getJSON(global_config.files_url+path, function(data){
+        $("#tpl-files")
+        .tmpl(data)
+        .appendTo("#files-row");
+      });
+
+      // Update breadcrumb
+      $("#breadcrumb").empty();
+
+      $("#tpl-breadcrumb")
+      .tmpl({
+        parts: path.split("/")
+      })
+      .appendTo("#breadcrumb");
+    })
+
+    // Rename file
+    .bind("Filebrowser:file:rename", function(e) {
+      var filename  = $(e.target).find(".params .filename").text()
+      var extension = $(e.target).find(".params .extension").text()
+
+      $("#file-rename-modal input[name=filename]").val(filename);
+      $("#file-rename-modal #file-extension").text(extension);
+
+      $("#file-rename-modal")
+      .on("show", function () {
+        $(this)
+        .find(".control-group")
+        .removeClass("error")
+        .find(".help-inline")
+        .remove();
+
+        $(this)
+        .find("a.btn-success")
+        .click(function() {
+          $("#file-rename-modal")
+          .find("form")
+          .ajaxSubmit({
+            url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
+            dataType: "json",
+            success:  function(data, statusText, xhr, $form) {
+              $($form)
+              .find(".control-group")
+              .removeClass("error")
+              .find(".help-inline")
+              .remove();
+
+              if(data.ok !== undefined) {
+                $(document).trigger("Filebrowser:loadFiles", path);
+                $("#file-rename-modal").modal("hide");
+              } else if(data.errors !== undefined) {
+                $($form)
+                .find(".control-group")
+                .addClass("error")
+                .append('<span class="help-inline">'+data.errors.filename+"</span>");
+              }
+            }
+          });
+
+          return false;
+        });
+      })
+      .on("hide", function() {
+        $(this)
+        .find("a.btn-success")
+        .unbind("click");
+      })
+      .modal();
+
+    })
+
+    // Delete file
+    .bind("Filebrowser:file:delete", function(e) {
+      $("#file-delete-modal")
+      .on("hide", function(){
+        $(this).find("a.btn-success").unbind("click");
+        $(this).find("form").unbind("submit");
+      })
+      .on("show", function(){
+        $(this)
+        .find(".control-group")
+        .removeClass("error")
+        .find(".help-inline")
+        .remove();
+      })
+      .modal()
+      .find("a.btn-success")
+      .click(function() {
+        $("#file-delete-modal form").ajaxSubmit({
+          url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
+          dataType: "json",
+          success:  function(data, statusText, xhr, $form) {
+            if(data.ok !== undefined) {
+              $(document).trigger("Filebrowser:loadFiles");
+              $("#file-delete-modal").modal("hide");
+            } else if (data.error !== undefined) {
+              $($form)
+              .find(".help-inline")
+              .remove();
+
+              $($form)
+              .find(".control-group")
+              .removeClass("error")
+              .addClass("error")
+              .append('<span class="help-inline">'+data.error+"</span>");
+            }
+          }
         });
 
-        // Update breadcrumb
-        $("#breadcrumb").empty();
+        return false;
+      });
+    })
 
-        $("#tpl-breadcrumb")
-          .tmpl({parts: path})
-          .appendTo("#breadcrumb");
+    // Download file
+    .bind("Filebrowser:file:download", function(e) {
+      location.replace("wysiwyg/filebrowser/download"+$.getSelectedFilePath(e));
+    })
+
+    // When we select file
+    .bind("Filebrowser:file:select", function(e) {
+      window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+$.getSelectedFilePath(e));
+      window.close();
+    })
+
+    // Crop and resize image
+    .bind("Filebrowser:image:crop", function(e) {
+      if(window.cropresizerWin)cropresizerWin.close();
+      var imgSize = Function("var c = new Object(); c="+$(e.target).attr("rel")+"; return c")();
+      var openSize = {
+        w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
+        h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
+      };
+      window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
+        "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
+    })
+
+    // Add new directory
+    .bind("Filebrowser:dir:add", function(e) {
+      $("#tpl-dir-modal")
+      .tmpl({
+        rename: false
       })
+      .appendTo("#dir-modal");
 
-      // Rename file
-      .bind("Filebrowser:file:rename", function(e) {
-        var filename  = $(e.target).find(".params .filename").text()
-        var extension = $(e.target).find(".params .extension").text()
+      $("#dir-modal")
+      .on("hide", function() {
+        $(this).html("");
+      })
+      .modal();
+    })
 
-        $("#file-rename-modal input[name=filename]").val(filename);
-        $("#file-rename-modal #file-extension").text(extension);
+    // Change directory name
+    .bind("Filebrowser:dir:rename", function(e) {
+      var dir     = $(e.target).find("a");
+      var dirname = dir.text();
 
-        $("#file-rename-modal")
-          .on("show", function () {
-            $(this)
-              .find(".control-group")
-              .removeClass("error")
+      $("#tpl-dir-modal")
+      .tmpl({
+        rename: true
+      })
+      .appendTo("#dir-modal");
+
+      $("#dir-modal")
+      .find("input")
+      .val(dirname);
+
+      $("#dir-modal")
+      .on("hide", function() {
+        $(this).html("");
+      })
+      .modal()
+      .find("a.btn-success")
+      .click(function() {
+        $("#dir-modal form").ajaxSubmit({
+          url:      'wysiwyg/filebrowser/rename/'+dirname, // TO-DO!!!!!!!!!!
+          dataType: "json",
+          success:  function(data, statusText, xhr, $form) {
+            if(data.ok !== undefined) {
+              $(document).trigger("Filebrowser:loadDirs");
+              dir.text($("#dir-modal").find("input").val());
+              $("#dir-modal").modal("hide");
+            } else if (data.errors !== undefined) {
+              $($form)
               .find(".help-inline")
               .remove();
 
-            $(this)
-              .find("a.btn-success")
-              .click(function() {
-                $("#file-rename-modal")
-                  .find("form")
-                  .ajaxSubmit({
-                    url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
-                    dataType: "json",
-                    success:  function(data, statusText, xhr, $form) {
-                      $($form)
-                        .find(".control-group")
-                        .removeClass("error")
-                        .find(".help-inline")
-                        .remove();
-
-                      if(data.ok !== undefined) {
-                        $(document).trigger("Filebrowser:loadFiles", path);
-                        $("#file-rename-modal").modal("hide");
-                      } else if(data.errors !== undefined) {
-                        $($form)
-                          .find(".control-group")
-                          .addClass("error")
-                          .append('<span class="help-inline">'+data.errors.filename+"</span>");
-                      }
-                    }
-                  });
-
-                return false;
-              });
-          })
-          .on("hide", function() {
-            $(this)
-              .find("a.btn-success")
-              .unbind("click");
-          })
-          .modal();
-
-      })
-
-      // Delete file
-      .bind("Filebrowser:file:delete", function(e) {
-        $("#file-delete-modal")
-          .on("hide", function(){
-            $(this).find("a.btn-success").unbind("click");
-            $(this).find("form").unbind("submit");
-          })
-          .on("show", function(){
-            $(this)
+              $($form)
               .find(".control-group")
               .removeClass("error")
-              .find(".help-inline")
-              .remove();
-          })
-          .modal()
-          .find("a.btn-success")
-          .click(function() {
-            $("#file-delete-modal form").ajaxSubmit({
-              url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
-              dataType: "json",
-              success:  function(data, statusText, xhr, $form) {
-                if(data.ok !== undefined) {
-                  $(document).trigger("Filebrowser:loadFiles", path);
-                  $("#file-delete-modal").modal("hide");
-                } else if (data.error !== undefined) {
-                  $($form)
-                    .find(".help-inline")
-                    .remove();
+              .addClass("error")
+              .append('<span class="help-inline">'+data.errors.filename+"</span>");
+            }
+          }
+        });
 
-                  $($form)
-                    .find(".control-group")
-                    .removeClass("error")
-                    .addClass("error")
-                    .append('<span class="help-inline">'+data.error+"</span>");
-                }
-              }
-            });
-
-            return false;
-          });
-      })
-
-      // Download file
-      .bind("Filebrowser:file:download", function(e) {
-        location.replace("wysiwyg/filebrowser/download"+$.getSelectedFilePath(e));
-      })
-
-      // When we select file
-      .bind("Filebrowser:file:select", function(e) {
-        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+$.getSelectedFilePath(e));
-        window.close();
-      })
-
-      // Crop and resize image
-      .bind("Filebrowser:image:crop", function(e) {
-        if(window.cropresizerWin)cropresizerWin.close();
-        var imgSize = Function("var c = new Object(); c="+$(e.target).attr("rel")+"; return c")();
-        var openSize = {
-          w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
-          h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
-        };
-        window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
-          "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
-      })
-
-      // Add new directory
-      .bind("Filebrowser:dir:add", function(e) {
-        $("#tpl-dir-modal")
-          .tmpl({rename: false})
-          .appendTo("#dir-modal");
-
-        $("#dir-modal")
-          .on("hide", function() {
-            $(this).html("");
-          })
-          .modal();
-      })
-
-      // Change directory name
-      .bind("Filebrowser:dir:rename", function(e) {
-        var dir     = $(e.target).find("a");
-        var dirname = dir.text();
-
-        $("#tpl-dir-modal")
-          .tmpl({rename: true})
-          .appendTo("#dir-modal");
-
-        $("#dir-modal")
-          .find("input")
-          .val(dirname);
-
-        $("#dir-modal")
-          .on("hide", function() {
-            $(this).html("");
-          })
-          .modal()
-          .find("a.btn-success")
-          .click(function() {
-            $("#dir-modal form").ajaxSubmit({
-              url:      'wysiwyg/filebrowser/rename/'+dirname, // TO-DO!!!!!!!!!!
-              dataType: "json",
-              success:  function(data, statusText, xhr, $form) {
-                if(data.ok !== undefined) {
-                  $(document).trigger("Filebrowser:loadDirs", path);
-                  dir.text($("#dir-modal").find("input").val());
-                  $("#dir-modal").modal("hide");
-                } else if (data.errors !== undefined) {
-                  $($form)
-                    .find(".help-inline")
-                    .remove();
-
-                  $($form)
-                    .find(".control-group")
-                    .removeClass("error")
-                    .addClass("error")
-                    .append('<span class="help-inline">'+data.errors.filename+"</span>");
-                }
-              }
-            });
-
-            return false;
-          });
-      })
-      .trigger("Filebrowser:loadFiles", path);
-      // End global events
+        return false;
+      });
+    })
+    .trigger("Filebrowser:loadFiles");
+    // End global events
 
     // Modal windows
     $(document).ready(function(){
@@ -387,8 +391,9 @@
 
   $.extend({
     recalculateHeight: function() {
-      $("#dirs>div.directories").height($("body").height()-85+"px");
-      $("#files").height($("body").height()-$("#info_wrap").height()-45+"px");
+      var c = $("body").height() - $("div.navbar").height()
+      $("#dirs").height(c - 40 + "px");
+      $("#files-row").height(c - $("#breadcrumb").height()- 65 +"px");
     }
   });
 

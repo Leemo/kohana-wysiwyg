@@ -3,7 +3,6 @@
   $.fn.folderTree = function(opt){
     var opt = $.extend({
       autoTurnTree : true, //auto open tree to folder which files is currently opened in browser
-      filesPathLine : "#header h2", //jQuery selector of outher html element has showing files path
       container : this //don't change!
     }, opt);
 
@@ -41,8 +40,9 @@
       if(isRoot) $(this).children("p").addClass("selected");
 
       var dirData = $(dir).getD();
-      if($(this).getD().hasChild == 0) $("b", this.children("p")).css("visibility", "hidden");
-      $("b", this.children("p")).toggle(
+      if($(this).getD().hasChild == 0) this.children("p").addClass("no_Child");
+      else {
+      $("i", this.children("p")).toggle(
         function(){ // open folder
           $(dir).addClass("process");
           var fullPath = $(dir).buildFullPath();
@@ -51,7 +51,7 @@
             $("div", dir).remove();
             for(var dirName in data.dirs){
               if(!isNaN(data.dirs[dirName])){
-                $('<div name="'+data.dirs[dirName]+'"><p><b><span></span></b><a href="">'+dirName+'</a><em></em></p></div>').appendTo(dir).processFolder();
+                $('<div name="'+data.dirs[dirName]+'"><p><i class="icon-chevron-right"></i><a href="">'+dirName+'</a><em></em></p></div>').appendTo(dir).processFolder();
               }
             }
 
@@ -66,7 +66,7 @@
                     }
                     else {
                       $(this).getD().isParentOfSelected = true;
-                      if(opt.autoTurnTree) $("b", this).click();
+                      if(opt.autoTurnTree) $("i", this).click();
                     }
                   }
                 });
@@ -91,15 +91,17 @@
           $(document).trigger("closeFolderClick");
         }
         );
-      // end add handlers to click on "open/close" triangle
+      }
+      // end add handlers to click on "open/close" icon
 
       $("a", this.children("p")).click(function(){ // click for files load
         path = $(dir).buildFullPath();
+        console.log(path);
         parentsArray = path.split("/");
         parentsArray.shift();
         parentsArray.pop();
         $.getJSON('/'+global_config.files_url+((!isRoot)? path : ''), function(data){
-          $("#filesRow").empty().append($("#tpl-files").tmpl(data));
+           $("#files-row").empty().append($("#tpl-files").tmpl(data));
           $("p", opt.container).removeClass("selected");
           $(opt.container).find("div").each(function(){
             $(this).getD().isParentOfSelected = false;
@@ -108,7 +110,6 @@
           dirP.addClass("selected");
           dirData.filesLoaded = true;
           $(dir).addSelectMarkToParent();
-          $(opt.filesPathLine).text(path);
         });
         return false;
       });
@@ -152,7 +153,6 @@
       this.find("div").each(function(){
         if($(this).getD().filesLoaded){
           path = $(this).buildFullPath();
-          $("#header h2").text(path); // change to opt.filesPathLine remove to inner method
         }
       });
     }
