@@ -72,7 +72,7 @@
 <!-- /Modal windows -->
 
 <!-- Navigation bar -->
-<div class="navbar">
+<div id="header" class="navbar">
 	<div class="navbar-inner">
 		<div class="container-fluid">
 				<ul class="nav pull-right">
@@ -89,8 +89,9 @@
 			<div id="dirs" class="well sidebar-nav">
 				<!-- Directories tree -->
 					<div class="directories">
-						<div id="root" class="open">
+						<div id="root">
 							<p>
+								<i class="icon-home"></i>
 								<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
 							</p>
 							<?php foreach ($dirs as $dir => $parents): ?>
@@ -125,10 +126,10 @@
 			<?php echo Kohana::$config->load('filebrowser.uploads_directory') ?>&nbsp;
 			<span class="divider">/</span>
 		</li>
-		{{each parts}}
+		{{each(key, value) parts}}
 		<li>
-			${$value}&nbsp;
-			<span class="divider">/</span>
+			${value}&nbsp;
+			{{if value != ""}}<span class="divider">/</span>{{/if}}
 		</li>
 		{{/each}}
 	</ul>

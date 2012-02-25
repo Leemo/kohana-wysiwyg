@@ -23,6 +23,10 @@ html {
   margin-bottom: 0
 }
 
+a {
+  outline: none;
+}
+
 .modal-footer .spinner {
   width: 18px;
   height: 18px;
@@ -43,4 +47,8 @@ html {
   height: 130px;
   padding: 5px;
   overflow: hidden;
+}
+
+#header>div{
+  border-radius: 0;
 }

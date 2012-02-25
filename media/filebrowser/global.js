@@ -112,19 +112,10 @@
 
       // Reload files list from server
       $.getJSON(global_config.files_url+path, function(data){
-        $("#tpl-files")
-        .tmpl(data)
-        .appendTo("#files-row");
+        $("#files-row").empty().append($("#tpl-files").tmpl(data));
+        $("#breadcrumb").breadcrumbUpdate();
       });
 
-      // Update breadcrumb
-      $("#breadcrumb").empty();
-
-      $("#tpl-breadcrumb")
-      .tmpl({
-        parts: path.split("/")
-      })
-      .appendTo("#breadcrumb");
     })
 
     // Rename file
@@ -394,6 +385,16 @@
       var c = $("body").height() - $("div.navbar").height()
       $("#dirs").height(c - 40 + "px");
       $("#files-row").height(c - $("#breadcrumb").height()- 65 +"px");
+    },
+
+    getUrlParam : function(paramName) {
+      var reParam = new RegExp("(?:[\?&]|&amp;)"+paramName+"=([^&]+)", "i") ;
+      var match = window.location.search.match(reParam) ;
+      return (match && match.length > 1) ? match[1] : '' ;
+    },
+
+    getSelectedFilePath : function(contextMenuEvent) {
+      return path+"/"+$(contextMenuEvent.target).find("p.name span").text()
     }
   });
 
@@ -403,13 +404,10 @@
       area.top < ev.clientY && area.bottom > ev.clientY) ? true : false;
   }
 
-  $.getUrlParam = function(paramName) {
-    var reParam = new RegExp("(?:[\?&]|&amp;)"+paramName+"=([^&]+)", "i") ;
-    var match = window.location.search.match(reParam) ;
-    return (match && match.length > 1) ? match[1] : '' ;
-  }
-
-  $.getSelectedFilePath = function(contextMenuEvent) {
-    return path+"/"+$(contextMenuEvent.target).find("p.name span").text()
-  }
+  $.fn.breadcrumbUpdate = function(){
+    this.empty().append($("#tpl-breadcrumb")
+      .tmpl({
+        parts: path.replace(/^\/(.*)\/$/, '$1').split("/")
+      }));
+  };
 })(jQuery);

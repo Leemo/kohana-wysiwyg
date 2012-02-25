@@ -42,74 +42,75 @@
       var dirData = $(dir).getD();
       if($(this).getD().hasChild == 0) this.children("p").addClass("no_Child");
       else {
-      $("i", this.children("p")).toggle(
-        function(){ // open folder
-          $(dir).addClass("process");
-          var fullPath = $(dir).buildFullPath();
-          $.getJSON(global_config.dirs_url + fullPath, function(data){
-            $(dir).removeClass("process").addClass("open").getD().open = true;
-            $("div", dir).remove();
-            for(var dirName in data.dirs){
-              if(!isNaN(data.dirs[dirName])){
-                $('<div name="'+data.dirs[dirName]+'"><p><i class="icon-chevron-right"></i><a href="">'+dirName+'</a><em></em></p></div>').appendTo(dir).processFolder();
+        $("i", this.children("p")).toggle(
+          function(){ // open folder
+            $(dir).addClass("process");
+            var fullPath = $(dir).buildFullPath();
+            $.getJSON(global_config.dirs_url + fullPath, function(data){
+              $(dir).removeClass("process").addClass("open").getD().open = true;
+              $("div", dir).remove();
+              for(var dirName in data.dirs){
+                if(!isNaN(data.dirs[dirName])){
+                  $('<div name="'+data.dirs[dirName]+'"><p><i class="icon-chevron-right"></i><a href="">'+dirName+'</a><em></em></p></div>').appendTo(dir).processFolder();
+                }
               }
-            }
 
-            if(path != "") { // auto turn tree to selected folder
-              var level = $.inArray(dirData.name, parentsArray);
-              if(level != -1 && dirData.isParentOfSelected) {
-                $(dir).children("div").each(function(){
-                  if($(this).getD().name == parentsArray[level+1]){
-                    $(this).children("p").addClass("selected");
-                    if(level+2 == parentsArray.length) {
-                      $(this).getD().filesLoaded = true;
+              if(path != "") { // auto turn tree to selected folder
+                var level = $.inArray(dirData.name, parentsArray);
+                if(level != -1 && dirData.isParentOfSelected) {
+                  $(dir).children("div").each(function(){
+                    if($(this).getD().name == parentsArray[level+1]){
+                      $(this).children("p").addClass("selected").children("i").addClass("icon-white");
+                      if(level+2 == parentsArray.length) {
+                        $(this).getD().filesLoaded = true;
+                      }
+                      else {
+                        $(this).getD().isParentOfSelected = true;
+                        if(opt.autoTurnTree) $("i", this).click();
+                      }
                     }
-                    else {
-                      $(this).getD().isParentOfSelected = true;
-                      if(opt.autoTurnTree) $("i", this).click();
-                    }
-                  }
-                });
+                  });
+                }
               }
-            }
-          });
+            });
 
-          if(dirP.hasClass("selected") && !dirData.filesLoaded){
-            dirP.removeClass("selected");
+            if(dirP.hasClass("selected") && !dirData.filesLoaded){
+              dirP.removeClass("selected").children("i").removeClass("icon-white");
+            }
+            $(document).trigger("openFolderClick", fullPath);
+          },
+          function(){ // close folder
+            dirData.isParentOfSelected = dirData.open = false;
+            $(dir).removeClass().find("div").each(function(){
+              if($(this).getD().filesLoaded) {
+                dirData.isParentOfSelected = true;
+                dirP.addClass("selected").children("i").addClass("icon-white");
+              }
+              $(this).hide();
+            });
+            $(document).trigger("closeFolderClick");
           }
-          $(document).trigger("openFolderClick", fullPath);
-        },
-        function(){ // close folder
-          dirData.isParentOfSelected = dirData.open = false;
-          $(dir).removeClass().find("div").each(function(){
-            if($(this).getD().filesLoaded) {
-              dirData.isParentOfSelected = true;
-              dirP.addClass("selected");
-            }
-            $(this).hide();
-          });
-          $(document).trigger("closeFolderClick");
-        }
-        );
+          );
       }
       // end add handlers to click on "open/close" icon
 
       $("a", this.children("p")).click(function(){ // click for files load
         path = $(dir).buildFullPath();
-        console.log(path);
         parentsArray = path.split("/");
         parentsArray.shift();
         parentsArray.pop();
         $.getJSON('/'+global_config.files_url+((!isRoot)? path : ''), function(data){
-           $("#files-row").empty().append($("#tpl-files").tmpl(data));
-          $("p", opt.container).removeClass("selected");
+          $("#files-row").empty().append($("#tpl-files").tmpl(data));
+          $("p", opt.container).removeClass("selected").children("i").removeClass("icon-white");
           $(opt.container).find("div").each(function(){
             $(this).getD().isParentOfSelected = false;
             $(this).getD().filesLoaded = false;
           });
-          dirP.addClass("selected");
+          dirP.addClass("selected").children("i").addClass("icon-white");
+
           dirData.filesLoaded = true;
           $(dir).addSelectMarkToParent();
+          $("#breadcrumb").breadcrumbUpdate(); // method defined in global.js
         });
         return false;
       });
@@ -123,7 +124,6 @@
   };
 
   // public methods of folders tree
-
 
   $.fn.buildFullPath = function(){
     var pathTxt = '';
@@ -157,8 +157,5 @@
       });
     }
   }
-
-
-
 
 })(jQuery);
