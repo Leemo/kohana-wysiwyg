@@ -29,15 +29,19 @@
         events: 'closeFolderClick,openFolderClick'
       },
       targetSelector : "div",
+      containerClass : "contextMenu well",
+      listClass: "nav nav-list",
       list: [
       {
         text:      __("Add subfolder"),
         itemClass: "add",
+        bootstrapiconClass : "icon-folder-close",
         event:     "Filebrowser:dir:add"
       },
       {
         text:      __("Rename"),
         itemClass: "rename",
+        bootstrapiconClass : "icon-pencil",
         event:     "Filebrowser:dir:rename"
       }
       ]
@@ -48,43 +52,51 @@
     {
       text:      __("Select"),
       itemClass: "select",
+      bootstrapiconClass : "icon-ok",
       event:     "Filebrowser:file:select"
     },
     {
       text:      __("Download"),
       itemClass: "download",
+      bootstrapiconClass : "icon-download",
       event:     "Filebrowser:file:download"
     },
     "break",
     {
       text:      __("Resize"),
       itemClass: "resize",
+      bootstrapiconClass : "icon-picture",
       event:     "Filebrowser:image:resize"
     },
     {
       text:      __("Crop"),
       itemClass: "crop",
+      bootstrapiconClass : "icon-edit",
       event:     "Filebrowser:image:crop"
     },
     {
       text: __("Rotate right"),
       itemClass: "rotate-right",
-      event: "filebrowser_image_rotate_right"
+      bootstrapiconClass : "icon-arrow-right",
+      event: "Filebrowser:image:rotate:right"
     },
     {
       text: __("Rotate left"),
       itemClass: "rotate-left",
-      event: "filebrowser_image_rotate_left"
+      bootstrapiconClass : "icon-arrow-left",
+      event: "Filebrowser:image:rotate:left"
     },
     "break",
     {
       text: __("Rename"),
       itemClass: "rename",
+      bootstrapiconClass : "icon-pencil",
       event: "Filebrowser:file:rename"
     },
     {
       text: __("Delete"),
       itemClass: "delete",
+      bootstrapiconClass : "icon-trash",
       event: "Filebrowser:file:delete"
     }
     ];
@@ -93,68 +105,202 @@
     // Bind context menu to delegate
     // for picture file elements in files area
     .contextMenu({
+      containerClass : "contextMenu well",
+      listClass: "nav nav-list",
       targetSelector: "div.picture",
       list:           filesMenu
     })
     // Bind context menu to delegate
     // for non-picture file elements in files area
     .contextMenu({
+      containerClass : "contextMenu well",
+      listClass: "nav nav-list",
       targetSelector: "div.non_picture",
-      list:           filesMenu.slice(0,2).concat(filesMenu.slice(8))
+      list: filesMenu.slice(0,2).concat(filesMenu.slice(8))
     });
 
     // Global events
-    $(document)
+    $(document).bind({
+      // Reload files list of current directory
+      "Filebrowser:loadFiles" : function() {
+        $("#files-row").empty();
+        // Reload files list from server
+        $.getJSON(global_config.files_url+path, function(data){
+          $("#files-row").empty().append($("#tpl-files").tmpl(data));
+          $("#breadcrumb").breadcrumbUpdate();
+        });
+      },
 
-    // Reload files list of current directory
-    .bind("Filebrowser:loadFiles", function() {
-      $("#files-row").empty();
+      // Rename file
+      "Filebrowser:file:rename" : function(e) {
+        var filename  = $(e.target).find(".params .filename").text()
+        var extension = $(e.target).find(".params .extension").text()
 
-      // Reload files list from server
-      $.getJSON(global_config.files_url+path, function(data){
-        $("#files-row").empty().append($("#tpl-files").tmpl(data));
-        $("#breadcrumb").breadcrumbUpdate();
-      });
+        $("#file-rename-modal input[name=filename]").val(filename);
+        $("#file-rename-modal #file-extension").text(extension);
 
-    })
+        $("#file-rename-modal")
+        .on("show", function () {
+          $(this)
+          .find(".control-group")
+          .removeClass("error")
+          .find(".help-inline")
+          .remove();
 
-    // Rename file
-    .bind("Filebrowser:file:rename", function(e) {
-      var filename  = $(e.target).find(".params .filename").text()
-      var extension = $(e.target).find(".params .extension").text()
+          $(this)
+          .find("a.btn-success")
+          .click(function() {
+            $("#file-rename-modal")
+            .find("form")
+            .ajaxSubmit({
+              url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
+              dataType: "json",
+              success:  function(data, statusText, xhr, $form) {
+                $($form).find(".control-group").removeClass("error").find(".help-inline").remove();
 
-      $("#file-rename-modal input[name=filename]").val(filename);
-      $("#file-rename-modal #file-extension").text(extension);
+                if(data.ok !== undefined) {
+                  $(document).trigger("Filebrowser:loadFiles", path);
+                  $("#file-rename-modal").modal("hide");
+                } else if(data.errors !== undefined) {
+                  $($form)
+                  .find(".control-group")
+                  .addClass("error")
+                  .append('<span class="help-inline">'+data.errors.filename+"</span>");
+                }
+              }
+            });
 
-      $("#file-rename-modal")
-      .on("show", function () {
-        $(this)
-        .find(".control-group")
-        .removeClass("error")
-        .find(".help-inline")
-        .remove();
+            return false;
+          });
+        })
+        .on("hide", function() {
+          $(this).find("a.btn-success").unbind("click");
+        }).modal();
+      },
 
-        $(this)
+      // Delete file
+      "Filebrowser:file:delete" : function(e) {
+        $("#file-delete-modal")
+        .on("hide", function(){
+          $(this).find("a.btn-success").unbind("click");
+          $(this).find("form").unbind("submit");
+        })
+        .on("show", function(){
+          $(this)
+          .find(".control-group")
+          .removeClass("error")
+          .find(".help-inline")
+          .remove();
+        })
+        .modal()
         .find("a.btn-success")
         .click(function() {
-          $("#file-rename-modal")
-          .find("form")
-          .ajaxSubmit({
-            url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
+          $("#file-delete-modal form").ajaxSubmit({
+            url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
-              $($form)
-              .find(".control-group")
-              .removeClass("error")
-              .find(".help-inline")
-              .remove();
-
               if(data.ok !== undefined) {
-                $(document).trigger("Filebrowser:loadFiles", path);
-                $("#file-rename-modal").modal("hide");
-              } else if(data.errors !== undefined) {
+                $(document).trigger("Filebrowser:loadFiles");
+                $("#file-delete-modal").modal("hide");
+              } else if (data.error !== undefined) {
+                $($form)
+                .find(".help-inline")
+                .remove();
+
                 $($form)
                 .find(".control-group")
+                .removeClass("error")
+                .addClass("error")
+                .append('<span class="help-inline">'+data.error+"</span>");
+              }
+            }
+          });
+
+          return false;
+        });
+      },
+
+      // Download file
+      "Filebrowser:file:download" : function(e) {
+        location.replace("wysiwyg/filebrowser/download"+$.getSelectedFilePath(e));
+      },
+
+      // When we select file
+      "Filebrowser:file:select" : function(e) {
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+$.getSelectedFilePath(e));
+        window.close();
+      },
+
+      // Crop and resize image
+      "Filebrowser:image:crop" : function(e) {
+        if(window.cropresizerWin)cropresizerWin.close();
+        var imgSize = Function("var c = new Object(); c="+$(e.target).attr("rel")+"; return c")();
+        var openSize = {
+          w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
+          h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
+        };
+        window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
+          "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
+      },
+      // Rotate image
+      "Filebrowser:image:rotate:left" : function(e){
+        $.get('wysiwyg/filebrowser/rotate_left'+$.getSelectedFilePath(e), function(data){
+          $(document).trigger('Filebrowser:loadFiles')
+        });
+      },
+
+      "Filebrowser:image:rotate:right" : function(e){
+        $.get('wysiwyg/filebrowser/rotate_right'+$.getSelectedFilePath(e), function(data){
+          $(document).trigger('Filebrowser:loadFiles')
+        });
+      },
+
+      // Add new directory
+      "Filebrowser:dir:add" : function(e) {
+        $("#tpl-dir-modal")
+        .tmpl({
+          rename: false
+        })
+        .appendTo("#dir-modal");
+
+        $("#dir-modal")
+        .on("hide", function() {
+          $(this).html("");
+        })
+        .modal();
+      },
+
+      // Change directory name
+      "Filebrowser:dir:rename" : function(e) {
+        var dir     = $(e.target).find("a");
+        var dirname = dir.text();
+
+        $("#tpl-dir-modal").tmpl({
+          rename: true
+        }).appendTo("#dir-modal");
+
+        $("#dir-modal").find("input").val(dirname);
+
+        $("#dir-modal").on("hide", function() {
+          $(this).html("");
+        })
+        .modal().find("a.btn-success").click(function() {
+          $("#dir-modal form").ajaxSubmit({
+            url:      'wysiwyg/filebrowser/rename/'+dirname, // TO-DO!!!!!!!!!!
+            dataType: "json",
+            success:  function(data, statusText, xhr, $form) {
+              if(data.ok !== undefined) {
+                $(document).trigger("Filebrowser:loadDirs");
+                dir.text($("#dir-modal").find("input").val());
+                $("#dir-modal").modal("hide");
+              } else if (data.errors !== undefined) {
+                $($form)
+                .find(".help-inline")
+                .remove();
+
+                $($form)
+                .find(".control-group")
+                .removeClass("error")
                 .addClass("error")
                 .append('<span class="help-inline">'+data.errors.filename+"</span>");
               }
@@ -163,142 +309,7 @@
 
           return false;
         });
-      })
-      .on("hide", function() {
-        $(this)
-        .find("a.btn-success")
-        .unbind("click");
-      })
-      .modal();
-
-    })
-
-    // Delete file
-    .bind("Filebrowser:file:delete", function(e) {
-      $("#file-delete-modal")
-      .on("hide", function(){
-        $(this).find("a.btn-success").unbind("click");
-        $(this).find("form").unbind("submit");
-      })
-      .on("show", function(){
-        $(this)
-        .find(".control-group")
-        .removeClass("error")
-        .find(".help-inline")
-        .remove();
-      })
-      .modal()
-      .find("a.btn-success")
-      .click(function() {
-        $("#file-delete-modal form").ajaxSubmit({
-          url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
-          dataType: "json",
-          success:  function(data, statusText, xhr, $form) {
-            if(data.ok !== undefined) {
-              $(document).trigger("Filebrowser:loadFiles");
-              $("#file-delete-modal").modal("hide");
-            } else if (data.error !== undefined) {
-              $($form)
-              .find(".help-inline")
-              .remove();
-
-              $($form)
-              .find(".control-group")
-              .removeClass("error")
-              .addClass("error")
-              .append('<span class="help-inline">'+data.error+"</span>");
-            }
-          }
-        });
-
-        return false;
-      });
-    })
-
-    // Download file
-    .bind("Filebrowser:file:download", function(e) {
-      location.replace("wysiwyg/filebrowser/download"+$.getSelectedFilePath(e));
-    })
-
-    // When we select file
-    .bind("Filebrowser:file:select", function(e) {
-      window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+$.getSelectedFilePath(e));
-      window.close();
-    })
-
-    // Crop and resize image
-    .bind("Filebrowser:image:crop", function(e) {
-      if(window.cropresizerWin)cropresizerWin.close();
-      var imgSize = Function("var c = new Object(); c="+$(e.target).attr("rel")+"; return c")();
-      var openSize = {
-        w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
-        h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
-      };
-      window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
-        "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
-    })
-
-    // Add new directory
-    .bind("Filebrowser:dir:add", function(e) {
-      $("#tpl-dir-modal")
-      .tmpl({
-        rename: false
-      })
-      .appendTo("#dir-modal");
-
-      $("#dir-modal")
-      .on("hide", function() {
-        $(this).html("");
-      })
-      .modal();
-    })
-
-    // Change directory name
-    .bind("Filebrowser:dir:rename", function(e) {
-      var dir     = $(e.target).find("a");
-      var dirname = dir.text();
-
-      $("#tpl-dir-modal")
-      .tmpl({
-        rename: true
-      })
-      .appendTo("#dir-modal");
-
-      $("#dir-modal")
-      .find("input")
-      .val(dirname);
-
-      $("#dir-modal")
-      .on("hide", function() {
-        $(this).html("");
-      })
-      .modal()
-      .find("a.btn-success")
-      .click(function() {
-        $("#dir-modal form").ajaxSubmit({
-          url:      'wysiwyg/filebrowser/rename/'+dirname, // TO-DO!!!!!!!!!!
-          dataType: "json",
-          success:  function(data, statusText, xhr, $form) {
-            if(data.ok !== undefined) {
-              $(document).trigger("Filebrowser:loadDirs");
-              dir.text($("#dir-modal").find("input").val());
-              $("#dir-modal").modal("hide");
-            } else if (data.errors !== undefined) {
-              $($form)
-              .find(".help-inline")
-              .remove();
-
-              $($form)
-              .find(".control-group")
-              .removeClass("error")
-              .addClass("error")
-              .append('<span class="help-inline">'+data.errors.filename+"</span>");
-            }
-          }
-        });
-
-        return false;
-      });
+      }
     })
     .trigger("Filebrowser:loadFiles");
     // End global events
@@ -312,6 +323,7 @@
       });
 
       // Upload dialog
+      // !!!ACHTUNG MOOTOOLS SYNTAX
       var up = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
         path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
         url:         '/wysiwyg/filebrowser/upload'+path,
@@ -363,7 +375,7 @@
           this.start();
         }
 
-      });
+      }); // end of uploader mootoolls syntax
 
       // When the download dialog window closes,
       // clear the upload history

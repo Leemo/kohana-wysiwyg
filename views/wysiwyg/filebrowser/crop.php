@@ -9,14 +9,12 @@
 		<?php
 		echo Media::instance('css')
 			->add_file('filebrowser/bootstrap/bootstrap.css')
-			->add_file('filebrowser/bootstrap/bootstrap-responsive.css')
 			->add_file('filebrowser/cropresizer/global.css');
 
 		echo Media::instance('js')
 			->add_file('filebrowser/jquery-1.7.1.js')
 			->add_file('filebrowser/jquery.form.js')
 			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
-			->add_file('filebrowser/bootstrap/bootstrap.js')
 			->add_file('filebrowser/bootstrap/bootstrap-modal.js')
 			->add_file('filebrowser/bootstrap/bootstrap-dropdown.js')
 			->add_file('filebrowser/cropresizer/global.js')
@@ -67,12 +65,11 @@
 		<!-- /Modal windows -->
 
 		<!-- Navigation bar -->
-		<div class="navbar navbar-fixed-top" id="tools">
+		<div class="navbar" id="tools">
 			<div class="navbar-inner">
 				<div class="container-fluid">
-					<div class="nav-collapse">
 						<ul class="nav pull-left">
-							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Drag')) ?></li>
+							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Drag'), array('id' => 'button-drag', 'class' => 'drag', 'rel' => '&nbsp;'.__('Crop'))) ?></li>
 							<li class="divider-vertical"></li>
 <!-- Temporary unavailable -->
 <!--
@@ -88,12 +85,12 @@
 							</li>
 							<li class="divider-vertical"></li>
 -->
-							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Reset', array('id' => 'button-reset'))) ?></li>
+							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Reset'), array('id' => 'button-reset')) ?></li>
 							<li class="divider-vertical"></li>
 							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Center'), array('id' => 'button-center')) ?></li>
 							<li class="divider-vertical"></li>
 							<li><?php echo HTML::anchor('#', '<i class="icon-minus icon-white"></i>', array('id' => 'button-minus')) ?></li>
-							<li><?php echo Form::input('zoom', NULL, array('id' => 'input-ratio')) ?></li>
+							<li><?php echo Form::input('zoom', '100', array('id' => 'input-ratio')) ?></li>
 							<li><?php echo HTML::anchor('#', '<i class="icon-plus icon-white"></i>', array('id' => 'button-plus')) ?></li>
 							<li class="divider-vertical"></li>
 						</ul>
@@ -103,7 +100,6 @@
 							<li class="divider-vertical"></li>
 							<li><?php echo HTML::anchor('#', '<i class="icon-remove icon-white"></i>&nbsp;'.__('Exit'), array('id' => 'button-close')) ?></li>
 						</ul>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -125,12 +121,10 @@
 					<b id="lb"><em></em></b>
 					<b id="lm"><em></em></b>
 					<div id="cropsize">
-						<em><ins></ins></em>
-						<div>
 							<input type="text" id="crop_w" name="w" value="" size="4" />
 							<i>×</i>
 							<input type="text" id="crop_h" name="h" value="" size="4"/>
-						</div>
+							<i id="setSize" class="icon-play icon-white"></i>
 					</div>
 				</div>
 			</div>

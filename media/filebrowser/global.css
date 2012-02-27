@@ -37,6 +37,10 @@ a {
   display: block
 }
 
+#files {
+  margin: 0 20px 0 260px ;
+}
+
 #files-row {
   overflow: auto;
 }
@@ -52,3 +56,12 @@ a {
 #header>div{
   border-radius: 0;
 }
+
+icon-ok
+icon-download-alt
+icon-picture
+icon-edit
+icon-arrow-right
+icon-arrow-left
+icon-pencil
+icon-trash

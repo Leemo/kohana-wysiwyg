@@ -106,7 +106,7 @@
 				<!-- /Directories tree -->
 			</div>
 		</div>
-		<div id="files" class="span9">
+		<div id="files">
 			<!-- breadcrumb -->
 			<div id="breadcrumb"></div>
 			<!-- /breadcrumb -->
