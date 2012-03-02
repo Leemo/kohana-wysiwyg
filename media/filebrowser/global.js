@@ -139,62 +139,47 @@
         $("#file-rename-modal input[name=filename]").val(filename);
         $("#file-rename-modal #file-extension").text(extension);
 
-        $("#file-rename-modal")
-        .on("show", function () {
-          $(this)
-          .find(".control-group")
-          .removeClass("error")
-          .find(".help-inline")
-          .remove();
+        $("#file-rename-modal").on({
+          "show" : function () {
+            $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
 
-          $(this)
-          .find("a.btn-success")
-          .click(function() {
-            $("#file-rename-modal")
-            .find("form")
-            .ajaxSubmit({
-              url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
-              dataType: "json",
-              success:  function(data, statusText, xhr, $form) {
-                $($form).find(".control-group").removeClass("error").find(".help-inline").remove();
-
-                if(data.ok !== undefined) {
-                  $(document).trigger("Filebrowser:loadFiles", path);
-                  $("#file-rename-modal").modal("hide");
-                } else if(data.errors !== undefined) {
-                  $($form)
-                  .find(".control-group")
-                  .addClass("error")
-                  .append('<span class="help-inline">'+data.errors.filename+"</span>");
+            $(this).find("a.btn-success").click(function() {
+              $("#file-rename-modal form").ajaxSubmit({
+                url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
+                dataType: "json",
+                success:  function(data, statusText, xhr, $form) {
+                  $form.find("div.control-group").removeClass("error").find(".help-inline").remove();
+                  if(data.ok !== undefined) {
+                    $(document).trigger("Filebrowser:loadFiles");
+                    $("#file-rename-modal").modal("hide");
+                  }
+                  else if(data.errors !== undefined) {
+                   $form.find(".control-group").addClass("error")
+                    .append('<span class="help-inline">'+data.errors.filename+"</span>");
+                  }
                 }
-              }
-            });
+              });
 
-            return false;
-          });
-        })
-        .on("hide", function() {
-          $(this).find("a.btn-success").unbind("click");
+              return false;
+            });
+          },
+          "hide" : function() {
+            $(this).find("a.btn-success").unbind("click");
+          }
         }).modal();
       },
 
       // Delete file
       "Filebrowser:file:delete" : function(e) {
-        $("#file-delete-modal")
-        .on("hide", function(){
-          $(this).find("a.btn-success").unbind("click");
-          $(this).find("form").unbind("submit");
-        })
-        .on("show", function(){
-          $(this)
-          .find(".control-group")
-          .removeClass("error")
-          .find(".help-inline")
-          .remove();
-        })
-        .modal()
-        .find("a.btn-success")
-        .click(function() {
+        $("#file-delete-modal").on({
+        "hide" : function(){
+          $(this).find("a.btn-success").unbind("click").end().find("form").unbind("submit");
+        },
+        "show" : function(){
+          $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
+        }
+        }).modal()
+        .find("a.btn-success").click(function() {
           $("#file-delete-modal form").ajaxSubmit({
             url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
             dataType: "json",
@@ -203,14 +188,9 @@
                 $(document).trigger("Filebrowser:loadFiles");
                 $("#file-delete-modal").modal("hide");
               } else if (data.error !== undefined) {
-                $($form)
-                .find(".help-inline")
-                .remove();
+                $form.find(".help-inline").remove();
 
-                $($form)
-                .find(".control-group")
-                .removeClass("error")
-                .addClass("error")
+                $form.find("div.control-group").addClass("error")
                 .append('<span class="help-inline">'+data.error+"</span>");
               }
             }
@@ -257,17 +237,13 @@
 
       // Add new directory
       "Filebrowser:dir:add" : function(e) {
-        $("#tpl-dir-modal")
-        .tmpl({
+        $("#tpl-dir-modal").tmpl({
           rename: false
-        })
-        .appendTo("#dir-modal");
+        }).appendTo("#dir-modal");
 
-        $("#dir-modal")
-        .on("hide", function() {
+        $("#dir-modal").on("hide", function() {
           $(this).html("");
-        })
-        .modal();
+        }).modal();
       },
 
       // Change directory name
@@ -283,8 +259,7 @@
 
         $("#dir-modal").on("hide", function() {
           $(this).html("");
-        })
-        .modal().find("a.btn-success").click(function() {
+        }).modal().find("a.btn-success").click(function() {
           $("#dir-modal form").ajaxSubmit({
             url:      'wysiwyg/filebrowser/rename/'+dirname, // TO-DO!!!!!!!!!!
             dataType: "json",
@@ -294,14 +269,10 @@
                 dir.text($("#dir-modal").find("input").val());
                 $("#dir-modal").modal("hide");
               } else if (data.errors !== undefined) {
-                $($form)
-                .find(".help-inline")
-                .remove();
 
-                $($form)
-                .find(".control-group")
-                .removeClass("error")
-                .addClass("error")
+                $form.find(".help-inline").remove();
+
+                $form.find(".control-group").addClass("error")
                 .append('<span class="help-inline">'+data.errors.filename+"</span>");
               }
             }

@@ -30,7 +30,7 @@
 				<h3><?php echo __('Save file') ?></h3>
 			</div>
 			<div class="modal-body">
-				<?php echo Form::open(NULL, array('class' => 'form-horizontal')) ?>
+				<?php echo Form::open(NULL, array('id' => 'crop-form', 'class' => 'form-horizontal')) ?>
 				<div class="control-group">
 					<?php echo Form::label('filename', __('File name').':') ?>
 					<div class="input-append">
@@ -48,7 +48,7 @@
 		<!-- /Save dialog -->
 
 		<!-- What's now -->
-		<div id="save-modal" class="modal hide fade">
+		<div id="what_s_now" class="modal hide fade">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal">&times;</a>
 				<h3><?php echo __('What\'s now') ?></h3>
@@ -61,6 +61,7 @@
 				<?php echo HTML::anchor('#', __('Continue'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
 			</div>
 		</div>
+
 		<!-- /What's now -->
 		<!-- /Modal windows -->
 

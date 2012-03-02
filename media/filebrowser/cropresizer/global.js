@@ -8,12 +8,49 @@
     $(document).bind({
       // Save croped file
       "Filebrowser:crop:save": function(e) {
-        $("#crop-form input[name=image_width]").val(e.resize.w);
-        $("#crop-form input[name=image_height]").val(e.resize.h);
-        $("#crop-form input[name=crop_width]").val(e.selection.right-e.selection.left);
-        $("#crop-form input[name=crop_height]").val(e.selection.bottom-e.selection.top);
-        $("#crop-form input[name=offset_x]").val(e.selection.left);
-        $("#crop-form input[name=offset_y]").val(e.selection.top);
+        var hiddenInputs = {
+          'image_width'  : e.resize.w,
+          'image_height' : e.resize.h,
+          'crop_width'   : e.selection.right-e.selection.left,
+          'crop_height'  : e.selection.bottom-e.selection.top,
+          'offset_x'     : e.selection.left,
+          'offset_y'     : e.selection.top
+        }, inputHtml = '';
+
+        for (var name in hiddenInputs) {
+          inputHtml += '<input type="hidden" name="'+name+'" value="'+hiddenInputs[name]+'" />'
+        }
+        $("#crop-form").append(inputHtml);
+
+        $("#save-modal").on({
+          "show" : function () {
+            $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
+
+            $(this).find("a.btn-success").click(function() {
+              $("#crop-form").ajaxSubmit({
+                url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
+                dataType: "json",
+                success:  function(data, statusText, xhr, $form) {
+                  $form.find("div.control-group").removeClass("error").find(".help-inline").remove();
+                  if(data.ok !== undefined) {
+                    $(document).trigger("Filebrowser:loadFiles");
+                    $("#file-rename-modal").modal("hide");
+                  }
+                  else if(data.errors !== undefined) {
+                   $form.find(".control-group").addClass("error")
+                    .append('<span class="help-inline">'+data.errors.filename+"</span>");
+                  }
+                }
+              });
+
+              return false;
+            });
+          },
+          "hide" : function() {
+            $(this).find("a.btn-success").unbind("click");
+          }
+        }).modal();
+
       },
 
       // Close cropresize window
