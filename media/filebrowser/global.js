@@ -133,8 +133,8 @@
 
       // Rename file
       "Filebrowser:file:rename" : function(e) {
-        var filename  = $(e.target).find(".params .filename").text()
-        var extension = $(e.target).find(".params .extension").text()
+        var filename  = $(e.target).find(".params .filename").text();
+        var extension = $(e.target).find(".params .extension").text();
 
         $("#file-rename-modal input[name=filename]").val(filename);
         $("#file-rename-modal #file-extension").text(extension);
@@ -219,7 +219,7 @@
           w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
           h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
         };
-        window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
+        window.open("/wysiwyg/filebrowser/crop"+$.getSelectedFilePath(e), "cropresizerWin",
           "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
       // Rotate image

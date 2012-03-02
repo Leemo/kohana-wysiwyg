@@ -231,7 +231,7 @@
                 e.stopPropagation();
                 obj.ClipResize(e, $(this));
               });
-            obj.save.removeAttr("disabled");
+            obj.save.removeClass("disabled");
           }
         });
         return this;
@@ -386,7 +386,7 @@
           x: 0,
           y: 0
         };
-        this.save.attr("disabled","disabled");
+        this.save.addClass("disabled");
         return this;
       },
 
@@ -495,13 +495,15 @@
     });
 
     this.save.click(function(){
-      $(document).trigger({
-        type: "savecrop",
-        resize: obj.currentSize,
-        selection: obj.selection
-      });
+      if( ! $(this).hasClass("disabled")){
+        $(document).trigger({
+          type: "Filebrowser:crop:save",
+          resize: obj.currentSize,
+          selection: obj.selection
+        });
+      }
       return false;
-    }).attr("disabled","disabled");
+    }).addClass("disabled");
 
     this.win.bind('mousewheel DOMMouseScroll',  function(e){
       e.preventDefault();

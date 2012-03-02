@@ -288,8 +288,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$file = APPPATH.$this->_directory.$this->_path;
 
-		if ( ! is_file($file) OR
+		if ( ( ! is_file($file) OR
 			! (list($width, $height) = getimagesize($file)))
+			AND ! $_POST)
 		{
 			return $this
 				->request
@@ -298,6 +299,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		if ($_POST)
 		{
+			$this->auto_render = FALSE;
+			
 			$_POST = Arr::extract($_POST, array(
 				'filename',
 				'image_width',
@@ -315,18 +318,13 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				))
 				->label('filename', __('Filename'));
 
-			if ( ! $validation->check())
-			{
-				$errors = $validation
-					->errors('feedback');
+				if ( ! $validation->check())
+		{
+			return $this->response->json(array(
+				'errors' => $validation->errors('wysiwyg')
+				));
+		}
 
-				$errors =
-					array_merge($errors, (isset($errors['_external']) ? $errors['_external'] : array()));
-
-				return $this->template->content =
-					View::factory('wysiwyg/filebrowser/crop/form', $_POST)
-						->bind('errors', $errors);
-			}
 
 			$extension = pathinfo($file, PATHINFO_EXTENSION);
 
@@ -335,14 +333,14 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				->crop($_POST['crop_width'], $_POST['crop_height'], $_POST['offset_x'], $_POST['offset_y'])
 				->save(pathinfo($file, PATHINFO_DIRNAME).DIRECTORY_SEPARATOR.$_POST['filename'].'.'.$extension);
 
-			return $this->template->content =
-				View::factory('wysiwyg/filebrowser/crop/choise', $_POST);
+			return $this->response->ok();
 		}
 
 		$file = Route::get('media')
 			->uri(array(
 				'file' => Kohana::$config->load('filebrowser.uploads_directory').'/'.$this->_path
 				));
+
 
 		$this->template = View::factory('wysiwyg/filebrowser/crop')
 			->bind('file', $file)

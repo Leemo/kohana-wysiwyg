@@ -139,7 +139,7 @@
 <!-- Files list -->
 <script id="tpl-files" type="text/x-jquery-tmpl">
 	{{each(key, value) files}}
-	<div class="file {{if value.type}}non_{{/if}}picture" title="${key}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
+	<div class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
 			 <div class="icon{{if value.type}} ${value.type}{{/if}}">
 			{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
 			<div class="fileOverlay"></div>

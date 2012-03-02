@@ -30,21 +30,9 @@
 				<h3><?php echo __('Save file') ?></h3>
 			</div>
 			<div class="modal-body">
-				<?php echo Form::open(NULL, array('id' => 'crop-form', 'class' => 'form-horizontal')) ?>
-				<div class="control-group">
-					<?php echo Form::label('filename', __('File name').':') ?>
-					<div class="input-append">
-						<?php echo Form::input('filename') ?>
-						<span class="add-on" id="file-extension">.jpg</span>
-					</div>
-				</div>
-				<?php echo Form::close() ?>
+				<?php echo View::factory('wysiwyg/filebrowser/crop/form', Arr::extract(array(), array('image_width', 'image_height', 'crop_width', 'crop_height', 'offset_x', 'offset_y')))
+					->set('filename', pathinfo($path, PATHINFO_FILENAME).'_crop')->set('extension', '.'.pathinfo($path, PATHINFO_EXTENSION)); ?>
 			</div>
-			<div class="modal-footer">
-				<?php echo HTML::anchor("#", __('Save file'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
-				<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
-			</div>
-		</div>
 		<!-- /Save dialog -->
 
 		<!-- What's now -->
@@ -57,7 +45,7 @@
 				<p><?php echo __('') ?></p>
 			</div>
 			<div class="modal-footer">
-				<?php echo HTML::anchor("#", __('Close window'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+				<?php echo HTML::anchor("#", __('Close window'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
 				<?php echo HTML::anchor('#', __('Continue'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
 			</div>
 		</div>

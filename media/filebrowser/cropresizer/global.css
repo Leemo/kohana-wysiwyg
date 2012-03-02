@@ -194,6 +194,11 @@ body {
    cursor: pointer;
  }
 
+ a.disabled {
+   cursor: default;
+   opacity: 0.4;
+   filter: Alpha(opacity=40);
+ }
 /*---------------------------- IE < 9 styles for crop area --------------------------- */
 
 #area #img.inIE #cropper {
