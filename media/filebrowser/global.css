@@ -64,15 +64,12 @@ a {
 }
 
 .file .icon {
-  display: table-cell;
-  width: 110px;
   height: 75px;
   margin: 0 auto 10px;
   background-position: center center;
   background-repeat: no-repeat;
   position: relative;
   text-align: center;
-  vertical-align: middle;
   -moz-user-select: none;
 }
 
@@ -83,12 +80,10 @@ a {
 .file p {
   white-space: nowrap;
   position: relative;
-  overflow: hidden;
-  line-height: 100%;
 }
 
 .file p.name {
-  line-height: 15px;
+  overflow-x: hidden;
 }
 
 .file p i {

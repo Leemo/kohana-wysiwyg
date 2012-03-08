@@ -228,7 +228,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$_POST = Arr::extract($_POST, array('filename'));
 
 		$current_fname = APPPATH.$this->_directory.$this->_path;
-		$new_fname     = $path.$_POST['filename']
+		$new_fname     = $path.DIRECTORY_SEPARATOR.$_POST['filename']
 			.( ! empty($extension) ? '.'.$extension : '');
 
 		$is_directory = is_dir($current_fname);
@@ -300,7 +300,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		if ($_POST)
 		{
 			$this->auto_render = FALSE;
-			
+
 			$_POST = Arr::extract($_POST, array(
 				'filename',
 				'image_width',

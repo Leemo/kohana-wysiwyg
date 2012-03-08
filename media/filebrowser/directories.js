@@ -1,5 +1,6 @@
 ;
 (function($){
+  var parentsArray;
   $.fn.folderTree = function(opt){
     var opt = $.extend({
       autoTurnTree : true, //auto open tree to folder which files is currently opened in browser
@@ -20,8 +21,6 @@
       }
       else return this;
     };
-
-    var parentsArray;
 
     $.fn.processFolder = function(){
       var dir = this[0], dirP = $(dir).children("p");
@@ -45,7 +44,7 @@
         $("i", this.children("p")).toggle(
           function(){ // open folder
             $(dir).addClass("process");
-            var fullPath = $(dir).buildFullPath();
+            var fullPath = $(dir).buildFullPath(false);
             $.getJSON(global_config.dirs_url + fullPath, function(data){
               $(dir).removeClass("process").addClass("open").getD().open = true;
               $("div", dir).remove();
@@ -95,10 +94,7 @@
       // end add handlers to click on "open/close" icon
 
       $("a", this.children("p")).click(function(){ // click for files load
-        path = $(dir).buildFullPath();
-        parentsArray = path.split("/");
-        parentsArray.shift();
-        parentsArray.pop();
+        path = $(dir).buildFullPath(true);
         $.getJSON('/'+global_config.files_url+((!isRoot)? path : ''), function(data){
           $("#files-row").empty().append($("#tpl-files").tmpl(data));
           $("p", opt.container).removeClass("selected").children("i").removeClass("icon-white");
@@ -125,7 +121,7 @@
 
   // public methods of folders tree
 
-  $.fn.buildFullPath = function(){
+  $.fn.buildFullPath = function(refreshParentsArray){
     var pathTxt = '';
     var parent = function(folder){
       if(!folder.data("data").isRoot){
@@ -135,6 +131,11 @@
       else return;
     };
     parent(this);
+    if(refreshParentsArray) {
+      parentsArray = pathTxt.split("/");
+      parentsArray.pop();
+      console.log (parentsArray);
+    }
     return "/" + pathTxt;
   };
 
@@ -149,10 +150,15 @@
     var dirData = this.getD();
     dirData.name = name;
     $("a", this.children("p")).text(name);
+    if(dirData.filesLoaded) {
+      path = $(this).buildFullPath(true);
+      $("#breadcrumb").breadcrumbUpdate();
+    }
     if(dirData.isParentOfSelected) {
       this.find("div").each(function(){
         if($(this).getD().filesLoaded){
-          path = $(this).buildFullPath();
+          path = $(this).buildFullPath(true);
+          $("#breadcrumb").breadcrumbUpdate();
         }
       });
     }

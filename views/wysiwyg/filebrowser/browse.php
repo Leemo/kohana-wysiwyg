@@ -145,8 +145,12 @@
 			<div class="fileOverlay"></div>
 		</div>
 		<p class="name"><span>${key}</span><i></i></p>
-		<p class="size">${value.size}</p>
-		{{if value.width && value.height}}<p class="img_size">img. size: ${value.width}×${value.height}</p>{{/if}}
+		<p class="size">
+			${value.size}
+		  {{if value.width && value.height}}
+				(img: ${value.width}×${value.height})
+			{{/if}}
+		</p>
 		<!-- File parameters (for easy rename) -->
 		<span class="params hide">
 			<span class="filename">${value.filename}</span>

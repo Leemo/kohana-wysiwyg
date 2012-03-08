@@ -19,11 +19,32 @@
       return false;
     });
 
-    // Init folders tree and bind context menu
-    // to delegate for all elements in folders column
-    $("div.directories").folderTree()
-    .contextMenu({
-      //title : "Folder menu",
+    // Modal windows
+
+    // Initialize all modal windows
+    $(".modal").modal({
+      show: false
+    });
+
+    // When the download dialog window closes,
+    // clear the upload history
+    $("#upload-modal").on("hide", function() {
+      $("#upload-modal #upload").empty();
+    });
+    // End upload dialog
+
+    $("#upload-link").click(function(){
+      $("#upload-modal").modal('show');
+      return false;
+    });
+    // End modal windows
+
+
+    // Init folders tree
+    $("div.directories").folderTree();
+    // bind context menu to CHILDREN folders of root,
+    // root folder don't get context menu
+    $("#root").contextMenu({
       closeType: {
         zone:   'any',
         events: 'closeFolderClick,openFolderClick'
@@ -128,6 +149,11 @@
         $.getJSON(global_config.files_url+path, function(data){
           $("#files-row").empty().append($("#tpl-files").tmpl(data));
           $("#breadcrumb").breadcrumbUpdate();
+
+          // crossbrowser icon position vertical correction
+          $("#files-row div.file div.icon img").load(function(){
+            $(this).css("margin-top", ($(this.parentNode).height() - $(this).height()) / 2 +"px");
+          });
         });
       },
 
@@ -154,7 +180,7 @@
                     $("#file-rename-modal").modal("hide");
                   }
                   else if(data.errors !== undefined) {
-                   $form.find(".control-group").addClass("error")
+                    $form.find(".control-group").addClass("error")
                     .append('<span class="help-inline">'+data.errors.filename+"</span>");
                   }
                 }
@@ -172,12 +198,12 @@
       // Delete file
       "Filebrowser:file:delete" : function(e) {
         $("#file-delete-modal").on({
-        "hide" : function(){
-          $(this).find("a.btn-success").unbind("click").end().find("form").unbind("submit");
-        },
-        "show" : function(){
-          $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
-        }
+          "hide" : function(){
+            $(this).find("a.btn-success").unbind("click").end().find("form").unbind("submit");
+          },
+          "show" : function(){
+            $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
+          }
         }).modal()
         .find("a.btn-success").click(function() {
           $("#file-delete-modal form").ajaxSubmit({
@@ -214,7 +240,7 @@
       // Crop and resize image
       "Filebrowser:image:crop" : function(e) {
         if(window.cropresizerWin)cropresizerWin.close();
-        var imgSize = Function("var c = new Object(); c="+$(e.target).attr("rel")+"; return c")();
+        var imgSize = $.parseSizeFormRel(e.target);
         var openSize = {
           w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
           h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
@@ -248,25 +274,24 @@
 
       // Change directory name
       "Filebrowser:dir:rename" : function(e) {
-        var dir     = $(e.target).find("a");
-        var dirname = dir.text();
+        var dir = $(e.target), data = dir.getD();
 
         $("#tpl-dir-modal").tmpl({
           rename: true
         }).appendTo("#dir-modal");
 
-        $("#dir-modal").find("input").val(dirname);
+        var input = $("#dir-modal").find("input");
+        input.val(data.name);
 
         $("#dir-modal").on("hide", function() {
           $(this).html("");
         }).modal().find("a.btn-success").click(function() {
           $("#dir-modal form").ajaxSubmit({
-            url:      'wysiwyg/filebrowser/rename/'+dirname, // TO-DO!!!!!!!!!!
+            url:      'wysiwyg/filebrowser/rename' + dir.buildFullPath(),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
               if(data.ok !== undefined) {
-                $(document).trigger("Filebrowser:loadDirs");
-                dir.text($("#dir-modal").find("input").val());
+                dir.renameFolder(input.val());
                 $("#dir-modal").modal("hide");
               } else if (data.errors !== undefined) {
 
@@ -285,83 +310,64 @@
     .trigger("Filebrowser:loadFiles");
     // End global events
 
-    // Modal windows
-    $(document).ready(function(){
 
-      // Initialize all modal windows
-      $(".modal").modal({
-        show: false
-      });
 
-      // Upload dialog
-      // !!!ACHTUNG MOOTOOLS SYNTAX
-      var up = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
-        path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
-        url:         '/wysiwyg/filebrowser/upload'+path,
-        fileSizeMax: 20 * 1024 * 1024,
+    // Upload dialog
+    // !!!ACHTUNG MOOTOOLS SYNTAX
+    var up = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
+      path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
+      url:         '/wysiwyg/filebrowser/upload'+path,
+      fileSizeMax: 20 * 1024 * 1024,
 
-        verbose: true,
+      verbose: true,
 
-        onSelectFail: function(files) {
-          files.each(function(file) {
-            new Element('li', {
-              'class': 'file-invalid',
-              events: {
-                click: function() {
-                  this.destroy();
-                }
+      onSelectFail: function(files) {
+        files.each(function(file) {
+          new Element('li', {
+            'class': 'file-invalid',
+            events: {
+              click: function() {
+                this.destroy();
               }
-            }).adopt(
-              new Element('span', {
-                html: file.validationErrorMessage || file.validationError
-              })
-              ).inject(this.list, 'top');
-          }, this);
-        },
+            }
+          }).adopt(
+            new Element('span', {
+              html: file.validationErrorMessage || file.validationError
+            })
+            ).inject(this.list, 'top');
+        }, this);
+      },
 
-        onFileSuccess: function(file) {
-          file.ui.element.highlight('#e6efc2');
-        },
+      onFileSuccess: function(file) {
+        file.ui.element.highlight('#e6efc2');
+      },
 
-        onFileError: function(file) {
-          file.ui.cancel.set('html', __("Retry")).removeEvents().addEvent('click', function() {
-            file.requeue();
-            return false;
-          });
+      onFileError: function(file) {
+        file.ui.cancel.set('html', __("Retry")).removeEvents().addEvent('click', function() {
+          file.requeue();
+          return false;
+        });
 
-          new Element('span', {
-            html: file.errorMessage,
-            'class': 'file-error'
-          }).inject(file.ui.cancel, 'before');
-        },
+        new Element('span', {
+          html: file.errorMessage,
+          'class': 'file-error'
+        }).inject(file.ui.cancel, 'before');
+      },
 
-        onFileRequeue: function(file) {
-          file.ui.element.getElement('.file-error').destroy();
+      onFileRequeue: function(file) {
+        file.ui.element.getElement('.file-error').destroy();
 
-          file.ui.cancel.set('html', __("Cancel")).removeEvents().addEvent('click', function() {
-            file.remove();
-            return false;
-          });
+        file.ui.cancel.set('html', __("Cancel")).removeEvents().addEvent('click', function() {
+          file.remove();
+          return false;
+        });
 
-          this.start();
-        }
+        this.start();
+      }
 
-      }); // end of uploader mootoolls syntax
+    }); // end of uploader mootoolls syntax
 
-      // When the download dialog window closes,
-      // clear the upload history
-      $("#upload-modal").on("hide", function() {
-        $("#upload-modal #upload").empty();
-      });
-      // End upload dialog
-
-      $("#upload-link").click(function(){
-        $("#upload-modal").modal('show');
-        return false;
-      });
-    });
-  // End modal windows
-  });
+  }); // End document ready
 
   $.extend({
     recalculateHeight: function() {
@@ -378,7 +384,20 @@
 
     getSelectedFilePath : function(contextMenuEvent) {
       return path+"/"+$(contextMenuEvent.target).find("p.name span").text()
+    },
+
+
+    parseSizeFormRel : function(element){
+      var relVal = $(element).attr("rel");
+      if(relVal.indexOf("{") == 0) {
+        return Function("var c = new Object(); c=" + relVal + "; return c")();
+      }
+      else {
+        console.warn ("parseSizeFormRel() : element " + element + "has non-object code in 'rel' attribute value or has no 'rel' attribute");
+        return false;
+      }
     }
+
   });
 
   $.fn.draggingOver = function(ev) {
@@ -393,4 +412,5 @@
         parts: path.replace(/^\/(.*)\/$/, '$1').split("/")
       }));
   };
+
 })(jQuery);
