@@ -75,46 +75,51 @@
 <div id="header" class="navbar">
 	<div class="navbar-inner">
 		<div class="container-fluid">
-				<ul class="nav pull-right">
-					<li class="divider-vertical"></li>
-					<li><?php echo HTML::anchor('#', '<i class="icon-upload icon-white"></i>&nbsp;'.__('Upload files'), array('id' => 'upload-link')) ?></li>
-					<li class="divider-vertical"></li>
-					<li><?php echo HTML::anchor('#', '<i class="icon-refresh icon-white"></i>&nbsp;'.__('Refresh'), array('id' => 'refresh-link')) ?></li>
-				</ul>
+			<ul class="nav pull-left">
+				<li class="divider-vertical"></li>
+				<li><?php echo HTML::anchor('#', '<i class="icon-upload icon-white"></i>&nbsp;'.__('Upload files'), array('id' => 'upload-link')) ?></li>
+				<li class="divider-vertical"></li>
+				<li><?php echo HTML::anchor('#', '<i class="icon-refresh icon-white"></i>&nbsp;'.__('Refresh'), array('id' => 'refresh-link')) ?></li>
+			</ul>
+
+			<ul class="nav pull-right">
+				<li class="divider-vertical"></li>
+				<li><?php echo HTML::anchor('#', '<i class="icon-remove icon-white"></i>&nbsp;'.__('Exit'), array('id' => 'exit-link')) ?></li>
+			</ul>
 		</div>
 	</div>
 </div>
 <!-- /Navigation bar -->
 
-			<div id="dirs" class="well sidebar-nav">
-				<!-- Directories tree -->
-					<div class="directories">
-						<div id="root">
-							<p>
-								<i class="icon-home"></i>
-								<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
-							</p>
-							<?php foreach ($dirs as $dir => $parents): ?>
-								<div name="<?php echo $parents ?>">
-									<p>
-										<i class="icon-chevron-right"></i><a href=""><?php echo $dir ?></a>
-										<em></em>
-									</p>
-								</div>
-							<?php endforeach ?>
-						</div>
-				<!-- /Directories tree -->
-			</div>
+<div id="dirs" class="well sidebar-nav">
+	<!-- Directories tree -->
+	<div class="directories">
+		<div id="root">
+			<p>
+				<i class="icon-home"></i>
+				<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
+			</p>
+			<?php foreach ($dirs as $dir => $parents): ?>
+				<div name="<?php echo $parents ?>">
+					<p>
+						<i class="icon-chevron-right"></i><a href=""><?php echo $dir ?></a>
+						<em></em>
+					</p>
+				</div>
+			<?php endforeach ?>
 		</div>
-		<div id="files">
-			<!-- breadcrumb -->
-			<div id="breadcrumb"></div>
-			<!-- /breadcrumb -->
+		<!-- /Directories tree -->
+	</div>
+</div>
+<div id="files">
+	<!-- breadcrumb -->
+	<div id="breadcrumb"></div>
+	<!-- /breadcrumb -->
 
-			<!-- Files list -->
-			<div id="files-row"></div>
-			<!-- /Files list -->
-		</div>
+	<!-- Files list -->
+	<div id="files-row"></div>
+	<!-- /Files list -->
+</div>
 
 
 
@@ -147,8 +152,8 @@
 		<p class="name"><span>${key}</span><i></i></p>
 		<p class="size">
 			${value.size}
-		  {{if value.width && value.height}}
-				(img: ${value.width}×${value.height})
+			{{if value.width && value.height}}
+			(img: ${value.width}×${value.height})
 			{{/if}}
 		</p>
 		<!-- File parameters (for easy rename) -->
@@ -168,9 +173,9 @@
 		<h3>{{if rename}}<?php echo __('Rename directory') ?>{{else}}<?php echo __('Add directory') ?>{{/if}}</h3>
 	</div>
 	<div class="modal-body">
-{{if rename}}
+		{{if rename}}
 		<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('It action will cause the file is unavailable at the old URL-address.') ?></div>
-{{/if}}
+		{{/if}}
 		<?php echo Form::open() ?>
 		<div class="control-group">
 			<?php echo Form::label('filename', '{{if rename}}'.__('New directory name').'{{else}}'.__('Directory name').'{{/if}}:') ?>
