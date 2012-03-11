@@ -13,16 +13,28 @@
     // by execute code in directories.js
     path = "";
 
-    // Refresh files of current directory
-    $("#refresh-link").click(function(){
-      $(document).trigger("Filebrowser:loadFiles");
-      return false;
-    });
+    // Bind handlers to nav-bar links
+    var navBar = {
+      "upload-link" : function(){
+        $("#upload-modal").modal('show');
+        return false;
+      },
+      "refresh-link" : function(){
+        $(document).trigger("Filebrowser:loadFiles");
+        return false;
+      },
+      "exit-link" : function(){
+        window.close();
+      }
+    }
+
+    for (var id in navBar) $("#" + id).click(navBar[id]);
+
 
     // Modal windows
 
     // Initialize all modal windows
-    $(".modal").modal({
+    $("div.modal").modal({
       show: false
     });
 
@@ -33,10 +45,7 @@
     });
     // End upload dialog
 
-    $("#upload-link").click(function(){
-      $("#upload-modal").modal('show');
-      return false;
-    });
+
     // End modal windows
 
 
@@ -49,8 +58,8 @@
         zone:   'any',
         events: 'closeFolderClick,openFolderClick'
       },
-      targetSelector: "div",
-      containerClass: "contextMenu well",
+      targetSelector : "div",
+      containerClass : "contextMenu dropdown-menu",
       listClass: "nav nav-list",
       list: [
       {
@@ -126,7 +135,7 @@
     // Bind context menu to delegate
     // for picture file elements in files area
     .contextMenu({
-      containerClass : "contextMenu well",
+      containerClass : "contextMenu dropdown-menu",
       listClass: "nav nav-list",
       targetSelector: "div.picture",
       list:           filesMenu
@@ -134,7 +143,7 @@
     // Bind context menu to delegate
     // for non-picture file elements in files area
     .contextMenu({
-      containerClass : "contextMenu well",
+      containerClass : "contextMenu dropdown-menu",
       listClass: "nav nav-list",
       targetSelector: "div.non_picture",
       list: filesMenu.slice(0,2).concat(filesMenu.slice(8))
@@ -387,7 +396,7 @@
     },
 
 
-    parseSizeFormRel : function(element){
+    parseSizeFormRel : function(element){ // create object from rel attribute value
       var relVal = $(element).attr("rel");
       if(relVal.indexOf("{") == 0) {
         return Function("var c = new Object(); c=" + relVal + "; return c")();
@@ -400,7 +409,7 @@
 
   });
 
-  $.fn.draggingOver = function(ev) {
+  $.fn.draggingOver = function(ev) { // check folder: is dragging file icon lay over this folder
     var area = this.getD().folderRect;
     return (area.left < ev.clientX && area.right > ev.clientX &&
       area.top < ev.clientY && area.bottom > ev.clientY) ? true : false;

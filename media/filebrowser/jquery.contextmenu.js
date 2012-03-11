@@ -18,7 +18,7 @@
  * Usage:
  *
  *   $(selector).contextMenu({
- *     containerClass: 'someClass' // (default:'contextMenu') class name for popup
+ *     containerClass: 'someClass' // (default:'contextMenu') class name for popup. ATTENTION! Writing several classes should first write unicue context menu class. plugin detect opened menu by first of classes
  *     listClass : 'someClass' // default: none, class for <ul> element
  *
  *     title: 'Popup title', // (default:empty) header of popup. If empty container don't generating,
@@ -64,7 +64,7 @@
 		}, opt);
 
 		return this.delegate(opt.targetSelector, "contextmenu", function(e){
-      $("div."+opt.containerClass).remove();
+      $("div."+((opt.containerClass.indexOf(" ") != -1) ? opt.containerClass.split(" ")[0] : opt.containerClass)).remove();
 			var $p = $('<div class = "'+opt.containerClass+'"></div>').appendTo("body");
 			if(opt.title) $p.append("<h3>"+opt.title+"</h3>");
 			var $li, $menu = $("<ul/>", {"class" : opt.listClass != "" ? opt.listClass : null}).appendTo($p), opener = $(e.target);

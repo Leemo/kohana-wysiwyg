@@ -36,7 +36,7 @@
 		<!-- /Save dialog -->
 
 		<!-- What's now -->
-		<div id="what_s_now" class="modal hide fade">
+		<div id="what-now-modal" class="modal hide fade">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal">&times;</a>
 				<h3><?php echo __('What\'s now') ?></h3>

@@ -56,8 +56,8 @@
       },
 
        "Filebrowser:crop:afterSave": function() {
-         var btnSuccess = $("#what_s_now a.btn-success");
-         $("#what_s_now").on({
+         var btnSuccess = $("#what-now-modal a.btn-success");
+         $("#what-now-modal").on({
           "show" : function () {
             btnSuccess.click(function() {
               $(document).trigger("Filebrowser:crop:exit");

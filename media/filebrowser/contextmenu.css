@@ -17,6 +17,11 @@
   cursor: default;
 }
 
+.contextMenu li a:hover {
+  background-color: #0088cc;
+  text-shadow: none;
+}
+
 .contextMenu li a i {
   margin-right: 1em !important;
 }
@@ -35,4 +40,9 @@
 	width: 100%;
 	height: 100%;
 	background: url('images/menu/pixel.gif') 0 0;
+}
+
+.contextMenu.dropdown-menu {
+  display: block;
+  border-radius: 5px;
 }
