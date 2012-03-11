@@ -49,8 +49,8 @@
         zone:   'any',
         events: 'closeFolderClick,openFolderClick'
       },
-      targetSelector : "div",
-      containerClass : "contextMenu well",
+      targetSelector: "div",
+      containerClass: "contextMenu well",
       listClass: "nav nav-list",
       list: [
       {
