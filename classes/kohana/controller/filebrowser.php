@@ -145,18 +145,29 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		if ($_FILES)
 		{
-			Upload::save($_FILES['Filedata'], $_FILES['Filedata']['name'], APPPATH.$this->_directory.$this->_path);
+			// Check if file already exists
+			if(is_file(APPPATH.$this->_directory.$this->_path.$_FILES['Filedata']['name']))
+			{
+				return $this->response->json(array(
+					'error' => __('FIle :file already exists in :path', array(
+						':file' => $_FILES['Filedata']['name'],
+						':path' => $this->_path
+					))));
+			}
+
+			try
+			{
+				Upload::save($_FILES['Filedata'], $_FILES['Filedata']['name'], APPPATH.$this->_directory.$this->_path);
+			}
+			catch(Kohana_Exception $e)
+			{
+				return $this->response->json(array(
+					'error' => $e->getMessage()
+					));
+			}
 
 			$this->response->body('Ok');
-
-			return;
 		}
-
-		$content = View::factory('wysiwyg/filebrowser/upload');
-
-		return $this
-			->response
-			->body($content);
 	}
 
 	public function action_move()
@@ -513,6 +524,13 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			->body($image);
 	}
 
+	/**
+	 * Optional GET params (like session_id etc)
+	 *
+	 * @var array
+	 */
+	protected $_optional_params = array();
+
 	public function after()
 	{
 		if ($this->auto_render)
@@ -521,10 +539,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 			$this->template->global_config = array
 			(
-				'root'      => $this->_config['media_directory'].'/'.Kohana::$config->load('filebrowser.uploads_directory'),
-				'dirs_url'  => $route->uri(array('action' => 'dirs')),
-				'files_url' => $route->uri(array('action' => $this->request->action())),
-				'move_url'  => $route->uri(array('action' => 'move'))
+				'root'       => $this->_config['media_directory'].'/'.Kohana::$config->load('filebrowser.uploads_directory'),
+				'dirs_url'   => $route->uri(array('action' => 'dirs')),
+				'files_url'  => $route->uri(array('action' => $this->request->action())),
+				'move_url'   => $route->uri(array('action' => 'move')),
+				'params'     => $this->_optional_params
 			);
 		}
 
