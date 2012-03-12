@@ -145,18 +145,29 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		if ($_FILES)
 		{
-			Upload::save($_FILES['Filedata'], $_FILES['Filedata']['name'], APPPATH.$this->_directory.$this->_path);
+			// Check if file already exists
+			if(is_file(APPPATH.$this->_directory.$this->_path.$_FILES['Filedata']['name']))
+			{
+				return $this->response->json(array(
+					'error' => __('FIle :file already exists in :path', array(
+						':file' => $_FILES['Filedata']['name'],
+						':path' => $this->_path
+					))));
+			}
+
+			try
+			{
+				Upload::save($_FILES['Filedata'], $_FILES['Filedata']['name'], APPPATH.$this->_directory.$this->_path);
+			}
+			catch(Kohana_Exception $e)
+			{
+				return $this->response->json(array(
+					'error' => $e->getMessage()
+					));
+			}
 
 			$this->response->body('Ok');
-
-			return;
 		}
-
-		$content = View::factory('wysiwyg/filebrowser/upload');
-
-		return $this
-			->response
-			->body($content);
 	}
 
 	public function action_move()
