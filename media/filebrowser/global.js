@@ -319,15 +319,14 @@
     .trigger("Filebrowser:loadFiles");
     // End global events
 
-
-
     // Upload dialog
     // !!!ACHTUNG MOOTOOLS SYNTAX
     var up = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
       path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
-      url:         '/wysiwyg/filebrowser/upload'+path,
+      url:         $.appendParams('/wysiwyg/filebrowser/upload'+path, global_config.params),
       fileSizeMax: 20 * 1024 * 1024,
-
+      appendCookieData: true,
+      method: "POST",
       verbose: true,
 
       onSelectFail: function(files) {
