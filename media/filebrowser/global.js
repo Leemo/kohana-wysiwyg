@@ -323,7 +323,7 @@
     // !!!ACHTUNG MOOTOOLS SYNTAX
     var up = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
       path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
-      url:         $.appendParams('/wysiwyg/filebrowser/upload'+path, global_config.params),
+      url:         '/wysiwyg/filebrowser/upload'+path,
       fileSizeMax: 20 * 1024 * 1024,
       appendCookieData: true,
       method: "POST",
