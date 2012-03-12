@@ -353,7 +353,7 @@
     },
 
     getSelectedFilePath : function(contextMenuEvent) {
-      return path+"/"+$(contextMenuEvent.target).find("p.name span").text()
+      return path+$(contextMenuEvent.target).find("p.name span").text()
     },
 
     parseSizeFormRel : function(element){ // create object from rel attribute value
