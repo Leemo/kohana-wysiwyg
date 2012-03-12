@@ -170,6 +170,10 @@
       listClass: "nav nav-list",
       targetSelector: "div.non_picture",
       list: filesMenu.slice(0,2).concat(filesMenu.slice(8))
+    })
+    // delegate dbl-click handler of files
+    .delegate('div.file', 'dblclick', function(){
+      $(this).trigger("Filebrowser:file:select");
     });
 
     // Global events
