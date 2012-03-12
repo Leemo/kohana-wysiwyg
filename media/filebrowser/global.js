@@ -6,12 +6,12 @@
     $.recalculateHeight();
   });
 
-  $(function(){
+  // This global variable gets value
+  // on each selecting of folders
+  // by execute code in directories.js
+  path = "";
 
-    // This global variable gets value
-    // on each selecting of folders
-    // by execute code in directories.js
-    path = "";
+  $(function(){
 
     // Bind handlers to nav-bar links
     var navBar = {
@@ -40,8 +40,15 @@
 
     // When the download dialog window closes,
     // clear the upload history
-    $("#upload-modal").on("hide", function() {
-      $("#upload-modal #upload").empty();
+    $("#upload-modal").on({
+      "show" : function() {
+        $.uploaderInit();
+      },
+      "hide" : function() {
+        $("#upload-modal #upload").empty();
+        $("span.swiff-uploader-box").remove();
+        $("#upload-modal div.modal-footer a.btn").css("display", "");
+      }
     });
     // End upload dialog
 
@@ -50,7 +57,23 @@
 
 
     // Init folders tree
-    $("div.directories").folderTree();
+    $("div.directories").folderTree().contextMenu({
+      closeType: {
+        zone:   'any',
+        events: 'closeFolderClick,openFolderClick'
+      },
+      targetSelector : "#root",
+      containerClass : "contextMenu dropdown-menu",
+      listClass: "nav nav-list",
+      list: [
+      {
+        text:      __("Add subfolder"),
+        itemClass: "add",
+        bootstrapiconClass : "icon-folder-close",
+        event:     "Filebrowser:dir:add"
+      }
+      ]
+    });
     // bind context menu to CHILDREN folders of root,
     // root folder don't get context menu
     $("#root").contextMenu({
@@ -107,13 +130,13 @@
     {
       text: __("Rotate right"),
       itemClass: "rotate-right",
-      bootstrapiconClass : "icon-arrow-right",
+      bootstrapiconClass : "icon-empty",
       event: "Filebrowser:image:rotate:right"
     },
     {
       text: __("Rotate left"),
       itemClass: "rotate-left",
-      bootstrapiconClass : "icon-arrow-left",
+      bootstrapiconClass : "icon-empty",
       event: "Filebrowser:image:rotate:left"
     },
     "break",
@@ -270,42 +293,32 @@
         });
       },
 
-      // Add new directory
-      "Filebrowser:dir:add" : function(e) {
-        $("#tpl-dir-modal").tmpl({
-          rename: false
-        }).appendTo("#dir-modal");
-
-        $("#dir-modal").on("hide", function() {
-          $(this).html("");
-        }).modal();
-      },
-
-      // Change directory name
-      "Filebrowser:dir:rename" : function(e) {
-        var dir = $(e.target), data = dir.getD();
+      // One handler gor add new directory, or rename directory
+      "Filebrowser:dir:rename Filebrowser:dir:add" : function(e){
+        var dir = $(e.target),
+        data = dir.getD(),
+        mission = e.type.split(":")[2]; // detect required mission: add or rename
 
         $("#tpl-dir-modal").tmpl({
-          rename: true
+          rename: mission == 'rename' ? true : false
         }).appendTo("#dir-modal");
 
-        var input = $("#dir-modal").find("input");
-        input.val(data.name);
+        var input = $("#dir-modal").find('input');
+        if(mission == "rename") input.val(data.name);
 
         $("#dir-modal").on("hide", function() {
           $(this).html("");
         }).modal().find("a.btn-success").click(function() {
           $("#dir-modal form").ajaxSubmit({
-            url:      'wysiwyg/filebrowser/rename' + dir.buildFullPath(),
+            url:      'wysiwyg/filebrowser/' + mission + dir.buildFullPath(),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
               if(data.ok !== undefined) {
-                dir.renameFolder(input.val());
+                // use (add/rename)Folder() methods from file directories.js
+                dir[mission+'Folder'](mission == 'rename' ? input.val() : '');
                 $("#dir-modal").modal("hide");
               } else if (data.errors !== undefined) {
-
                 $form.find(".help-inline").remove();
-
                 $form.find(".control-group").addClass("error")
                 .append('<span class="help-inline">'+data.errors.filename+"</span>");
               }
@@ -313,68 +326,12 @@
           });
 
           return false;
-        });
-      }
-    })
+        }); // end of btn click handler
+
+      } // end of dir del/rename events handler
+
+    }) // end of user event handlers
     .trigger("Filebrowser:loadFiles");
-    // End global events
-
-
-
-    // Upload dialog
-    // !!!ACHTUNG MOOTOOLS SYNTAX
-    var up = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
-      path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
-      url:         '/wysiwyg/filebrowser/upload'+path,
-      fileSizeMax: 20 * 1024 * 1024,
-
-      verbose: true,
-
-      onSelectFail: function(files) {
-        files.each(function(file) {
-          new Element('li', {
-            'class': 'file-invalid',
-            events: {
-              click: function() {
-                this.destroy();
-              }
-            }
-          }).adopt(
-            new Element('span', {
-              html: file.validationErrorMessage || file.validationError
-            })
-            ).inject(this.list, 'top');
-        }, this);
-      },
-
-      onFileSuccess: function(file) {
-        file.ui.element.highlight('#e6efc2');
-      },
-
-      onFileError: function(file) {
-        file.ui.cancel.set('html', __("Retry")).removeEvents().addEvent('click', function() {
-          file.requeue();
-          return false;
-        });
-
-        new Element('span', {
-          html: file.errorMessage,
-          'class': 'file-error'
-        }).inject(file.ui.cancel, 'before');
-      },
-
-      onFileRequeue: function(file) {
-        file.ui.element.getElement('.file-error').destroy();
-
-        file.ui.cancel.set('html', __("Cancel")).removeEvents().addEvent('click', function() {
-          file.remove();
-          return false;
-        });
-
-        this.start();
-      }
-
-    }); // end of uploader mootoolls syntax
 
   }); // End document ready
 
@@ -385,7 +342,7 @@
       $("#files-row").height(c - $("#breadcrumb").height()- 65 +"px");
     },
 
-    getUrlParam : function(paramName) {
+    getUrlParam : function(paramName) { // for correct transmitt data to CKEdirtor
       var reParam = new RegExp("(?:[\?&]|&amp;)"+paramName+"=([^&]+)", "i") ;
       var match = window.location.search.match(reParam) ;
       return (match && match.length > 1) ? match[1] : '' ;
@@ -394,7 +351,6 @@
     getSelectedFilePath : function(contextMenuEvent) {
       return path+"/"+$(contextMenuEvent.target).find("p.name span").text()
     },
-
 
     parseSizeFormRel : function(element){ // create object from rel attribute value
       var relVal = $(element).attr("rel");
@@ -421,5 +377,61 @@
         parts: path.replace(/^\/(.*)\/$/, '$1').split("/")
       }));
   };
+
+  $.uploaderInit = function(){  // Upload dialog
+    // !!!ACHTUNG MOOTOOLS SYNTAX
+    $.upLoader = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
+      path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
+      url:         '/wysiwyg/filebrowser/upload'+path,
+      fileSizeMax: 20 * 1024 * 1024,
+
+      verbose: true,
+
+      onSelectFail: function(files) {
+        files.each(function(file) {
+          new Element('li', {
+            'class': 'file-invalid',
+            events: {
+              click: function() {
+                this.destroy();
+              }
+            }
+          }).adopt(
+            new Element('span', {
+              html: file.validationErrorMessage || file.validationError
+            })
+            ).inject(this.list, 'top');
+        }, this);
+      },
+
+      onFileSuccess: function(file) {
+        file.ui.element.highlight('#e6efc2');
+        $(document).trigger("Filebrowser:loadFiles");
+      },
+
+      onFileError: function(file) {
+        file.ui.cancel.set('html', __("Retry")).removeEvents().addEvent('click', function() {
+          file.requeue();
+          return false;
+        });
+
+        new Element('span', {
+          html: file.errorMessage,
+          'class': 'file-error'
+        }).inject(file.ui.cancel, 'before');
+      },
+
+      onFileRequeue: function(file) {
+        file.ui.element.getElement('.file-error').destroy();
+
+        file.ui.cancel.set('html', __("Cancel")).removeEvents().addEvent('click', function() {
+          file.remove();
+          return false;
+        });
+        this.start();
+      }
+
+    }); // end of uploader mootoolls syntax
+  }
 
 })(jQuery);

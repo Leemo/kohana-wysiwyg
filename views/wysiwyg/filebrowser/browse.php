@@ -76,7 +76,6 @@
 	<div class="navbar-inner">
 		<div class="container-fluid">
 			<ul class="nav pull-left">
-				<li class="divider-vertical"></li>
 				<li><?php echo HTML::anchor('#', '<i class="icon-upload icon-white"></i>&nbsp;'.__('Upload files'), array('id' => 'upload-link')) ?></li>
 				<li class="divider-vertical"></li>
 				<li><?php echo HTML::anchor('#', '<i class="icon-refresh icon-white"></i>&nbsp;'.__('Refresh'), array('id' => 'refresh-link')) ?></li>

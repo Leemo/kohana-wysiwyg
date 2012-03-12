@@ -4,7 +4,7 @@
   user-select: none;
   position: absolute;
   overflow: hidden;
-	z-index: 110;
+  z-index: 110;
   padding: 8px 0 !important;
 }
 
@@ -26,23 +26,33 @@
   margin-right: 1em !important;
 }
 
+.contextMenu li a i.icon-empty {
+  display: inline-block;
+  width: 14px;
+}
+
 .contextMenu li.point-nonActive a {
-	opacity: 0.5;
+  opacity: 0.5;
   color: #666 !important;
   text-shadow: 1px 1px 0 #fff;
 }
 
 .contextMenu li span {
-	display: block;
+  display: block;
   position: absolute;
-	top:0;
-	left:0;
-	width: 100%;
-	height: 100%;
-	background: url('images/menu/pixel.gif') 0 0;
+  top:0;
+  left:0;
+  width: 100%;
+  height: 100%;
+  background: url('images/menu/pixel.gif') 0 0;
 }
 
 .contextMenu.dropdown-menu {
   display: block;
   border-radius: 5px;
+}
+
+.contextMenu li.delimiter {
+  border-bottom: 1px solid #EEEEEE;
+  margin: 5px 0;
 }

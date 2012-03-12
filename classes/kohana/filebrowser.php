@@ -74,7 +74,7 @@ class Kohana_Filebrowser {
 							'extension' => pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION)
 						);
 
-						$filename = $directory.$fileinfo->getFilename();
+						$filename = $directory.DIRECTORY_SEPARATOR.$fileinfo->getFilename();
 
 						if ($dimensions = self::is_image($filename))
 						{

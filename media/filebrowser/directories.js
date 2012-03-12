@@ -139,14 +139,13 @@
     return "/" + pathTxt;
   };
 
-  $.fn.addFolder = function(){
+  $.fn.addFolder = function(){ // use for parent of created directory in global.js
     var dirData = this.getD();
-    if(dirData.hasChild == 0) $("b", this.children("p")).css("visibility", "visible");
+    this.children('p').removeClass('no_Child').children('i').click();
     dirData.hasChild++;
-    $("b", this.children("p")).click();
   }
 
-  $.fn.renameFolder = function(name){
+  $.fn.renameFolder = function(name){ // use for renamed directory for change name immidiatly
     var dirData = this.getD();
     dirData.name = name;
     $("a", this.children("p")).text(name);
