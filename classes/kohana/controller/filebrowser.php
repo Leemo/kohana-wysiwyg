@@ -526,14 +526,14 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		{
 			$route = Route::get('wysiwyg/filebrowser');
 
-			$this->template->global_config = Arr::merge($this->template->global_config, array
+			$this->template->global_config = array
 			(
 				'root'       => $this->_config['media_directory'].'/'.Kohana::$config->load('filebrowser.uploads_directory'),
 				'dirs_url'   => $route->uri(array('action' => 'dirs')),
 				'files_url'  => $route->uri(array('action' => $this->request->action())),
 				'move_url'   => $route->uri(array('action' => 'move')),
 				'params'     => $this->_optional_params
-				));
+			);
 		}
 
 		parent::after();
