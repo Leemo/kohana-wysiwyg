@@ -60,8 +60,8 @@
 						<ul class="nav pull-left">
 							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Drag'), array('id' => 'button-drag', 'class' => 'drag', 'rel' => '&nbsp;'.__('Crop'))) ?></li>
 							<li class="divider-vertical"></li>
-<!-- Temporary unavailable -->
-<!--
+							<!-- Temporary unavailable -->
+							<!--
 							<li><p class="navbar-text"><?php echo '<i class="icon-resize-full icon-white"></i>&nbsp;'.__('Proportions') ?>:</p></li>
 							<li class="dropdown">
 								<?php echo HTML::anchor('#', __('Arbitrary').'&nbsp;<b class="caret"></b>', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown')) ?>
@@ -73,7 +73,7 @@
 								</ul>
 							</li>
 							<li class="divider-vertical"></li>
--->
+							-->
 							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Reset'), array('id' => 'button-reset')) ?></li>
 							<li class="divider-vertical"></li>
 							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Center'), array('id' => 'button-center')) ?></li>
