@@ -140,8 +140,10 @@
   };
 
   $.fn.addFolder = function(){ // use for parent of created directory in global.js
-    var dirData = this.getD();
-    this.children('p').treeOpenerToggleActive().children('i').click();
+    var dirData = this.getD(), p = this.children('p');
+    if(p.hasClass('noChild')) p.treeOpenerToggleActive().children('i').click();
+    else if (dirData.open) p.children('i').click().click();
+         else p.children('i').click();
     dirData.hasChild++;
   }
 
