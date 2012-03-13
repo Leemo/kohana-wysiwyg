@@ -207,7 +207,7 @@
 
             $(this).find("a.btn-success").click(function() {
               $("#file-rename-modal form").ajaxSubmit({
-                url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
+                url:      'wysiwyg/filebrowser/rename/'+$.getSelectedFilePath(e),
                 dataType: "json",
                 success:  function(data, statusText, xhr, $form) {
                   $form.find("div.control-group").removeClass("error").find(".help-inline").remove();
@@ -243,7 +243,7 @@
         }).modal()
         .find("a.btn-success").click(function() {
           $("#file-delete-modal form").ajaxSubmit({
-            url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
+            url:      'wysiwyg/filebrowser/delete/'+$.getSelectedFilePath(e),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
               if(data.ok !== undefined) {
@@ -264,12 +264,12 @@
 
       // Download file
       "Filebrowser:file:download" : function(e) {
-        location.replace("wysiwyg/filebrowser/download"+$.getSelectedFilePath(e));
+        location.replace("wysiwyg/filebrowser/download/"+$.getSelectedFilePath(e));
       },
 
       // When we select file
       "Filebrowser:file:select" : function(e) {
-        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+$.getSelectedFilePath(e));
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+'/'+$.getSelectedFilePath(e));
         window.close();
       },
 
@@ -281,18 +281,18 @@
           w: (screen.availWidth >= imgSize.width + 20 && imgSize.width + 20 > 900)? imgSize.width + 20 : 900,
           h: (screen.availHeight >= imgSize.height + 50 && imgSize.width + 50 > 500)? imgSize.height + 50 : 500
         };
-        window.open("/wysiwyg/filebrowser/crop"+$.getSelectedFilePath(e), "cropresizerWin",
+        window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
           "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
       // Rotate image
       "Filebrowser:image:rotate:left" : function(e){
-        $.get('wysiwyg/filebrowser/rotate_left'+$.getSelectedFilePath(e), function(data){
+        $.get('wysiwyg/filebrowser/rotate_left/'+$.getSelectedFilePath(e), function(data){
           $(document).trigger('Filebrowser:loadFiles')
         });
       },
 
       "Filebrowser:image:rotate:right" : function(e){
-        $.get('wysiwyg/filebrowser/rotate_right'+$.getSelectedFilePath(e), function(data){
+        $.get('wysiwyg/filebrowser/rotate_right/'+$.getSelectedFilePath(e), function(data){
           $(document).trigger('Filebrowser:loadFiles')
         });
       },
@@ -314,7 +314,7 @@
           $(this).html("");
         }).modal().find("a.btn-success").click(function() {
           $("#dir-modal form").ajaxSubmit({
-            url:      'wysiwyg/filebrowser/' + mission + dir.buildFullPath(),
+            url:      'wysiwyg/filebrowser/' + mission + "/" + dir.buildFullPath(),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
               if(data.ok !== undefined) {
