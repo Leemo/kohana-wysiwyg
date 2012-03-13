@@ -355,7 +355,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		$this->template = View::factory('wysiwyg/filebrowser/crop')
 			->bind('file', $file)
-			->bind('path', $this->_path)
+			->set('path', str_replace(DIRECTORY_SEPARATOR, '/', $this->_path))
 			->bind('width', $width)
 			->bind('height', $height);
 	}
