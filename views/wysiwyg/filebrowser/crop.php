@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <base href="<?php echo URL::base(TRUE, TRUE) ?>" />
+	<head>
+		<base href="<?php echo URL::base(TRUE, TRUE) ?>" />
 		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" />
-    <title><?php echo __('Crop and resize image :path', array(':path' => $path)) ?></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title><?php echo __('Crop and resize image :path', array(':path' => $path)) ?></title>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<?php
 		echo Media::instance('css')
 			->add_file('filebrowser/bootstrap/bootstrap.css')
@@ -33,30 +33,30 @@
 				<?php echo View::factory('wysiwyg/filebrowser/crop/form', Arr::extract(array(), array('image_width', 'image_height', 'crop_width', 'crop_height', 'offset_x', 'offset_y')))
 					->set('filename', pathinfo($path, PATHINFO_FILENAME).'_crop')->set('extension', '.'.pathinfo($path, PATHINFO_EXTENSION)); ?>
 			</div>
-		<!-- /Save dialog -->
+			<!-- /Save dialog -->
 
-		<!-- What's now -->
-		<div id="what-now-modal" class="modal hide fade">
-			<div class="modal-header">
-				<a class="close" data-dismiss="modal">&times;</a>
-				<h3><?php echo __('What\'s now') ?></h3>
+			<!-- What's now -->
+			<div id="what-now-modal" class="modal hide fade">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">&times;</a>
+					<h3><?php echo __('What\'s now?') ?></h3>
+				</div>
+				<div class="modal-body">
+					<p><?php echo __('The modified image is saved. You can continue or close window.') ?></p>
+				</div>
+				<div class="modal-footer">
+					<?php echo HTML::anchor("#", __('Close window'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
+					<?php echo HTML::anchor('#', __('Continue'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+				</div>
 			</div>
-			<div class="modal-body">
-				<p><?php echo __('') ?></p>
-			</div>
-			<div class="modal-footer">
-				<?php echo HTML::anchor("#", __('Close window'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
-				<?php echo HTML::anchor('#', __('Continue'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
-			</div>
-		</div>
 
-		<!-- /What's now -->
-		<!-- /Modal windows -->
+			<!-- /What's now -->
+			<!-- /Modal windows -->
 
-		<!-- Navigation bar -->
-		<div class="navbar" id="tools">
-			<div class="navbar-inner">
-				<div class="container-fluid">
+			<!-- Navigation bar -->
+			<div class="navbar" id="tools">
+				<div class="navbar-inner">
+					<div class="container-fluid">
 						<ul class="nav pull-left">
 							<li><?php echo HTML::anchor('#', '<i class="icon-move icon-white"></i>&nbsp;'.__('Drag'), array('id' => 'button-drag', 'class' => 'drag', 'rel' => '&nbsp;'.__('Crop'))) ?></li>
 							<li class="divider-vertical"></li>
@@ -64,7 +64,7 @@
 							<!--
 							<li><p class="navbar-text"><?php echo '<i class="icon-resize-full icon-white"></i>&nbsp;'.__('Proportions') ?>:</p></li>
 							<li class="dropdown">
-								<?php echo HTML::anchor('#', __('Arbitrary').'&nbsp;<b class="caret"></b>', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown')) ?>
+							<?php echo HTML::anchor('#', __('Arbitrary').'&nbsp;<b class="caret"></b>', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown')) ?>
 								<ul class="dropdown-menu">
 									<li><?php echo HTML::anchor('#', __('Arbitrary')) ?></li>
 									<li><?php echo HTML::anchor('#', __('Square')) ?></li>
@@ -89,35 +89,35 @@
 							<li class="divider-vertical"></li>
 							<li><?php echo HTML::anchor('#', '<i class="icon-remove icon-white"></i>&nbsp;'.__('Exit'), array('id' => 'button-close')) ?></li>
 						</ul>
+					</div>
 				</div>
 			</div>
-		</div>
-		<!-- /Navigation bar -->
+			<!-- /Navigation bar -->
 
-		<!-- Crop tool -->
-		<div id="area">
-			<div id="img" <?php echo HTML::attributes(array('style' => "width: ".$width."px; height: ".$height."px;")); ?>>
-				<img alt="" src="<?php echo $file ?>"/>
-				<div id="overlay"></div>
-				<div></div>
-				<div id="cropper">
-					<b id="lt"><em></em></b>
-					<b id="mt"><em></em></b>
-					<b id="rt"><em></em></b>
-					<b id="rm"><em></em></b>
-					<b id="rb"><em></em></b>
-					<b id="mb"><em></em></b>
-					<b id="lb"><em></em></b>
-					<b id="lm"><em></em></b>
-					<div id="cropsize">
+			<!-- Crop tool -->
+			<div id="area">
+				<div id="img" <?php echo HTML::attributes(array('style' => "width: ".$width."px; height: ".$height."px;")); ?>>
+					<img alt="" src="<?php echo $file ?>"/>
+					<div id="overlay"></div>
+					<div></div>
+					<div id="cropper">
+						<b id="lt"><em></em></b>
+						<b id="mt"><em></em></b>
+						<b id="rt"><em></em></b>
+						<b id="rm"><em></em></b>
+						<b id="rb"><em></em></b>
+						<b id="mb"><em></em></b>
+						<b id="lb"><em></em></b>
+						<b id="lm"><em></em></b>
+						<div id="cropsize">
 							<input type="text" id="crop_w" name="w" value="" size="4" />
 							<i>×</i>
 							<input type="text" id="crop_h" name="h" value="" size="4"/>
 							<i id="setSize" class="icon-play icon-white"></i>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<!-- /Crop tool -->
+			<!-- /Crop tool -->
 	</body>
 </html>

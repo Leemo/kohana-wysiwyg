@@ -294,14 +294,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$file = APPPATH.$this->_directory.$this->_path;
 
-		if ( ( ! is_file($file) OR
-			! (list($width, $height) = getimagesize($file)))
-			AND ! $_POST)
-		{
-			return $this
-				->request
-				->redirect(Route::get('wysiwyg/filebrowser')->uri());
-		}
+		if ( ! is_file($file) OR ! $dimentions = Filebrowser::is_image($file))
+			throw new HTTP_Exception_404;
 
 		if ($_POST)
 		{
@@ -318,10 +312,12 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				));
 
 			$path  = rtrim(APPPATH.$this->_directory
-				.pathinfo($this->_path, PATHINFO_DIRNAME), '.');
+				.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
+				.DIRECTORY_SEPARATOR;
 
 			$extension = pathinfo($this->_path, PATHINFO_EXTENSION);
 
+			// Validate fle
 			$validation = $this
 				->_files_validation($_POST, $path, $extension)
 				->label('filename', __('Filename'));
@@ -333,10 +329,44 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 					));
 			}
 
-			Image::factory($file)
-				->resize($_POST['image_width'], $_POST['image_height'])
-				->crop($_POST['crop_width'], $_POST['crop_height'], $_POST['offset_x'], $_POST['offset_y'])
-				->save($path.$_POST['filename'].'.'.$extension);
+			// Validate dimentions
+			$validation = Validation::factory($_POST);
+
+			foreach(array_keys($_POST) as $field)
+			{
+				if ($field != 'filename')
+				{
+					$validation->rules($field, array(
+						array('not_empty'),
+						array('digit', array(':value', TRUE))
+						));
+				}
+			}
+
+			if ( ! $validation->check())
+				throw new HTTP_Exception_400;
+
+			try
+			{
+				// Crop and resize an image
+				Image::factory($file)
+					->resize($_POST['image_width'], $_POST['image_height'])
+					->crop($_POST['crop_width'], $_POST['crop_height'],
+						$_POST['offset_x'], $_POST['offset_y'])
+					->save($path.$_POST['filename'].'.'.$extension);
+			}
+			catch(Exception $e)
+			{
+				// If something's wrong,
+				// return error message
+				$message = explode(':', $e->getMessage());
+
+				return $this->response->json(array(
+					'errors' => array(
+						'filename' => __('Server error. Message: :message', array(
+							':message' => $message[sizeof($message) - 1]
+							)))));
+			}
 
 			return $this->response->ok();
 		}
@@ -350,8 +380,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$this->template = View::factory('wysiwyg/filebrowser/crop')
 			->bind('file', $file)
 			->set('path', str_replace(DIRECTORY_SEPARATOR, '/', $this->_path))
-			->bind('width', $width)
-			->bind('height', $height);
+			->bind('width', $dimentions[0])
+			->bind('height', $dimentions[1]);
 	}
 
 	/**
@@ -530,10 +560,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		return Validation::factory($_POST)
 			->rules('filename', array(
-				array('not_empty'),
-				array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
-				array('fb_file_not_exists', array($path, ':value', $extension))
-				));
+					array('not_empty'),
+					array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
+					array('fb_file_not_exists', array($path, ':value', $extension))
+					));
 	}
 
 	/**
