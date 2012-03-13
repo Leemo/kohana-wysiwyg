@@ -343,8 +343,18 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				}
 			}
 
+			// If crop-parameters isn't valid
 			if ( ! $validation->check())
-				throw new HTTP_Exception_400;
+			{
+				$message = array();
+
+				foreach($validation->errors('wysiwyg') as $row => $error)
+					$message[] = $row.': '.$error;
+
+				// Send message
+				throw new HTTP_Exception_400(implode("\n", $message));
+			}
+
 
 			try
 			{
