@@ -1,5 +1,5 @@
 (function($) {
-  $(document).ready(function(){
+  $(function(){
     for(var environment in wysiwyg_config) {
       var env = wysiwyg_config[environment];
 
@@ -13,5 +13,25 @@
 
       $(env.selector).ckeditor(env.config);
     }
-  })
+    // set output HTML code rules
+
+    CKEDITOR.on( 'instanceReady', function( ev ) {
+      var writer = ev.editor.dataProcessor.writer,
+
+      tags = ['p','h1','h2','h3','h4','h5','h6','dl','dt','dd','div','ul','li'];
+
+      writer.indentationChars = '   ';
+
+      for (var i=0; i<tags.length; i++) {
+        writer.setRules(tags[i],
+        {
+          indent : true,
+          breakBeforeOpen : true,
+          breakAfterOpen : true,
+          breakBeforeClose : true,
+          breakAfterClose : true
+        });
+      }
+    });
+  });
 }(jQuery));
