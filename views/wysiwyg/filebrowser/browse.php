@@ -143,24 +143,19 @@
 <!-- Files list -->
 <script id="tpl-files" type="text/x-jquery-tmpl">
 	{{each(key, value) files}}
-	<div class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}{{if value.width && value.height}} (${value.width} × ${value.height}),{{/if}} ${value.size}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
-			 <div class="icon{{if value.type}} ${value.type}{{/if}}">
-			{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
-			<div class="fileOverlay"></div>
+		<div class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}{{if value.width && value.height}} (${value.width} x ${value.height}),{{/if}} ${value.size}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
+				 <div class="icon{{if value.type}} ${value.type}{{/if}}">
+				{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
+				<div class="fileOverlay"></div>
+			</div>
+			<p class="name"><span>${key}</span><i></i></p>
+			<p class="size">{{if value.width && value.height}}${value.width} &times; ${value.height}, {{/if}}${value.size}</p>
+			<!-- File parameters (for easy rename) -->
+			<span class="params hide">
+				<span class="filename">${value.filename}</span>
+				<span class="extension">${value.extension}</span>
+			</span>
 		</div>
-		<p class="name"><span>${key}</span><i></i></p>
-		<p class="size">
-			{{if value.width && value.height}}
-			(${value.width} × ${value.height}),
-			{{/if}}
-			${value.size}
-		</p>
-		<!-- File parameters (for easy rename) -->
-		<span class="params hide">
-			<span class="filename">${value.filename}</span>
-			<span class="extension">${value.extension}</span>
-		</span>
-	</div>
 	{{/each}}
 </script>
 <!-- /Files list -->
@@ -173,7 +168,7 @@
 	</div>
 	<div class="modal-body">
 		{{if rename}}
-		<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('It action will cause the file is unavailable at the old URL-address.') ?></div>
+			<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('It action will cause the file is unavailable at the old URL-address.') ?></div>
 		{{/if}}
 		<?php echo Form::open() ?>
 		<div class="control-group">
