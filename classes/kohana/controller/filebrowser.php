@@ -232,7 +232,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$this->auto_render = FALSE;
 
 		$path  = rtrim(APPPATH.$this->_directory
-			.pathinfo($this->_path, PATHINFO_DIRNAME), '.');
+			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
+			.DIRECTORY_SEPARATOR;
 
 		$extension = pathinfo($this->_path, PATHINFO_EXTENSION);
 
@@ -413,15 +414,15 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		if ( ! is_dir($directory))
 			return $this->response->status(404);
 
+		$path  = rtrim(APPPATH.$this->_directory
+			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
+			.DIRECTORY_SEPARATOR;
+
 		if ($_POST)
 		{
 			// Then we need to check filename
-			$validation = Validation::factory($_POST)
-				->rules('filename', array(
-					array('not_empty'),
-					array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
-					array('fb_file_not_exists', array($path, ':value', $extension))
-					))
+			$validation = $this->
+				_files_validation($_POST, $path)
 				->label('filename', 'Directory name');
 
 			if ( ! $validation->check())
@@ -566,7 +567,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	 * @param   type   Extension
 	 * @return  Validation
 	 */
-	protected function _files_validation(array $array, $path, $extension)
+	protected function _files_validation(array $array, $path, $extension = NULL)
 	{
 		return Validation::factory($_POST)
 			->rules('filename', array(
