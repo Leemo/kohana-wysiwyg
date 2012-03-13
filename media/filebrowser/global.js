@@ -388,6 +388,7 @@
       path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
       url:         '/wysiwyg/filebrowser/upload'+path,
       fileSizeMax: 20 * 1024 * 1024,
+      appendCookieData: true,
 
       verbose: true,
 
