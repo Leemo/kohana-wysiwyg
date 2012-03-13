@@ -250,12 +250,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			return $this->response->ok();
 
 		// Then we need to check filename
-		$validation = Validation::factory($_POST)
-			->rules('filename', array(
-				array('not_empty'),
-				array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
-				array('fb_file_not_exists', array($path, ':value', $extension))
-				))
+		$validation = $this->_files_validation($_POST, $path, $extension)
 			->label('filename', ($is_directory ? 'Directory name' : 'File name'));
 
 		if ( ! $validation->check())
@@ -322,27 +317,26 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				'offset_y'
 				));
 
-			$validation = Validation::factory($_POST)
-				->rules('filename', array(
-					array('not_empty'),
-					array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$='))
-				))
+			$path  = rtrim(APPPATH.$this->_directory
+				.pathinfo($this->_path, PATHINFO_DIRNAME), '.');
+
+			$extension = pathinfo($this->_path, PATHINFO_EXTENSION);
+
+			$validation = $this
+				->_files_validation($_POST, $path, $extension)
 				->label('filename', __('Filename'));
 
-				if ( ! $validation->check())
-		{
-			return $this->response->json(array(
-				'errors' => $validation->errors('wysiwyg')
-				));
-		}
-
-
-			$extension = pathinfo($file, PATHINFO_EXTENSION);
+			if ( ! $validation->check())
+			{
+				return $this->response->json(array(
+					'errors' => $validation->errors('wysiwyg')
+					));
+			}
 
 			Image::factory($file)
 				->resize($_POST['image_width'], $_POST['image_height'])
 				->crop($_POST['crop_width'], $_POST['crop_height'], $_POST['offset_x'], $_POST['offset_y'])
-				->save(pathinfo($file, PATHINFO_DIRNAME).DIRECTORY_SEPARATOR.$_POST['filename'].'.'.$extension);
+				->save($path.$_POST['filename'].'.'.$extension);
 
 			return $this->response->ok();
 		}
@@ -522,6 +516,24 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		// Send thumbnail content
 		$this->response
 			->body($image);
+	}
+
+	/**
+	 * Returns basic files validation
+	 *
+	 * @param   array  Array to use for validation
+	 * @param   type   Path
+	 * @param   type   Extension
+	 * @return  Validation
+	 */
+	protected function _files_validation(array $array, $path, $extension)
+	{
+		return Validation::factory($_POST)
+			->rules('filename', array(
+				array('not_empty'),
+				array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
+				array('fb_file_not_exists', array($path, ':value', $extension))
+				));
 	}
 
 	/**
