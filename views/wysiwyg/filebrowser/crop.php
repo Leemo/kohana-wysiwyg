@@ -6,20 +6,34 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" />
 		<title><?php echo __('Crop and resize image :path', array(':path' => $path)) ?></title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<?php
-		echo Media::instance('css')
-			->add_file('filebrowser/bootstrap/bootstrap.css')
-			->add_file('filebrowser/cropresizer/global.css');
+		<?php $route = Route::get('media/wysiwyg') ?>
+<?php
 
-		echo Media::instance('js')
-			->add_file('filebrowser/jquery-1.7.1.js')
-			->add_file('filebrowser/jquery.form.js')
-			->add_file('filebrowser/cropresizer/jquery.cropresizer.js')
-			->add_file('filebrowser/bootstrap/bootstrap-modal.js')
-			->add_file('filebrowser/bootstrap/bootstrap-dropdown.js')
-			->add_file('filebrowser/cropresizer/global.js')
-			->add_source('$(function(){$("#img").cropResize({width:'.$width.', height:'.$height.'})});');
-		?>
+	$js = array
+	(
+		'filebrowser/jquery-1.7.1.js',
+		'filebrowser/jquery.form.js',
+		'filebrowser/cropresizer/jquery.cropresizer.js',
+		'filebrowser/bootstrap/bootstrap-modal.js',
+		'filebrowser/bootstrap/bootstrap-dropdown.js',
+		'filebrowser/cropresizer/global.js'
+	);
+
+	$css = array
+	(
+		'filebrowser/bootstrap/bootstrap.css',
+		'filebrowser/cropresizer/global.css'
+	);
+?>
+<?php foreach($js as $file): ?>
+		<?php echo HTML::script($route->uri(array('file' => $file))) ?>
+
+<?php endforeach ?>
+<?php foreach($css as $file): ?>
+		<?php echo HTML::style($route->uri(array('file' => $file))) ?>
+
+<?php endforeach ?>
+		<script type="text/javascript">$(function(){$("#img").cropResize({width:<?php echo $width ?>, height:<?php echo $height ?>})});</script>
 	</head>
 	<body>
 		<!-- Modal windows -->
@@ -97,7 +111,7 @@
 			<!-- Crop tool -->
 			<div id="area">
 				<div id="img" <?php echo HTML::attributes(array('style' => "width: ".$width."px; height: ".$height."px;")); ?>>
-					<img alt="" src="<?php echo $file ?>"/>
+					<img alt="" src="<?php echo $image ?>"/>
 					<div id="overlay"></div>
 					<div></div>
 					<div id="cropper">

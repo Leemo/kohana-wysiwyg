@@ -381,14 +381,13 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			return $this->response->ok();
 		}
 
-		$file = Route::get('media')
-			->uri(array(
-				'file' => Kohana::$config->load('filebrowser.uploads_directory').'/'.$this->_path
-				));
+		$file = $this->_config['public_directory'].'/'
+			.$this->_config['uploads_directory'].'/'
+			.$this->_path;
 
 
 		$this->template = View::factory('wysiwyg/filebrowser/crop')
-			->bind('file', $file)
+			->bind('image', $file)
 			->set('path', str_replace(DIRECTORY_SEPARATOR, '/', $this->_path))
 			->bind('width', $dimentions[0])
 			->bind('height', $dimentions[1]);
