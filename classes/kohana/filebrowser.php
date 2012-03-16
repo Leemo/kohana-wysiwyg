@@ -46,7 +46,7 @@ class Kohana_Filebrowser {
 	 */
 	protected static function _list($directory, $dirs, $files, array $filter = NULL)
 	{
-		$directory = APPPATH.$directory;
+		$directory = DOCROOT.$directory;
 
 		$return = array();
 
@@ -78,8 +78,8 @@ class Kohana_Filebrowser {
 
 						if ($dimensions = self::is_image($filename))
 						{
-							$dir = APPPATH
-								.Kohana::$config->load('media.media_directory')
+							$dir = DOCROOT
+								.Kohana::$config->load('filebrowser.public_directory')
 								.DIRECTORY_SEPARATOR
 								.Kohana::$config->load('filebrowser.uploads_directory')
 								.DIRECTORY_SEPARATOR;
@@ -91,7 +91,7 @@ class Kohana_Filebrowser {
 									));
 
 							$return[$fileinfo->getFilename()] = Arr::merge($return[$fileinfo->getFilename()], array(
-								'thumb'  => $thumb.'?'.Media::compress($fileinfo->getMTime()),
+								'thumb'  => $thumb.'?'.$fileinfo->getMTime(),
 								'width'  => $dimensions[0],
 								'height' => $dimensions[1]
 								));

@@ -4,35 +4,46 @@
     <title><?php echo $title ?></title>
     <base href="<?php echo URL::base(TRUE, TRUE) ?>" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<?php $route = Route::get('media/wysiwyg') ?>
+		<?php echo HTML::script($route->uri(array('file' => 'filebrowser/jquery-1.7.1.js'))) ?>
+		<script type="text/javascript">jQuery.noConflict(); var global_config = <?php echo json_encode($global_config) ?></script>
 <?php
-	echo $css
-		->add_file('filebrowser/bootstrap/bootstrap.css')
-		->add_file('filebrowser/global.css')
-		->add_file('filebrowser/directories.css')
-		->add_file('filebrowser/contextmenu.css')
-		->add_file('filebrowser/fancyupload/style.css')
-		->add_file('filebrowser/fancybox.css');
-?>
-<?php
-	echo $js
-		->add_file('filebrowser/jquery-1.7.1.js')
-		->add_source('jQuery.noConflict();')
-		->add_source('var global_config = '.json_encode($global_config).';');
 
-	echo $js
-		->add_file('filebrowser/i18n/ru.js')
-		->add_file('filebrowser/i18n.js')
-		->add_file('filebrowser/fancyupload/mootools-1.3.2.js')
-		->add_file('filebrowser/fancyupload/Fx.ProgressBar.js')
-		->add_file('filebrowser/fancyupload/Swiff.Uploader.js')
-		->add_file('filebrowser/fancyupload/FancyUpload3.Attach.js')
-		->add_file('filebrowser/jquery.tmpl.js')
-		->add_file('filebrowser/jquery.contextmenu.js')
-		->add_file('filebrowser/jquery.form.js')
-		->add_file('filebrowser/directories.js')
-		->add_file('filebrowser/bootstrap/bootstrap-modal.js')
-		->add_file('filebrowser/global.js');
+	$js = array
+	(
+		'filebrowser/i18n/ru.js',
+		'filebrowser/i18n.js',
+		'filebrowser/fancyupload/mootools-1.3.2.js',
+		'filebrowser/fancyupload/Fx.ProgressBar.js',
+		'filebrowser/fancyupload/Swiff.Uploader.js',
+		'filebrowser/fancyupload/FancyUpload3.Attach.js',
+		'filebrowser/jquery.tmpl.js',
+		'filebrowser/jquery.contextmenu.js',
+		'filebrowser/jquery.form.js',
+		'filebrowser/directories.js',
+		'filebrowser/bootstrap/bootstrap-modal.js',
+		'filebrowser/global.js'
+	);
+
+	$css = array
+	(
+		'filebrowser/bootstrap/bootstrap.css',
+		'filebrowser/global.css',
+		'filebrowser/directories.css',
+		'filebrowser/contextmenu.css',
+		'filebrowser/fancyupload/style.css',
+		'filebrowser/fancybox.css'
+	);
 ?>
+
+<?php foreach($js as $file): ?>
+		<?php echo HTML::script($route->uri(array('file' => $file))) ?>
+
+<?php endforeach ?>
+<?php foreach($css as $file): ?>
+		<?php echo HTML::style($route->uri(array('file' => $file))) ?>
+
+<?php endforeach ?>
 	</head>
 	<body>
 		<?php echo $content ?>

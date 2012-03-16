@@ -35,8 +35,6 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		parent::before();
 
 		$this->template
-			->set('js',            Media::instance('js'))
-			->set('css',           Media::instance('css'))
 			->set('global_config', array())
 			->set('title',         '')
 			->set('content',       '');
@@ -44,12 +42,13 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		/**
 		 * Load config
 		 */
-		$this->_config = Arr::merge(Kohana::$config->load('media')->as_array(),
-			Kohana::$config->load('wysiwyg.default'));
+		$this->_config = Kohana::$config
+			->load('filebrowser')
+			->as_array();
 
-		$this->_directory = $this->_config['media_directory']
+		$this->_directory = $this->_config['public_directory']
 			.DIRECTORY_SEPARATOR
-			.Kohana::$config->load('filebrowser.uploads_directory')
+			.$this->_config['uploads_directory']
 			.DIRECTORY_SEPARATOR;
 
 		$this->_path = str_replace('/', DIRECTORY_SEPARATOR, $this->request->param('path'));
@@ -102,7 +101,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	protected function _filebrowser()
 	{
-		$filter = Kohana::$config->load('filebrowser.filters.'.$this->request->action());
+		$filter = $this->_config['filters'][$this->request->action()];
 		$path   = $this->_directory.$this->_path;
 
 		if ($this->request->is_ajax())
@@ -146,7 +145,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		if ($_FILES)
 		{
 			// Check if file already exists
-			if(is_file(APPPATH.$this->_directory.$this->_path.$_FILES['Filedata']['name']))
+			if(is_file(DOCROOT.$this->_directory.$this->_path.$_FILES['Filedata']['name']))
 			{
 				return $this->response->json(array(
 					'error' => __('FIle :file already exists in :path', array(
@@ -157,7 +156,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 			try
 			{
-				Upload::save($_FILES['Filedata'], $_FILES['Filedata']['name'], APPPATH.$this->_directory.$this->_path);
+				Upload::save($_FILES['Filedata'], $_FILES['Filedata']['name'], DOCROOT.$this->_directory.$this->_path);
 			}
 			catch(Kohana_Exception $e)
 			{
@@ -180,8 +179,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		if (isset($_POST['to']))
 		{
-			$from = APPPATH.$this->_directory.$this->_path;
-			$to   = APPPATH.$this->_directory.$_POST['to'].DIRECTORY_SEPARATOR.pathinfo($this->_path, PATHINFO_BASENAME);
+			$from = DOCROOT.$this->_directory.$this->_path;
+			$to   = DOCROOT.$this->_directory.$_POST['to'].DIRECTORY_SEPARATOR.pathinfo($this->_path, PATHINFO_BASENAME);
 
 			try
 			{
@@ -205,7 +204,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$file = APPPATH.$this->_directory.$this->_path;
+		$file = DOCROOT.$this->_directory.$this->_path;
 
 		if ( ! file_exists($file) OR ! is_file($file))
 		{
@@ -231,7 +230,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$path  = rtrim(APPPATH.$this->_directory
+		$path  = rtrim(DOCROOT.$this->_directory
 			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
 			.DIRECTORY_SEPARATOR;
 
@@ -239,7 +238,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		$_POST = Arr::extract($_POST, array('filename'));
 
-		$current_fname = APPPATH.$this->_directory.$this->_path;
+		$current_fname = DOCROOT.$this->_directory.$this->_path;
 		$new_fname     = $path.DIRECTORY_SEPARATOR.$_POST['filename']
 			.( ! empty($extension) ? '.'.$extension : '');
 
@@ -293,7 +292,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function action_crop()
 	{
-		$file = APPPATH.$this->_directory.$this->_path;
+		$file = DOCROOT.$this->_directory.$this->_path;
 
 		if ( ! is_file($file) OR ! $dimentions = Filebrowser::is_image($file))
 			throw new HTTP_Exception_404;
@@ -312,7 +311,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				'offset_y'
 				));
 
-			$path  = rtrim(APPPATH.$this->_directory
+			$path  = rtrim(DOCROOT.$this->_directory
 				.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
 				.DIRECTORY_SEPARATOR;
 
@@ -409,12 +408,12 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$directory = APPPATH.$this->_directory.$this->_path;
+		$directory = DOCROOT.$this->_directory.$this->_path;
 
 		if ( ! is_dir($directory))
 			return $this->response->status(404);
 
-		$path  = rtrim(APPPATH.$this->_directory
+		$path  = rtrim(DOCROOT.$this->_directory
 			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
 			.DIRECTORY_SEPARATOR;
 
@@ -461,7 +460,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$file = APPPATH.$this->_directory.$this->_path;
+		$file = DOCROOT.$this->_directory.$this->_path;
 
 		if ( ! is_file($file) OR ! Filebrowser::is_image($file))
 		{
@@ -491,7 +490,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		{
 			try
 			{
-				unlink(APPPATH.$this->_directory.$this->_path);
+				unlink(DOCROOT.$this->_directory.$this->_path);
 			}
 			catch(Exception $e)
 			{
@@ -517,9 +516,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$config = Kohana::$config->load('filebrowser.thumbs');
+		$config = $this->_config['thumbs'];
 
-		$image = APPPATH.$this->_directory.$this->_path;
+		$image = DOCROOT.$this->_directory.$this->_path;
 
 		if ( ! is_file($image) OR ! ($dimentions = Filebrowser::is_image($image)))
 		{
@@ -592,7 +591,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 			$this->template->global_config = array
 			(
-				'root'       => $this->_config['media_directory'].'/'.Kohana::$config->load('filebrowser.uploads_directory'),
+				'root'       => $this->_config['public_directory'].'/'.$this->_config['uploads_directory'],
 				'dirs_url'   => $route->uri(array('action' => 'dirs')),
 				'files_url'  => $route->uri(array('action' => $this->request->action())),
 				'move_url'   => $route->uri(array('action' => 'move')),

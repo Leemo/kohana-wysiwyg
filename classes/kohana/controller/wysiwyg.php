@@ -1,77 +1,65 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
-class Kohana_Controller_WYSIWYG extends Controller_Media {
+class Kohana_Controller_WYSIWYG extends Controller {
 
 	/**
-	 * WYSIWYG configuration array
+	 * Filebrowser configuration array
 	 *
 	 * @var array
 	 */
-	protected $_wysiwyg_config = array();
-
-	/**
-	 * WYSIWYG filebrowser configuration array
-	 *
-	 * @var array
-	 */
-	protected $_filebrowser_config = array();
-
-	/**
-	 * Environment name
-	 *
-	 * @var string
-	 */
-	protected $_environment;
+	protected $_config = array();
 
 	public function before()
 	{
 		parent::before();
 
-		$this->_wysiwyg_config = Kohana::$config->load('wysiwyg')
+		$this->_config = Kohana::$config
+			->load('filebrowser')
 			->as_array();
+	}
 
-		$this->_filebrowser_config = Kohana::$config->load('filebrowser')
-			->as_array();
+	/**
+	 * Requested filename
+	 *
+	 * @var string
+	 */
+	protected $_file;
 
-		// Be cause minimized WYSIWYG editor does not work...
-		// I don't know why... I add this problem in my TODO
-		// Alexey Popov :)
-		$this->_config['filters'] = array
-		(
-			'css' => $this->_config['filters']['css']
-		);
+	/**
+	 * Requested file extension
+	 *
+	 * @var string
+	 */
+	protected $_ext;
 
-		$file = pathinfo($this->_file, PATHINFO_FILENAME);
+	public function action_media()
+	{
+		$file = $this->request->param('file');
 
-		if ($file == 'init')
+		// Get the file info
+		$this->_ext  = pathinfo($file, PATHINFO_EXTENSION);
+		$this->_file = str_replace('.'.$this->_ext, '', $file);
+
+		// Find requested file
+		$file = Kohana::find_file('media', $this->_file, $this->_ext);
+
+		if ($file)
 		{
-			$ext = pathinfo($this->_file, PATHINFO_EXTENSION);
+			// Check if the browser sent an "if-none-match: <etag>" header, and tell if the file hasn't changed
+			$this->response->check_cache(sha1($this->request->uri()).filemtime($file), $this->request);
 
-			if (in_array($ext, array('js', 'css')))
-			{
-				$this->_environment = $file;
-
-				$this->request->action($ext);
-			}
+			// Set the proper headers to allow caching
+			// and send the file content as the response
+			$this->response
+				->body(file_get_contents($file))
+				->headers('content-type',  File::mime_by_ext($this->_ext))
+				->headers('last-modified', date('r', filemtime($file)));
 		}
-	}
-
-	public function action_plain()
-	{
-		$this->_source(array($this->_check_path($this->_file)));
-	}
-
-	public function action_js()
-	{
-		$files = array
-		(
-			Kohana::find_file('media/wysiwyg', 'init', 'js')
-		);
-
-		$optional_content  = 'var wysiwyg_config = '.json_encode($this->_wysiwyg_config).'; ';
-		$optional_content .= 'var filebrowser_config = '.json_encode($this->_filebrowser_config).';';
-
-		$source = $this->_source($files, $optional_content);
+		else
+		{
+			// Return a 404 status
+			$this->response->status(404);
+		}
 	}
 
 } // End Kohana_Controller_WYSIWYG
