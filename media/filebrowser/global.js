@@ -385,7 +385,7 @@
   $.uploaderInit = function(){  // Upload dialog
     // !!!ACHTUNG MOOTOOLS SYNTAX
     $.upLoader = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
-      path:        '/media/filebrowser/fancyupload/Swiff.Uploader.swf',
+      path:        '/media/wysiwyg/filebrowser/fancyupload/Swiff.Uploader.swf',
       url:         '/wysiwyg/filebrowser/upload'+path,
       fileSizeMax: 20 * 1024 * 1024,
       appendCookieData: true,
