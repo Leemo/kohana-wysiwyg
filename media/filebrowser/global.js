@@ -52,9 +52,13 @@
     });
     // End upload dialog
 
+    //Disable default submit by pressing "enter" on some field of 'modal' form and provide ajax POST request
+    $("div.modal").delegate("form", "submit", function(){
+      $(this).parent().siblings("div.modal-footer").children("a.btn-success").click();
+      return false;
+    });
 
     // End modal windows
-
 
     // Init folders tree
     $("div.directories").folderTree().contextMenu({
@@ -269,7 +273,7 @@
 
       // When we select file
       "Filebrowser:file:select" : function(e) {
-        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), global_config.root+'/'+$.getSelectedFilePath(e));
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), "/" + global_config.root + "/" + $.getSelectedFilePath(e));
         window.close();
       },
 
