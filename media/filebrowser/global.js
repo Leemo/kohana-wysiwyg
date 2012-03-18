@@ -273,7 +273,7 @@
 
       // When we select file
       "Filebrowser:file:select" : function(e) {
-        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), "/" + global_config.root + "/" + $.getSelectedFilePath(e));
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), "/" + global_config.root + $.getSelectedFilePath(e));
         window.close();
       },
 
