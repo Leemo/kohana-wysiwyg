@@ -9,7 +9,7 @@
   // This global variable gets value
   // on each selecting of folders
   // by execute code in directories.js
-  path = "";
+  path = "/";
 
   $(function(){
 
