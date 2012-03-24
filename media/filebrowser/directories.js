@@ -125,7 +125,7 @@
     var pathTxt = '';
     var parent = function(folder){
       if(!folder.data("data").isRoot){
-        pathTxt = folder.data("data").name+"/" + pathTxt;
+        pathTxt = folder.data("data").name+ "/" + pathTxt;
         parent(folder.parent());
       }
       else return;
@@ -134,7 +134,6 @@
     if(refreshParentsArray) {
       parentsArray = pathTxt.split("/");
       parentsArray.pop();
-      console.log (parentsArray);
     }
     return "/" + pathTxt;
   };
