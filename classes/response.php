@@ -6,6 +6,8 @@ class Response extends Kohana_Response {
 	{
 		$this
 			->headers('content-type', 'application/json')
+			->headers('cache-control', 'no-store, no-cache, must-revalidate')
+			->headers('pragma', 'no-cache')
 			->body(json_encode($json));
 	}
 
