@@ -1,5 +1,5 @@
-Copyright (c) 2011, Alexey Popov (Leemo studio)
-===============================================
+Copyright (c) 2011-2012, Leemo studio
+=====================================
 
 All rights reserved
 -------------------

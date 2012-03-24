@@ -1,67 +1,86 @@
 (function($){
   $(function(){
 
-    // Modal dialog window settings
-    var fancyboxSettings = {
-      "overlayOpacity":     0.4,
-      "hideOnOverlayClick": false,
-      "showCloseButton":    false,
-      "speedIn":            0,
-      "speedOut":           0,
-      "onComplete":         function(){
-        $(document).trigger("fancybox_ready")
-      }
-    };
+    // Initialize dropdown menus
+    $(".dropdown-toggle").dropdown();
 
-    // Tooltips on buttons
-    $(".tip-sw").tipsy({
-      "gravity": "sw",
-      "fade":    true,
-      "delayIn": 1000
+    // Bind global actions
+    $(document).bind({
+      // Save croped file
+      "Filebrowser:crop:save": function(e) {
+        var hiddenInputs = {
+          'image_width'  : e.resize.w,
+          'image_height' : e.resize.h,
+          'crop_width'   : e.selection.right-e.selection.left,
+          'crop_height'  : e.selection.bottom-e.selection.top,
+          'offset_x'     : e.selection.left,
+          'offset_y'     : e.selection.top
+        },
+        inputHtml = '',
+        btnSuccess = $("#save-modal a.btn-success");
+
+        for (var name in hiddenInputs) {
+          inputHtml += '<input type="hidden" name="'+name+'" value="'+hiddenInputs[name]+'" />'
+        }
+        $("#crop-form").append(inputHtml);
+
+        $("#save-modal").on({
+          "show" : function () {
+            $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
+
+            btnSuccess.click(function() {
+              $("#crop-form").ajaxSubmit({
+                url: location.href,
+                dataType: "json",
+                success:  function(data, statusText, xhr, $form) {
+                  $form.find("div.control-group").removeClass("error").find(".help-inline").remove();
+                  if(data.ok !== undefined) {
+                    $(document).trigger("Filebrowser:crop:afterSave");
+                    $("#save-modal").modal("hide");
+                  }
+                  else if(data.errors !== undefined) {
+                    $form.find(".control-group").addClass("error")
+                    .append('<span class="help-inline">'+data.errors.filename+"</span>");
+                  }
+                }
+              });
+
+              return false;
+            });
+          },
+          "hide" : function() {
+            btnSuccess.unbind("click");
+          }
+        }).modal();
+
+      },
+
+       "Filebrowser:crop:afterSave": function() {
+         var btnSuccess = $("#what-now-modal a.btn-success");
+         $("#what-now-modal").on({
+          "show" : function () {
+            btnSuccess.click(function() {
+              $(document).trigger("Filebrowser:crop:exit");
+            });
+          },
+
+          "hide" : function() {
+            btnSuccess.unbind("click");
+          }
+         }).modal();
+       },
+
+      // Close cropresize window
+      "Filebrowser:crop:exit": function() {
+        window.opener.jQuery(window.opener.document).trigger("Filebrowser:loadFiles");
+        window.close();
+      }
     });
 
-    // Save croped image
-    $(document).bind("savecrop", function(e){
-      $("#crop-form input[name=image_width]").val(e.resize.w);
-      $("#crop-form input[name=image_height]").val(e.resize.h);
-      $("#crop-form input[name=crop_width]").val(e.selection.right-e.selection.left);
-      $("#crop-form input[name=crop_height]").val(e.selection.bottom-e.selection.top);
-      $("#crop-form input[name=offset_x]").val(e.selection.left);
-      $("#crop-form input[name=offset_y]").val(e.selection.top);
+    // Close cropresizer window on click to "Exit" button
+    $("#button-close").click(function() {
+      $(document).trigger("Filebrowser:crop:exit");
+    });
 
-      $.fancybox($("#crop-form").html(), fancyboxSettings)
-    }).bind("fancybox_ready", function(){
-      $(document).trigger("process_form");
-
-      $("#fancybox-content .close").click(function(){
-        $.fancybox.close();
-
-        return false;
-      });
-
-      $("#fancybox-content .exit").click(function(){
-        window.close();
-        return false
-      })
-    }).bind("process_form", function(){
-      $("#fancybox-content form").ajaxForm({
-        "success": function(responseText) {
-          try {
-            var data = $.parseJSON(responseText);
-            location.replace(data.redirect);
-            return
-          } catch(e) {
-            $.fancybox(responseText, fancyboxSettings)
-          }
-        },
-        "iframe": true,
-        "data": {
-          "X-REQUESTED-WITH": "XMLHTTPREQUEST"
-        },
-        "beforeSubmit": function() {
-          $("#fancybox-content form .submit").addClass("spinner")
-        }
-      })
-    })
   })
 })(jQuery);

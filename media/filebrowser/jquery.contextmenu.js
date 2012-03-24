@@ -4,7 +4,7 @@
  * content of file 'contextmenu.css' to be included in page css styles.
  * Auto correction direction of popup opening depending on position of edge of the screen:
  * context menu open to left or right or up or down from clicked object to be full visible whithout scrolling.
- * Also supported non-active (visible but not clicable) point of menu, delimiter of points group, set method and events list of closing popup, call individual handlers or(and) start user events for click each menu points.
+ * Also supported non-point-active (visible but not clicable) point of menu, delimiter of points group, set method and events list of closing popup, call individual handlers or(and) start user events for click each menu points.
  *
  * Plugin should be binded to parent element of objects which need context menu. Progressive method 'delegate' use, and delegete right click event to child elements,
  * so it possible to save in memory only one function-handler on parent element, without many handlers for all elements. Parameter 'targetSelector' set child elements need context menu.
@@ -13,12 +13,13 @@
  * Plugin start event "onOpenContextMenu" on opener (element on which menu open). Event has parameter 'event.menu', it returns menu container.
  *
  * Plugin has 2 public methods: pointToggleActive(number) and pointToggleShow(number). Methods can be use in outher scripts
- * it should call on menu box element to change a view of menu poins (make active, non-active, hide or visible). All they recive a number of <li> element in list.
+ * it should call on menu box element to change a view of menu poins (make point-active, non-point-active, hide or visible). All they recive a number of <li> element in list.
  *
  * Usage:
  *
  *   $(selector).contextMenu({
- *     cssClass: 'someClass' // (default:'contextMenu') class name for popup
+ *     containerClass: 'someClass' // (default:'contextMenu') class name for popup. ATTENTION! Writing several classes should first write unicue context menu class. plugin detect opened menu by first of classes
+ *     listClass : 'someClass' // default: none, class for <ul> element
  *
  *     title: 'Popup title', // (default:empty) header of popup. If empty container don't generating,
  *
@@ -32,10 +33,11 @@
  *       {
  *				text:'someText',            // the text of this menu point, empty make this point ignored (irrespective of other parameters)
  *				itemClass:'classOfpoint',   // the css class directly for this point contain for example bkg-color, bkg-icon, text-color
+ *				bootstrapiconClass : 'iconClass' // Not strict required, need for twitter bootstrap styles udsing. If exist, special tag <i> with this class name will be added into <a> element.
  *				event: 'eventName' | {} ,  // user event (name or event object) starting on click this menu point, WARNING! event start on element which has opened contextmenu, not on menu point! you can get opener as event.target
  *				handler: function(){},      // anonymous function which will call on click this menu point. WARNING! It will called "as is" like "<a>" onClick handler, it's 'return' will transport to link, you should controll return value
  *				href: 'http://somelink',    // link to some url will put to point 'href' attribute, link behaviour should be coordinate to handler function if it exist (for ex. handler can return 'false' and this 'href' not be processed)
- *			  nonActive : false,          // (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain overlay <span> over <a> and have no class ".active"
+ *			  point-nonActive : false,          // (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain overlay <span> over <a> and have no class ".point-active"
  *			 },
  *			"break",                      //change all described object to string "break" make the delimiter point between menu points. this point styles set in class '.delimiter'
  *     ]
@@ -54,17 +56,18 @@
 				zone : 'any',
 				events : ''
 			},
-			cssClass : 'contextMenu',
+			containerClass : 'contextMenu',
+      listClass: "",
 			targetSelector : "a",
 			title: '',
 			list: []
 		}, opt);
 
 		return this.delegate(opt.targetSelector, "contextmenu", function(e){
-      $("div."+opt.cssClass).remove();
-			var $p = $('<div class = "'+opt.cssClass+'"></div>').appendTo("body");
+      $("div."+((opt.containerClass.indexOf(" ") != -1) ? opt.containerClass.split(" ")[0] : opt.containerClass)).remove();
+			var $p = $('<div class = "'+opt.containerClass+'"></div>').appendTo("body");
 			if(opt.title) $p.append("<h3>"+opt.title+"</h3>");
-			var $li, $menu = $("<ul/>").appendTo($p), opener = $(e.target);
+			var $li, $menu = $("<ul/>", {"class" : opt.listClass != "" ? opt.listClass : null}).appendTo($p), opener = $(e.target);
 			if(opener.parent() != this) { // if event.target is targrtSelector's child
 				opener = $(e.target).closest(opt.targetSelector) || opener;
 			}
@@ -72,10 +75,10 @@
 				if(typeof(item) == "object"){
 					if(item.text) {
 						$li = $("<li>",{
-							"class" : ((item.nonActive) ? "nonActive " :"active ")+item.itemClass
+							"class" : ((item.nonActive) ? "point-nonActive " :"point-active ")+item.itemClass
 						}).appendTo($menu);
 						$li.append( $("<a/>", {
-							text : item.text,
+							html : (typeof(item.bootstrapiconClass) != undefined ? "<i class='"+item.bootstrapiconClass+"'></i>" : "") + item.text,
 							href : (item.nonActive) ? item.href : null,
 							click : (typeof(item.handler) == "function" || item.event != "") ?
 							function(e){
@@ -134,12 +137,12 @@
 		if(list.length > 0 && typeof(list[n]) != 'undefined'){
 			if(!$(list[n]).hasClass("delimiter")){
 				var $li = $(list[n]), $link = $li.children("a");
-				if($li.hasClass("nonActive") && $li.children("span").length > 0) {
-					$li.removeClass("nonActive").addClass("active").children("span").remove();
-					$link.attr("href", $li.data("href"));
+				if($li.hasClass("point-nonActive") && $li.children("span").length > 0) {
+					$li.removeClass("point-nonActive").addClass("point-active").children("span").remove();
+					$link.attr("href", $li.data("href") || "");
 				}
-				else if($li.hasClass("active")) {
-					$li.removeClass("active").addClass("nonActive").append("<span/>");
+				else if($li.hasClass("point-active")) {
+					$li.removeClass("point-active").addClass("point-nonActive").append("<span/>");
 					$link.removeAttr("href");
 				}
 			}

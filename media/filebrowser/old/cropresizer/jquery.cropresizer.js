@@ -45,20 +45,20 @@
       }).prependTo(this),
       picture : this.children("img"), //already two images
       // toolbar
-      toolbar        : $("#tools"),
-      plus           : $("#button-plus"),
-      minus          : $("#button-minus"),
-      reset          : $("#button-reset"),
-      center         : $("#button-center"),
-      close          : $("#button-close"),
-      save           : $("#button-save"),
-      zoominput      : $("#input-ratio"),
-      toggleDragCrop : $("#button-drag"),
-      proportion     : $("#button-proportion"),
-      cropsize       : $("#cropsize"),
-      crop_w         : $("#crop_w"),
-      crop_h         : $("#crop_h"),
-      setSize        : $("#setSize"),
+      toolbar   : $("#tools"),
+      plus      : $("#plus"),
+      minus     : $("#minus"),
+      reset     : $("#reset"),
+      center    : $("#center"),
+      close     : $("#close"),
+      save      : $("#save"),
+      zoominput : $("#ratio"),
+      drag      : $("#drag"),
+      crop      : $("#crop"),
+      proportion: $("#proportion"),
+      cropsize  : $("#cropsize"),
+      crop_w    : $("#crop_w"),
+      crop_h    : $("#crop_h"),
 
       // other
 
@@ -231,7 +231,7 @@
                 e.stopPropagation();
                 obj.ClipResize(e, $(this));
               });
-            obj.save.removeClass("disabled");
+            obj.save.removeAttr("disabled");
           }
         });
         return this;
@@ -294,7 +294,7 @@
             var value = parseInt($(this).val());
             if((!isNaN(value) && value > 15 && value < winsize[$(this).attr("name")]-20)) {
               var input = this;
-              obj.setSize.fadeIn().bind({
+              obj.cropsize.children("em").fadeIn().bind({
                 click :function(){
                   if (input == obj.crop_w[0]) {
                     obj.selection.left = parseInt((obj.selection.right + obj.selection.left - value)/2);
@@ -316,7 +316,7 @@
               });
             }
 
-            else obj.setSize.fadeOut()
+            else obj.cropsize.children("em").fadeOut()
 
           },
 
@@ -386,7 +386,7 @@
           x: 0,
           y: 0
         };
-        this.save.addClass("disabled");
+        this.save.attr("disabled","disabled");
         return this;
       },
 
@@ -439,33 +439,29 @@
       }
     });
 
-    this.toggleDragCrop.click(function(){ // drag image button
-      var link = $(this);
-      obj.win.toggleClass("dragable");
-      var r = this.rel;
-      this.rel = link.text();
-      link.html('<i class="icon-' + (link.hasClass("drag") ? 'retweet' : 'move') + ' icon-white"></i>'+ r);
-      if(link.hasClass("drag")){
-        obj.unbind(".setcrop").bind("mousedown.drag", function(e){
-          obj.Drag(e);
+    this.drag.click(function(){ // drag image button
+      $(this).addClass("active");
+      obj.crop.removeClass("active");
+      obj.win.addClass("dragable");
+      obj.unbind(".setcrop").bind("mousedown.drag", function(e){
+        obj.Drag(e);
+      });
+    });
+
+    this.crop.click(function(){
+      obj.drag.removeClass("active");
+      obj.win.removeClass("dragable");
+      $(this).addClass("active");
+      obj.unbind(".drag").bind(
+        "mousedown.setcrop", function(e){
+          obj.Crop(e);
         });
-       link.removeClass("drag");
-      }
-      else {
-        obj.unbind(".drag").bind(
-          "mousedown.setcrop", function(e){
-            obj.Crop(e);
-          });
-        link.addClass("drag");
-      }
-      return false;
     });
 
     $.each([this.plus, this.minus], function(i){ // zoom buttons
       $(this).bind({
         "click" : function(){ // presition resize by single click
           obj.ZoomStart("button", 1-i*2, false);
-          return false;
         },
         "mousedown" : function(){
           obj.ZoomStart("button", 1-i*2, true, 3000);
@@ -478,16 +474,15 @@
 
     this.proportion.bind("change", function(){
       obj.cropRatio = this.options[this.selectedIndex].value*1;
+      console.log (obj.cropRatio);
     });
 
     this.reset.click(function(){ // reset button
       obj.Center(true).ClipDelete();
-      return false;
     });
 
     this.center.click(function(){
-      obj.Center(false);
-      return false;
+      obj.Center(false)
     });
 
     this.close.click(function(){
@@ -495,19 +490,16 @@
     });
 
     this.save.click(function(){
-      if( ! $(this).hasClass("disabled")){
-        $(document).trigger({
-          type: "Filebrowser:crop:save",
-          resize: obj.currentSize,
-          selection: obj.selection
-        });
-      }
-      return false;
-    }).addClass("disabled");
+      $(document).trigger({
+        type: "savecrop",
+        resize: obj.currentSize,
+        selection: obj.selection
+      });
+    }).attr("disabled","disabled");
 
     this.win.bind('mousewheel DOMMouseScroll',  function(e){
       e.preventDefault();
-      var dir = -e.originalEvent.wheelDelta || e.originalEvent.detail;
+      var dir = -e.wheelDelta || e.detail;
       obj.wheelTiks += dir/Math.abs(dir);
       if(!obj.hasClass("active")){
         obj.addClass("active "+((dir<0) ? "in" : "out"));
