@@ -55,17 +55,19 @@
     $("#upload-modal").on({
       "show" : function() {
         var modal = $(this);
-        $(this).find("a.upload").click(function(){
+        modal.find("a.upload").click(function(){
+          $(this).addClass("disabled");
           modal.find("ul.upload").children("li").each(function(){
             $(this).fileUpload("/wysiwyg/filebrowser/upload" + path, "Filedata");
           });
           return false;
         });
-        $(this).find("a.attach-another").children("input").getFileToModal("upload-modal");
+        modal.find("a.attach-another").children("input").getFileToModal("upload-modal");
       },
       "hide" : function() {
         $("#upload-modal ul.upload").empty();
         $(this).find("a.upload").unbind("click");
+        $(document).trigger("Filebrowser:loadFiles");
       }
     });
     // End upload dialog
@@ -266,7 +268,7 @@
         }).modal()
         .find("a.btn-success").click(function() {
           $("#file-delete-modal form").ajaxSubmit({
-            url:      'wysiwyg/filebrowser/delete/'+$.getSelectedFilePath(e),
+            url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
               if(data.ok !== undefined) {
@@ -405,7 +407,7 @@
       }));
   };
 
-  
+
 
   // file multi-upload methods based on HTML5 File API
 
@@ -420,56 +422,62 @@
     MIME-TYPE: by comparing with allowed types list form global config,
     SIZE: by comparing with max size from global config,
     VALID NAME: checking allowed symbols by regexp
-    NON_DUBLICATE NAME IN FOLDER ON SERVER: checking group of files by special ajax-reuest to server
 
-    Method return object with files and error notes for each file
+    Method return array of files and error notes for each file
   */
-    var files = [], names = [];
+    var files = [], valid = [];
     $.each(inputElement.files, function(i, file){
-
       var check = {
         "mime" : (file.type == "") ? true : ($.inArray(file.type, global_config.mime_types) == -1 ? true : false),
         "size" : file.size*1 > global_config.max_upload_size*1 ? true : false,
-        "invalid" : ""
+        "invalid" : ! /^[\w\.-]*$/.test(file.name)
       },
       note = "";
-
       for(var n in check) {
-        note += check[n] === true ? " "+ global_config.upload_notes.file_err[n] : "";
-      };
-
+        note += check[n] === true ? (note != "" ? ", " : "") + global_config.upload_notes.file_err[n] : "";
+      }
       files[i] = {
         "file": file,
-        "note": note
+        "note": note != "" ? note + "." : ""
       };
-      names[i] = file.name;
+      if (note == "") valid.push(file.name); // files checked succefull
     });
-
-    $.POST("/wysiwyg/filebrowser/upload" + path, {"files": names}, function(data){
-      console.log(data);
-    },"json");
-
+    return {
+      "all" : files,
+      "valid" : valid
+    };
   }
 
   // assemble selected files to modal, read properties, check allowed type and size
   $.fn.getFileToModal = function(uploadModalId){
     var modal = $("#" + uploadModalId),
-    ul = modal.find("ul.upload");
+    ul = modal.find("ul.upload"),
+    upload = modal.find("a.upload");
 
     this.bind("change", function(){
-      var files = fileListPreCheck(this);
-      $.each(files, function(i, item){
-        $("<li/>", {
-          "html" :  item.file.name+" <em>("+(item.file.size/1000).toFixed(2)+" Kb)</em>"
-          +"<div class='progress progress-striped active'><div class='bar'></div></div>"
-          +"<span class='note'>" + item.note + "</span></li>",
-          "class" : item.note == "" ? "" : "disallowed"
-        }).data("file", item.note == "" ? item.file : "").appendTo(ul);
-      // all files showing in list but only allowed files put to <li> as jquery data
-      });
-      modal.modal('show');
-    });
+      var checked = $.fileListPreCheck(this);
 
+      $.post("/wysiwyg/filebrowser/status" + path, {
+        "files": checked.valid // last check for already existing file
+      }, function(data){
+        // creating file list
+        var nothingToUpload = true; // to deactivate upload button if all files invalid and nothing to upload
+        $.each(checked.all, function(i, item){
+          if (data[item.file.name] === true) item.note = global_config.upload_notes.file_err["already_exist"];
+          if(item.note == "") nothingToUpload = false;
+          $("<li/>", {
+            "html" :  item.file.name+" <em>("+(item.file.size/1000).toFixed(2)+" Kb)</em>"
+            +(item.note == "" ? "<div class='progress progress-striped active'><div class='bar'></div></div>" : "")
+            +"<span class='note'>" + item.note + "</span></li>",
+            "class" : item.note == "" ? "allowed" : "disallowed"
+          }).data("file", item.note == "" ? item.file : "").appendTo(ul);
+        // all files showing in list but only allowed files put to <li> as jquery data
+        });
+        modal.find("a.upload")[ (nothingToUpload ? "add" : "remove")+"Class"]("disabled");
+        modal.modal('show');
+
+      });// end of postJSON responce hundler
+    });
   }
 
   $.fn.fileUpload = function(url, fileDataKey) {
@@ -480,7 +488,8 @@
    * postDataKey - string, which will key of $_FILE array in server (analog value of <input> 'name' attribute .
    */
     if( ! this.data("file") || this.data("file") == "" || this.hasClass("finished")) return this;
-    var progress = this.children("div.progress").children("div"),
+    var progress = this.children("div.progress"),
+    fill = progress.children("div"),
     note = this.children("span.note"),
     file = this.data("file"),
     li = this;
@@ -491,27 +500,33 @@
       var xhr = new XMLHttpRequest();
 
       xhr.upload.addEventListener("progress", function(e) {
-        if (e.lengthComputable) progress.width((e.loaded * 100) / e.total + "%");
+        if (e.lengthComputable) fill.width((e.loaded * 100) / e.total + "%");
       }, false);
 
       // load and error events handlers
       xhr.onreadystatechange = function () {
+        var obj, errorText = "";
         if (this.readyState == 4) {
-          li.addClass("finished");
+          var xhr = this;
+          fill.width("100%").parent().fadeOut(function(){
+            li.addClass("finished");
 
-          if(this.status == 200) {
-            try {
-              var obj = $.parseJSON(xhr.responseText);
-            }
-            catch(e) {
-              if(xhr.responseText == "ok")  {
-                note.text(global_config.upload_notes.ok).parent().addClass("ok");
+            if(xhr.status == 200) {
+              try {
+                obj = $.parseJSON(xhr.responseText);
+                for (var i in obj) errorText += obj[i]+" ";
+                note.text(errorText).parent().addClass("error");
               }
-            }
+              catch(e) {
+                if(xhr.responseText == "Ok")  {
+                  note.parent().addClass("ok");
+                }
+              }
 
-          } else {
-            note.text(global_config.upload_notes.error + " status:" + this.status).parent().addClass("error");
-          }
+            } else {
+              note.text(global_config.upload_notes.error + " status:" + xhr.status).parent().addClass("error");
+            }
+          });
         }
       };
 

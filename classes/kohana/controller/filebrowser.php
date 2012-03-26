@@ -627,7 +627,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		{
 			$route = Route::get('wysiwyg/filebrowser');
 			$mime = array();
-			// add select types by opener dialog type, now using all allowed types
+			// TODO: make types array depended of opener dialog (for ex. only images, docs...).
+			// for provide this mime-types in config already selected to arrays by type of files
+			// Now using all allowed types
 			foreach($this->_config['mime_types'] as $m) {
 				$mime = array_merge($mime, $m);
 			}

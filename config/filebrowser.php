@@ -44,10 +44,10 @@ return array
 		'ok'       => __('Loaded OK!'),
 		'error'    => __('Upload error'),
 		'file_err' => array(
-			'size'          => __('File too large'),
-			'mime'          => __('Forbidden file type'),
-			'invalid'       => __('Invalid characters in file name'),
-			'already_exist' => __('File already exist')
+			'size'          => __('file is too large'),
+			'mime'          => __('forbidden file type'),
+			'invalid'       => __('fnvalid file name'),
+			'already_exist' => __('file already exist')
 		)
 	),
 // end of uploader options

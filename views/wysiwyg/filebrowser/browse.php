@@ -9,12 +9,12 @@
 		<ul class="upload"></ul>
 	</div>
 	<div class="modal-footer">
+		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
 		<?php echo HTML::anchor("#", __('Upload'), array('class' => 'btn btn-success upload', 'data-dismiss' => 'modal')) ?>
 		<a href ="javascript:void(0)" class="btn btn-success attach-another">
 			<?php echo __('Attach another file') ?>
 			<input type="file" name="files[]" multiple = "multiple" />
 		</a>
-		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
 	</div>
 </div>
 <!-- /File upload modal window -->
