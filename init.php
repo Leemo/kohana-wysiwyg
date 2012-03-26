@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-Route::set('wysiwyg/filebrowser', 'wysiwyg/filebrowser/<action>(/<path>)', array('action' => '(add|browse|crop|delete|dirs|download|flash|images|move|rename|resize|rotate_left|rotate_right|thumb|upload)', 'path' => '.*'))
+Route::set('wysiwyg/filebrowser', 'wysiwyg/filebrowser/<action>(/<path>)', array('action' => '(add|browse|crop|delete|dirs|download|flash|images|move|rename|resize|rotate_left|rotate_right|status|thumb|upload)', 'path' => '.*'))
 	->defaults(array(
 		'controller' => 'filebrowser',
 		'action'     => 'browse'

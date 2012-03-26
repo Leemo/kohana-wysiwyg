@@ -99,6 +99,45 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$this->_filebrowser();
 	}
 
+	public function action_status()
+	{
+		$this->auto_render = FALSE;
+
+		//if ( ! $this->request->is_ajax())
+		//	return;
+
+		$response = array();
+
+		if ($_POST)
+		{
+			$dir = DOCROOT.$this->_directory.$this->_path;
+
+			if ( ! is_dir($dir))
+				throw new HTTP_Exception_404;
+
+			$files = Arr::get($_POST, 'files');
+
+			if (empty($files))
+				return;
+
+			if ( ! is_array($files))
+				$files = array($files);
+
+			if (sizeof($files) > 0)
+			{
+				foreach($files as $file)
+				{
+					// TODO: Files filtering and XSS protection
+					$response[$file] = is_file($dir.$file);
+				}
+			}
+
+			$this
+				->response
+				->json($response);
+		}
+	}
+
 	protected function _filebrowser()
 	{
 		$filter = $this->_config['filters'][$this->request->action()];
