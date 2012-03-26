@@ -587,6 +587,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		if ($this->auto_render)
 		{
 			$route = Route::get('wysiwyg/filebrowser');
+			$mime = array();
+			// add select types by opener dialog type, now using all allowed types
+			foreach($this->_config['mime_types'] as $m) {
+				$mime = array_merge($mime, $m);
+			}
 
 			$this->template->global_config = array
 			(
@@ -594,7 +599,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				'dirs_url'   => $route->uri(array('action' => 'dirs')),
 				'files_url'  => $route->uri(array('action' => $this->request->action())),
 				'move_url'   => $route->uri(array('action' => 'move')),
-				'params'     => $this->_optional_params
+				'params'     => $this->_optional_params,
+				'mime_types' => $mime,
+				'max_upload_size' => $this->_config['max_upload_size'],
+				'upload_notes' => $this->_config['upload_notes'],
 			);
 		}
 

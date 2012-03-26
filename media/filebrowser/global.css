@@ -179,4 +179,63 @@ a {
   background-size: 40px 40px;
 }
 
+/* file uploader */
+#upload-link {
+  position: relative;
+  overflow: hidden;
+}
 
+input[multiple] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: solid transparent;
+  border-width: 0 0 100px 200px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  direction: ltr;
+  cursor: pointer;
+}
+
+.attach-another {
+  position: relative;
+  overflow: hidden;
+}
+
+#upload-modal ul.upload {
+  list-style-type: none;
+}
+
+#upload-modal ul.upload li.disallowed {
+  color: #c0c0c0;
+}
+
+#upload-modal ul.upload li.finished {
+
+}
+
+#upload-modal ul.upload li.finished.ok {
+  color: #008800;
+}
+
+#upload-modal ul.upload li.finished.error {
+  color: #770000;
+}
+
+#upload-modal ul.upload em {
+  color: #888;
+  padding: 0 10px;
+}
+
+#upload-modal ul.upload li.disallowed .note {
+  color: #770000
+}
+
+#upload-modal ul.upload {
+
+}
+
+#upload-modal ul.upload {
+
+}
