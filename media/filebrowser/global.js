@@ -458,7 +458,7 @@
       var checked = $.fileListPreCheck(this);
 
       $.post("/wysiwyg/filebrowser/status" + path, {
-        "files": checked.valid // last check for already existing file
+        "files": checked.valid // check for already existing file
       }, function(data){
         // creating file list
         var nothingToUpload = true; // to deactivate upload button if all files invalid and nothing to upload
@@ -476,7 +476,7 @@
         modal.find("a.upload")[ (nothingToUpload ? "add" : "remove")+"Class"]("disabled");
         modal.modal('show');
 
-      });// end of postJSON responce hundler
+      });// end of post responce hundler
     });
   }
 
@@ -494,43 +494,55 @@
     file = this.data("file"),
     li = this;
 
-    var reader = new FileReader();
+    var xhr = new XMLHttpRequest();
+    var opera = "";
+    for (var i in xhr) {
+      opera += "'"+i+"': "+ xhr[i] + "\n"
+    }
+    alert (opera);
+  if(xhr.upload) {
+    xhr.upload.addEventListener("progress", function(e) {
+      if (e.lengthComputable) fill.width((e.loaded * 100) / e.total + "%");
+    }, false);
+  }
+    // load and error events handlers
+    xhr.onreadystatechange = function () {
+      var obj, errorText = "";
+      if (this.readyState == 4) {
+        var xhr = this;
+        fill.width("100%").parent().fadeOut(function(){
+          li.addClass("finished");
 
-    reader.onload = function() {
-      var xhr = new XMLHttpRequest();
-
-      xhr.upload.addEventListener("progress", function(e) {
-        if (e.lengthComputable) fill.width((e.loaded * 100) / e.total + "%");
-      }, false);
-
-      // load and error events handlers
-      xhr.onreadystatechange = function () {
-        var obj, errorText = "";
-        if (this.readyState == 4) {
-          var xhr = this;
-          fill.width("100%").parent().fadeOut(function(){
-            li.addClass("finished");
-
-            if(xhr.status == 200) {
-              try {
-                obj = $.parseJSON(xhr.responseText);
-                for (var i in obj) errorText += obj[i]+" ";
-                note.text(errorText).parent().addClass("error");
-              }
-              catch(e) {
-                if(xhr.responseText == "Ok")  {
-                  note.parent().addClass("ok");
-                }
-              }
-
-            } else {
-              note.text(global_config.upload_notes.error + " status:" + xhr.status).parent().addClass("error");
+          if(xhr.status == 200) {
+            try {
+              obj = $.parseJSON(xhr.responseText);
+              for (var i in obj) errorText += obj[i]+" ";
+              note.text(errorText).parent().addClass("error");
             }
-          });
-        }
-      };
+            catch(e) {
+              if(xhr.responseText == "Ok")  {
+                note.parent().addClass("ok");
+              }
+            }
 
-      xhr.open("POST", url);
+          } else {
+            note.text(global_config.upload_notes.error + " status:" + xhr.status).parent().addClass("error");
+          }
+        });
+      }
+    };
+
+    xhr.open("POST", url);
+
+    if(window.FormData) {
+      // W3C (Chrome, Safari, Firefox 4+)
+      var formData = new FormData();
+      formData.append(fileDataKey, file);
+      xhr.send(formData);
+    }
+
+    else if (window.FileReader && xhr.sendAsBinary) {
+      // FF < 4
       var boundary = "xxxxxxxxx";
       // headers setting
       xhr.setRequestHeader("Content-Type", "multipart/form-data, boundary="+boundary);
@@ -539,14 +551,20 @@
       var body = "--" + boundary + "\r\n";
       body += "Content-Disposition: form-data; name='" + fileDataKey + "'; filename='" + file.name + "'\r\n";
       body += "Content-Type: application/octet-stream\r\n\r\n";
-      body += reader.result + "\r\n";
+      body += (file.getAsBinary ? file.getAsBinary() : file.readAsBinary()) + "\r\n";
       body += "--" + boundary + "--";
 
-      if(xhr.sendAsBinary) xhr.sendAsBinary(body); // for FF < 5 (?)
-      else xhr.send(body);  // W3C
-    };
+      xhr.sendAsBinary(body);
+    }
 
-    reader.readAsBinaryString(file);
+    else {
+      // Other
+      xhr.setRequestHeader('Upload-Filename', file.name);
+      xhr.setRequestHeader('Upload-Size', file.size);
+      xhr.setRequestHeader('Upload-Type', file.type);
+      xhr.send(file);
+    }
+
 
     return li;
   }
