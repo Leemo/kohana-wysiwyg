@@ -14,6 +14,7 @@
     filebrowserFlashUploadUrl: "wysiwyg/filebrowser/upload"
   };
 
+  
   $(function() {
 
     // Понеслася! (rus. "Here we go!") :)
