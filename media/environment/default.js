@@ -1,6 +1,5 @@
 (function($) {
-  var wysiwyg_config = {
-
+  $.wysiwyg_config = {
     // Main configuration
     skin:        "kama",
     filebrowser: true,
@@ -14,11 +13,10 @@
     filebrowserFlashUploadUrl: "wysiwyg/filebrowser/upload"
   };
 
-  
   $(function() {
 
     // Понеслася! (rus. "Here we go!") :)
-    $(".rte").ckeditor(wysiwyg_config);
+    $(".rte").ckeditor($.wysiwyg_config);
 
     // set output HTML code rules
     CKEDITOR.on( 'instanceReady', function(ev) {
