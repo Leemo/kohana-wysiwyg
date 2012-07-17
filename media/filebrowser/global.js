@@ -495,11 +495,12 @@
     li = this;
 
     var xhr = new XMLHttpRequest();
-    var opera = "";
+ /*   var opera = "";
     for (var i in xhr) {
       opera += "'"+i+"': "+ xhr[i] + "\n"
     }
     alert (opera);
+ */
   if(xhr.upload) {
     xhr.upload.addEventListener("progress", function(e) {
       if (e.lengthComputable) fill.width((e.loaded * 100) / e.total + "%");
