@@ -46,7 +46,7 @@ return array
 		'file_err' => array(
 			'size'          => __('file is too large'),
 			'mime'          => __('forbidden file type'),
-			'invalid'       => __('fnvalid file name'),
+			'invalid'       => __('invalid file name'),
 			'already_exist' => __('file already exist')
 		)
 	),
