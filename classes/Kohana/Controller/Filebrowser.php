@@ -569,8 +569,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		// Check if the browser sent an "if-none-match: <etag>" header,
 		// and tell if the file hasn't changed
-		$this->response
-			->check_cache(sha1($this->request->uri()).$lastmod, $this->request);
+		$this->check_cache(sha1($this->request->uri()).$lastmod);
 
 		// If the image is smaller than the thumbnail, stretch, it is not necessary
 		if ($dimentions[0] <= $config['width'] AND $dimentions[1] <= $config['height'])
