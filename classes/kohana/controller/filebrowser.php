@@ -99,6 +99,45 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$this->_filebrowser();
 	}
 
+	public function action_status()
+	{
+		$this->auto_render = FALSE;
+
+		//if ( ! $this->request->is_ajax())
+		//	return;
+
+		$response = array();
+
+		if ($_POST)
+		{
+			$dir = DOCROOT.$this->_directory.$this->_path;
+
+			if ( ! is_dir($dir))
+				throw new HTTP_Exception_404;
+
+			$files = Arr::get($_POST, 'files');
+
+			if (empty($files))
+				return;
+
+			if ( ! is_array($files))
+				$files = array($files);
+
+			if (sizeof($files) > 0)
+			{
+				foreach($files as $file)
+				{
+					// TODO: Files filtering and XSS protection
+					$response[$file] = is_file($dir.$file);
+				}
+			}
+
+			$this
+				->response
+				->json($response);
+		}
+	}
+
 	protected function _filebrowser()
 	{
 		$filter = $this->_config['filters'][$this->request->action()];
@@ -587,6 +626,13 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		if ($this->auto_render)
 		{
 			$route = Route::get('wysiwyg/filebrowser');
+			$mime = array();
+			// TODO: make types array depended of opener dialog (for ex. only images, docs...).
+			// for provide this mime-types in config already selected to arrays by type of files
+			// Now using all allowed types
+			foreach($this->_config['mime_types'] as $m) {
+				$mime = array_merge($mime, $m);
+			}
 
 			$this->template->global_config = array
 			(
@@ -594,7 +640,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				'dirs_url'   => $route->uri(array('action' => 'dirs')),
 				'files_url'  => $route->uri(array('action' => $this->request->action())),
 				'move_url'   => $route->uri(array('action' => 'move')),
-				'params'     => $this->_optional_params
+				'params'     => $this->_optional_params,
+				'mime_types' => $mime,
+				'max_upload_size' => $this->_config['max_upload_size'],
+				'upload_notes' => $this->_config['upload_notes'],
 			);
 		}
 

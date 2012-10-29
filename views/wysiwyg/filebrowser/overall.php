@@ -13,10 +13,6 @@
 	(
 		'filebrowser/i18n/ru.js',
 		'filebrowser/i18n.js',
-		'filebrowser/fancyupload/mootools-1.3.2.js',
-		'filebrowser/fancyupload/Fx.ProgressBar.js',
-		'filebrowser/fancyupload/Swiff.Uploader.js',
-		'filebrowser/fancyupload/FancyUpload3.Attach.js',
 		'filebrowser/jquery.tmpl.js',
 		'filebrowser/jquery.contextmenu.js',
 		'filebrowser/jquery.form.js',
@@ -31,8 +27,6 @@
 		'filebrowser/global.css',
 		'filebrowser/directories.css',
 		'filebrowser/contextmenu.css',
-		'filebrowser/fancyupload/style.css',
-		'filebrowser/fancybox.css'
 	);
 ?>
 

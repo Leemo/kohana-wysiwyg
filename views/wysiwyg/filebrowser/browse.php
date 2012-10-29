@@ -6,13 +6,15 @@
 		<h3><?php echo __('Upload files') ?></h3>
 	</div>
 	<div class="modal-body">
-		<p><?php echo __('Select files to upload it to the server') ?></p>
-		<ul id="upload"></ul>
+		<ul class="upload"></ul>
 	</div>
 	<div class="modal-footer">
-		<?php echo HTML::anchor("#", __('Attach file'), array('class' => 'btn btn-success attach', 'data-dismiss' => 'modal')) ?>
-		<?php echo HTML::anchor("#", __('Attach another file'), array('class' => 'btn btn-success attach-another', 'data-dismiss' => 'modal')) ?>
 		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+		<?php echo HTML::anchor("#", __('Upload'), array('class' => 'btn btn-success upload', 'data-dismiss' => 'modal')) ?>
+		<a href ="javascript:void(0)" class="btn btn-success attach-another">
+			<?php echo __('Attach another file') ?>
+			<input type="file" name="files[]" multiple = "multiple" />
+		</a>
 	</div>
 </div>
 <!-- /File upload modal window -->
@@ -76,7 +78,13 @@
 	<div class="navbar-inner">
 		<div class="container-fluid">
 			<ul class="nav pull-left">
-				<li><?php echo HTML::anchor('#', '<i class="icon-upload icon-white"></i>&nbsp;'.__('Upload files'), array('id' => 'upload-link')) ?></li>
+				<li>
+					<a href ="javascript:void(0)" id="upload-link">
+						<i class="icon-upload icon-white"></i>
+						<?php echo __('Upload files') ?>
+						<input type="file" name="files[]" multiple = "multiple" />
+					</a>
+				</li>
 				<li class="divider-vertical"></li>
 				<li><?php echo HTML::anchor('#', '<i class="icon-refresh icon-white"></i>&nbsp;'.__('Refresh'), array('id' => 'refresh-link')) ?></li>
 			</ul>
@@ -143,19 +151,19 @@
 <!-- Files list -->
 <script id="tpl-files" type="text/x-jquery-tmpl">
 	{{each(key, value) files}}
-		<div class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}{{if value.width && value.height}} (${value.width} x ${value.height}),{{/if}} ${value.size}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
-				 <div class="icon{{if value.type}} ${value.type}{{/if}}">
-				{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
-				<div class="fileOverlay"></div>
-			</div>
-			<p class="name"><span>${key}</span><i></i></p>
-			<p class="size">{{if value.width && value.height}}${value.width} &times; ${value.height}, {{/if}}${value.size}</p>
-			<!-- File parameters (for easy rename) -->
-			<span class="params hide">
-				<span class="filename">${value.filename}</span>
-				<span class="extension">${value.extension}</span>
-			</span>
+	<div class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}{{if value.width && value.height}} (${value.width} x ${value.height}),{{/if}} ${value.size}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
+			 <div class="icon{{if value.type}} ${value.type}{{/if}}">
+			{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
+			<div class="fileOverlay"></div>
 		</div>
+		<p class="name"><span>${key}</span><i></i></p>
+		<p class="size">{{if value.width && value.height}}${value.width} &times; ${value.height}, {{/if}}${value.size}</p>
+		<!-- File parameters (for easy rename) -->
+		<span class="params hide">
+			<span class="filename">${value.filename}</span>
+			<span class="extension">${value.extension}</span>
+		</span>
+	</div>
 	{{/each}}
 </script>
 <!-- /Files list -->
@@ -168,7 +176,7 @@
 	</div>
 	<div class="modal-body">
 		{{if rename}}
-			<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('It action will cause the file is unavailable at the old URL-address.') ?></div>
+		<div class="alert"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('It action will cause the file is unavailable at the old URL-address.') ?></div>
 		{{/if}}
 		<?php echo Form::open() ?>
 		<div class="control-group">

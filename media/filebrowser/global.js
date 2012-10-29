@@ -13,6 +13,7 @@
 
   $(function(){
 
+
     // Bind handlers to nav-bar links
     var navBar = {
       "upload-link" : function(){
@@ -28,8 +29,19 @@
       }
     }
 
-    for (var id in navBar) $("#" + id).click(navBar[id]);
+    // multi upload checking
+    var filesInput = $("#upload-link input");
+    if(filesInput.checkMultiUploadAPI()) { //html5 API support
 
+      // delete click handler open modal -- system window will opened  for file multiselect
+      navBar["upload-link"] = function(){};
+      // multi-upload by html5 files API, modal id must be in argument
+      filesInput.getFileToModal("upload-modal");
+    }
+
+    else filesInput.remove(); // remove multi=upload input from link, standart single upload in modal
+
+    for (var id in navBar) $("#" + id).click(navBar[id]);
 
     // Modal windows
 
@@ -42,15 +54,24 @@
     // clear the upload history
     $("#upload-modal").on({
       "show" : function() {
-        $.uploaderInit();
+        var modal = $(this);
+        modal.find("a.upload").click(function(){
+          $(this).addClass("disabled");
+          modal.find("ul.upload").children("li").each(function(){
+            $(this).fileUpload("/wysiwyg/filebrowser/upload" + path, "Filedata");
+          });
+          return false;
+        });
+        modal.find("a.attach-another").children("input").getFileToModal("upload-modal");
       },
       "hide" : function() {
-        $("#upload-modal #upload").empty();
-        $("span.swiff-uploader-box").remove();
-        $("#upload-modal div.modal-footer a.btn").css("display", "");
+        $("#upload-modal ul.upload").empty();
+        $(this).find("a.upload").unbind("click");
+        $(document).trigger("Filebrowser:loadFiles");
       }
     });
     // End upload dialog
+
 
     //Disable default submit by pressing "enter" on some field of 'modal' form and provide ajax POST request
     $("div.modal").delegate("form", "submit", function(){
@@ -247,7 +268,7 @@
         }).modal()
         .find("a.btn-success").click(function() {
           $("#file-delete-modal form").ajaxSubmit({
-            url:      'wysiwyg/filebrowser/delete/'+$.getSelectedFilePath(e),
+            url:      'wysiwyg/filebrowser/delete'+$.getSelectedFilePath(e),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
               if(data.ok !== undefined) {
@@ -386,61 +407,150 @@
       }));
   };
 
-  $.uploaderInit = function(){  // Upload dialog
-    // !!!ACHTUNG MOOTOOLS SYNTAX
-    $.upLoader = new FancyUpload3.Attach('upload', '#upload-modal .attach, #upload-modal .attach-another', {
-      path:        '/media/wysiwyg/filebrowser/fancyupload/Swiff.Uploader.swf',
-      url:         '/wysiwyg/filebrowser/upload'+path,
-      fileSizeMax: 20 * 1024 * 1024,
-      appendCookieData: true,
 
-      verbose: true,
 
-      onSelectFail: function(files) {
-        files.each(function(file) {
-          new Element('li', {
-            'class': 'file-invalid',
-            events: {
-              click: function() {
-                this.destroy();
-              }
-            }
-          }).adopt(
-            new Element('span', {
-              html: file.validationErrorMessage || file.validationError
-            })
-            ).inject(this.list, 'top');
-        }, this);
-      },
+  // file multi-upload methods based on HTML5 File API
 
-      onFileSuccess: function(file) {
-        file.ui.element.highlight('#e6efc2');
-        $(document).trigger("Filebrowser:loadFiles");
-      },
 
-      onFileError: function(file) {
-        file.ui.cancel.set('html', __("Retry")).removeEvents().addEvent('click', function() {
-          file.requeue();
-          return false;
-        });
-
-        new Element('span', {
-          html: file.errorMessage,
-          'class': 'file-error'
-        }).inject(file.ui.cancel, 'before');
-      },
-
-      onFileRequeue: function(file) {
-        file.ui.element.getElement('.file-error').destroy();
-
-        file.ui.cancel.set('html', __("Cancel")).removeEvents().addEvent('click', function() {
-          file.remove();
-          return false;
-        });
-        this.start();
-      }
-
-    }); // end of uploader mootoolls syntax
+  $.fn.checkMultiUploadAPI = function(){ // check html5 files API support
+    return (this[0].multiple && this[0].files) ? true : false;
   }
+
+  $.fileListPreCheck = function(inputElement){
+    // check selected in multiple input files before including to file list in upload modal
+    /* files checking to:
+    MIME-TYPE: by comparing with allowed types list form global config,
+    SIZE: by comparing with max size from global config,
+    VALID NAME: checking allowed symbols by regexp
+
+    Method return array of files and error notes for each file
+  */
+    var files = [], valid = [];
+    $.each(inputElement.files, function(i, file){
+      var check = {
+        "mime" : (file.type == "") ? true : ($.inArray(file.type, global_config.mime_types) == -1 ? true : false),
+        "size" : file.size*1 > global_config.max_upload_size*1 ? true : false,
+        "invalid" : ! /^[\w\.-]*$/.test(file.name)
+      },
+      note = "";
+      for(var n in check) {
+        note += check[n] === true ? (note != "" ? ", " : "") + global_config.upload_notes.file_err[n] : "";
+      }
+      files[i] = {
+        "file": file,
+        "note": note != "" ? note + "." : ""
+      };
+      if (note == "") valid.push(file.name); // files checked succefull
+    });
+    return {
+      "all" : files,
+      "valid" : valid
+    };
+  }
+
+  // assemble selected files to modal, read properties, check allowed type and size
+  $.fn.getFileToModal = function(uploadModalId){
+    var modal = $("#" + uploadModalId),
+    ul = modal.find("ul.upload"),
+    upload = modal.find("a.upload");
+
+    this.bind("change", function(){
+      var checked = $.fileListPreCheck(this);
+
+      $.post("/wysiwyg/filebrowser/status" + path, {
+        "files": checked.valid // last check for already existing file
+      }, function(data){
+        // creating file list
+        var nothingToUpload = true; // to deactivate upload button if all files invalid and nothing to upload
+        $.each(checked.all, function(i, item){
+          if (data[item.file.name] === true) item.note = global_config.upload_notes.file_err["already_exist"];
+          if(item.note == "") nothingToUpload = false;
+          $("<li/>", {
+            "html" :  item.file.name+" <em>("+(item.file.size/1000).toFixed(2)+" Kb)</em>"
+            +(item.note == "" ? "<div class='progress progress-striped active'><div class='bar'></div></div>" : "")
+            +"<span class='note'>" + item.note + "</span></li>",
+            "class" : item.note == "" ? "allowed" : "disallowed"
+          }).data("file", item.note == "" ? item.file : "").appendTo(ul);
+        // all files showing in list but only allowed files put to <li> as jquery data
+        });
+        modal.find("a.upload")[ (nothingToUpload ? "add" : "remove")+"Class"]("disabled");
+        modal.modal('show');
+
+      });// end of postJSON responce hundler
+    });
+  }
+
+  $.fn.fileUpload = function(url, fileDataKey) {
+    /* method to be used for each uploading file and must be called on <li> element,
+     created in previous method and contain file as jQuery.data().
+   * Method send files by XMLHttpRequest() as binary data, emulating file request structure.
+   * url - the URL to send request,
+   * postDataKey - string, which will key of $_FILE array in server (analog value of <input> 'name' attribute .
+   */
+    if( ! this.data("file") || this.data("file") == "" || this.hasClass("finished")) return this;
+    var progress = this.children("div.progress"),
+    fill = progress.children("div"),
+    note = this.children("span.note"),
+    file = this.data("file"),
+    li = this;
+
+    var reader = new FileReader();
+
+    reader.onload = function() {
+      var xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener("progress", function(e) {
+        if (e.lengthComputable) fill.width((e.loaded * 100) / e.total + "%");
+      }, false);
+
+      // load and error events handlers
+      xhr.onreadystatechange = function () {
+        var obj, errorText = "";
+        if (this.readyState == 4) {
+          var xhr = this;
+          fill.width("100%").parent().fadeOut(function(){
+            li.addClass("finished");
+
+            if(xhr.status == 200) {
+              try {
+                obj = $.parseJSON(xhr.responseText);
+                for (var i in obj) errorText += obj[i]+" ";
+                note.text(errorText).parent().addClass("error");
+              }
+              catch(e) {
+                if(xhr.responseText == "Ok")  {
+                  note.parent().addClass("ok");
+                }
+              }
+
+            } else {
+              note.text(global_config.upload_notes.error + " status:" + xhr.status).parent().addClass("error");
+            }
+          });
+        }
+      };
+
+      xhr.open("POST", url);
+      var boundary = "xxxxxxxxx";
+      // headers setting
+      xhr.setRequestHeader("Content-Type", "multipart/form-data, boundary="+boundary);
+      xhr.setRequestHeader("Cache-Control", "no-cache");
+      // body setting
+      var body = "--" + boundary + "\r\n";
+      body += "Content-Disposition: form-data; name='" + fileDataKey + "'; filename='" + file.name + "'\r\n";
+      body += "Content-Type: application/octet-stream\r\n\r\n";
+      body += reader.result + "\r\n";
+      body += "--" + boundary + "--";
+
+      if(xhr.sendAsBinary) xhr.sendAsBinary(body); // for FF < 5 (?)
+      else xhr.send(body);  // W3C
+    };
+
+    reader.readAsBinaryString(file);
+
+    return li;
+  }
+
+
 
 })(jQuery);

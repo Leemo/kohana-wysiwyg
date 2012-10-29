@@ -117,23 +117,23 @@ a {
 
 
 .file .archive {
-  background-image: url("/media/filebrowser/images/icons/archive.png")
+  background-image: url("images/icons/archive.png")
 }
 
 .file .document {
-  background-image: url("/media/filebrowser/images/icons/document.png")
+  background-image: url("images/icons/document.png")
 }
 
 .file .music {
-  background-image: url("/media/filebrowser/images/icons/music.png")
+  background-image: url("images/icons/music.png")
 }
 
 .file .unknown {
-  background-image: url("/media/filebrowser/images/icons/unknown.png")
+  background-image: url("images/icons/unknown.png")
 }
 
 .file .video {
-  background-image: url("/media/filebrowser/images/icons/video.png")
+  background-image: url("images/icons/video.png")
 }
 
 .file .size {
@@ -157,7 +157,7 @@ a {
   top: 0;
   width: 100%;
   height: 100%;
-  background: url('/media/filebrowser/images/crop/pixel.gif') 0 0 repeat;
+  background: url('images/crop/pixel.gif') 0 0 repeat;
 }
 
 .file .hide {
@@ -179,4 +179,67 @@ a {
   background-size: 40px 40px;
 }
 
+/* file uploader */
+#upload-link {
+  position: relative;
+  overflow: hidden;
+}
 
+input[multiple] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: solid transparent;
+  border-width: 0 0 100px 200px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  direction: ltr;
+  cursor: pointer;
+}
+
+.attach-another {
+  position: relative;
+  overflow: hidden;
+}
+
+#upload-modal ul.upload {
+  list-style-type: none;
+}
+
+#upload-modal ul.upload li {
+  line-height: 24px;
+}
+
+#upload-modal ul.upload li.disallowed {
+  color: #888;
+}
+
+#upload-modal ul.upload li div.progress{
+   display: inline-block;
+   width: 100px;
+   height: 10px;
+   margin-bottom: 0;
+}
+
+#upload-modal ul.upload li.finished.ok:after {
+  content: 'Ok!';
+  color: #008800;
+}
+
+#upload-modal ul.upload li.finished.error .note {
+  color: #770000;
+}
+
+#upload-modal ul.upload em {
+  padding-right: 5px;
+}
+
+#upload-modal ul.upload li.disallowed .note {
+  color: #770000;
+
+}
+
+#upload-modal ul.upload li.disallowed .note:first-letter {
+  text-transform: uppercase;
+}
