@@ -11,6 +11,6 @@ $public_directory = Kohana::$config
 
 Route::set('media/wysiwyg', $public_directory.'/wysiwyg/<file>', array('file' => '.*'))
 	->defaults(array(
-		'controller' => 'wysiwyg',
+		'controller' => 'WYSIWYG',
 		'action'     => 'media'
 	));
