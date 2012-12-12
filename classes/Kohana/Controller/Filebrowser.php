@@ -99,45 +99,6 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		$this->_filebrowser();
 	}
 
-	public function action_status()
-	{
-		$this->auto_render = FALSE;
-
-		//if ( ! $this->request->is_ajax())
-		//	return;
-
-		$response = array();
-
-		if ($_POST)
-		{
-			$dir = DOCROOT.$this->_directory.$this->_path;
-
-			if ( ! is_dir($dir))
-				throw new HTTP_Exception_404;
-
-			$files = Arr::get($_POST, 'files');
-
-			if (empty($files))
-				return;
-
-			if ( ! is_array($files))
-				$files = array($files);
-
-			if (sizeof($files) > 0)
-			{
-				foreach($files as $file)
-				{
-					// TODO: Files filtering and XSS protection
-					$response[$file] = is_file($dir.$file);
-				}
-			}
-
-			$this
-				->response
-				->json($response);
-		}
-	}
-
 	protected function _filebrowser()
 	{
 		$filter = $this->_config['filters'][$this->request->action()];
@@ -181,10 +142,14 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
+		$path  = rtrim(DOCROOT.$this->_directory
+			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
+			.DIRECTORY_SEPARATOR;
+
 		if ($_FILES)
 		{
 			// Check if file already exists
-			if(is_file(DOCROOT.$this->_directory.$this->_path.$_FILES['Filedata']['name']))
+			if(is_file($path.$_FILES['Filedata']['name']))
 			{
 				return $this->response->json(array(
 					'error' => __('FIle :file already exists in :path', array(
@@ -193,11 +158,24 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 						))));
 			}
 
-			// TODO: check file type
+			$extension = strtolower(pathinfo($_FILES['Filedata']['name'], PATHINFO_EXTENSION));
+
+			// Then we need to check filename
+			$validation = $this->_files_validation(array('filename' => $_FILES['Filedata']['name']), $path, $extension);
+
+			if ( ! $validation->check())
+			{
+				return $this->response->json(array(
+					'errors' => $validation->errors('wysiwyg')
+					));
+			}
 
 			try
 			{
-				Upload::save($_FILES['Filedata'], $_FILES['Filedata']['name'], DOCROOT.$this->_directory.$this->_path);
+				// Normalize file extensions
+				$filename = pathinfo($_FILES['Filedata']['name'], PATHINFO_FILENAME).'.'.$extension;
+
+				Upload::save($_FILES['Filedata'], $filename, DOCROOT.$this->_directory.$this->_path);
 			}
 			catch(Kohana_Exception $e)
 			{
@@ -288,7 +266,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		// This means that the user doesn't enter anything,
 		// and we just need to pretend that everything's OK
 		if ($current_fname == $new_fname)
+		{
 			return $this->response->ok();
+		}
 
 		// Then we need to check filename
 		$validation = $this->_files_validation($_POST, $path, $extension)
