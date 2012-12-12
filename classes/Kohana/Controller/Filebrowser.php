@@ -190,8 +190,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 					'error' => __('FIle :file already exists in :path', array(
 						':file' => $_FILES['Filedata']['name'],
 						':path' => $this->_path
-					))));
+						))));
 			}
+
+			// TODO: check file type
 
 			try
 			{
