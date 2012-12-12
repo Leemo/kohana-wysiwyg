@@ -608,8 +608,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		return Validation::factory($_POST)
 			->rules('filename', array(
 					array('not_empty'),
-					array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
-					array('fb_file_not_exists', array($path, ':value', $extension))
+					array('regex', array(':value', '/^[a-zA-Z_-]$/')),
+					array('Filebrowser::file_not_exists', array($path, ':value', $extension))
 					));
 	}
 
