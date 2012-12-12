@@ -135,7 +135,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		$this->template->content = View::factory('wysiwyg/filebrowser/browse')
 			->bind('files', $files)
-			->set('dirs', $dirs);
+			->set('dirs', $dirs)
+			->set('accept', $filter['allowed']);
 	}
 
 	public function action_upload()

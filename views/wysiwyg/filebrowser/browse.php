@@ -82,7 +82,7 @@
 					<a href ="javascript:void(0)" id="upload-link">
 						<i class="icon-upload icon-white"></i>
 						<?php echo __('Upload files') ?>
-						<input type="file" name="files[]" multiple = "multiple" />
+						<input type="file" name="files[]" multiple = "multiple"<?php if (is_array($accept) AND sizeof($accept) > 0): ?> accept=".<?php echo implode('.,', $accept) ?>"<?php endif ?> />
 					</a>
 				</li>
 				<li class="divider-vertical"></li>
