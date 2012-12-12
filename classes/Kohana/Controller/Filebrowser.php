@@ -190,8 +190,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 					'error' => __('FIle :file already exists in :path', array(
 						':file' => $_FILES['Filedata']['name'],
 						':path' => $this->_path
-					))));
+						))));
 			}
+
+			// TODO: check file type
 
 			try
 			{
@@ -569,8 +571,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		// Check if the browser sent an "if-none-match: <etag>" header,
 		// and tell if the file hasn't changed
-		$this->response
-			->check_cache(sha1($this->request->uri()).$lastmod, $this->request);
+		$this->check_cache(sha1($this->request->uri()).$lastmod);
 
 		// If the image is smaller than the thumbnail, stretch, it is not necessary
 		if ($dimentions[0] <= $config['width'] AND $dimentions[1] <= $config['height'])
@@ -609,8 +610,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		return Validation::factory($_POST)
 			->rules('filename', array(
 					array('not_empty'),
-					array('regex', array(':value', '=^[^/?*;:\.{}\\\\]+$=')),
-					array('fb_file_not_exists', array($path, ':value', $extension))
+					array('regex', array(':value', '/^[a-zA-Z_-]$/')),
+					array('Filebrowser::file_not_exists', array($path, ':value', $extension))
 					));
 	}
 
