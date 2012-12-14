@@ -1,4 +1,3 @@
-
 * {
   padding: 0;
   margin: 0
@@ -201,6 +200,11 @@ input[multiple] {
 .attach-another {
   position: relative;
   overflow: hidden;
+}
+
+#upload-modal.modal {
+  margin-top: 0;
+  top: 100px;
 }
 
 #upload-modal ul.upload {

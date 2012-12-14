@@ -13,7 +13,7 @@
 		<?php echo HTML::anchor("#", __('Upload'), array('class' => 'btn btn-success upload', 'data-dismiss' => 'modal')) ?>
 		<a href ="javascript:void(0)" class="btn btn-success attach-another">
 			<?php echo __('Attach another file') ?>
-			<input type="file" name="files[]" multiple = "multiple" />
+			<input type="file" name="files[]" multiple = "multiple"<?php if (is_array($accept) AND sizeof($accept) > 0): ?> accept=".<?php echo implode(',.', $accept) ?>"<?php endif ?> />
 		</a>
 	</div>
 </div>
@@ -82,7 +82,7 @@
 					<a href ="javascript:void(0)" id="upload-link">
 						<i class="icon-upload icon-white"></i>
 						<?php echo __('Upload files') ?>
-						<input type="file" name="files[]" multiple = "multiple"<?php if (is_array($accept) AND sizeof($accept) > 0): ?> accept=".<?php echo implode('.,', $accept) ?>"<?php endif ?> />
+						<input type="file" name="files[]" multiple = "multiple"<?php if (is_array($accept) AND sizeof($accept) > 0): ?> accept=".<?php echo implode(',.', $accept) ?>"<?php endif ?> />
 					</a>
 				</li>
 				<li class="divider-vertical"></li>
