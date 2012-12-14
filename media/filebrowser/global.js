@@ -302,6 +302,78 @@
         window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
           "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
+
+      // Resize image
+      "Filebrowser:image:resize" : function(e) {
+        $("#image-resize-modal").on({
+          "hide" : function(){
+            $(this).find("a.btn-success").unbind("click").end()
+            .find("form").unbind("submit")
+            .find("input").unbind().removeAttr("readonly checked").end()
+            .find("div.proportion div.controls").removeClass("allow-arbitrary");
+          },
+
+            "show" : function(){
+              $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
+              var imgSize = $.parseSizeFormRel(e.target),
+              form = $(this).find("form"),
+              prop = imgSize.width / imgSize.height,
+              checkbox = form.find("input[type=checkbox]"),
+              sides = {},
+              revers = {
+                width: "height",
+                height: "width"
+              };
+
+              $.each(["width", "height"], function(i, item){
+                sides[item] = form.find("input[name=" + item + "]")
+              });
+
+              var inputEvent = "oninput" in sides["width"][0] ? "input" : "keyup";
+
+              for(var side in imgSize) {
+                $(this).find("#current-" + side).text(imgSize[side]);
+                sides[side].val(imgSize[side])
+                .on(inputEvent + " focus blur", function(e){
+                  if (e.type == inputEvent &&  ! checkbox[0].checked) {
+                    var v = this.value;
+                    sides[revers[this.name]].val(parseInt(this.name == "width" ? v / prop : v * prop));
+                  }
+
+                  else if (e.type == "focus" && ! checkbox[0].checked) {
+                    sides[revers[this.name]].attr("readonly", "readonly");
+                  }
+
+                  else form.find("input").removeAttr("readonly");
+                });
+              }
+
+              checkbox.change(function(){
+                $(this).parent().parent().toggleClass("allow-arbitrary");
+              });
+            }
+
+        }).modal()
+        .find("a.btn-success").click(function() {
+          $("#image-resize-modal form").ajaxSubmit({
+            url:      'wysiwyg/filebrowser/resize'+$.getSelectedFilePath(e),
+            dataType: "json",
+            success:  function(data, statusText, xhr, $form) {
+              if(data.ok !== undefined) {
+                $(document).trigger("Filebrowser:loadFiles");
+                $("#image-resize-modal").modal("hide");
+              } else if (data.error !== undefined) {
+                $form.find(".help-inline").remove();
+
+                $form.find("div.control-group").addClass("error")
+                .append('<span class="help-inline">'+data.error+"</span>");
+              }
+            }
+          });
+          return false;
+        });
+      },
+
       // Rotate image
       "Filebrowser:image:rotate:left" : function(e){
         $.get('wysiwyg/filebrowser/rotate_left/'+$.getSelectedFilePath(e), function(data){

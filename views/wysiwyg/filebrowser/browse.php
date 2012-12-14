@@ -44,6 +44,48 @@
 </div>
 <!-- /File rename modal -->
 
+<!-- Image resize modal window -->
+<div id="image-resize-modal" class="modal hide fade">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">&times;</a>
+		<h3><?php echo __('Resize image') ?></h3>
+	</div>
+	<div class="modal-body resize-modal">
+		<div class="alert alert-info"><strong><?php echo __('Current image size') ?>: </strong><span id="current-width"></span>&times;<span id="current-height"></span></div>
+		<?php echo Form::open(NULL, array('class' => 'form-horizontal')) ?>
+		<div class="resize-fields">
+			<div class="control-group">
+				<?php echo Form::label('width', __('Width').':', array('class' => 'control-label')) ?>
+				<div class="controls input-append">
+					<?php echo Form::input('width', '', array('type' => 'number', 'class' => 'input-small')) ?>
+					<span class="add-on" id="file-extension">px</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<?php echo Form::label('height', __('Height').':', array('class' => 'control-label')) ?>
+				<div class="controls input-append">
+					<?php echo Form::input('height', '', array('type' => 'number', 'class' => 'input-small')) ?>
+					<span class="add-on" id="file-extension">px</span>
+				</div>
+			</div>
+		</div>
+		<div class="control-group proportion">
+			<div class="controls">
+				<label class="checkbox">
+					<?php echo Form::input('alow-arbitrary', '', array('type' => 'checkbox')) ?>
+					<?php echo __('Arbitrary proportion') ?>
+				</label>
+			</div>
+		</div>
+		<?php echo Form::close() ?>
+	</div>
+	<div class="modal-footer">
+		<?php echo HTML::anchor("#", __('Save'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
+		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+	</div>
+</div>
+<!-- /Image resize modal window -->
+
 <!-- File delete modal window -->
 <div id="file-delete-modal" class="modal hide fade">
 	<div class="modal-header">

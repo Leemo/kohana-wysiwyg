@@ -56,7 +56,7 @@ a {
   position: absolute;
   height: 10px;
   left: 0;
-  right: 10px;
+  right: 12px;
   background: 0 0 repeat-x url("data:image/png; base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAUCAYAAABMDlehAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAD9JREFUeNo8ykEKABAYROHJCewUhfufCmVhxQ3438Ysvpp6ujYn6cCCCQMa9H+nrPUgrocACTJUKJ9IvJ8AAwDoZhYTZkpoLAAAAABJRU5ErkJggg==");
   z-index: 2;
 }
@@ -400,10 +400,9 @@ a {
 
 /* modal styles bootstrap correction */
 
-.modal,
-.modal-open {
+.modal, .modal.fade-in {
   margin-top: 0;
-  top: 100px;
+  top: 100px !important;
 }
 
 .modal form {
@@ -488,3 +487,56 @@ input[multiple] {
 #upload-modal ul.upload li.disallowed .note:first-letter {
   text-transform: uppercase;
 }
+
+.resize-modal {
+  overflow: hidden;
+}
+
+.resize-modal .resize-fields {
+  float: left;
+  overflow: hidden;
+}
+
+.resize-modal .proportion {
+  float: left;
+  padding-top: 12px;
+}
+
+.resize-modal .proportion .controls {
+  margin-left: 0;
+  position: relative;
+}
+
+.resize-modal .proportion .controls label {
+  position: relative;
+  display: inline;
+  line-height: 50px;
+  padding: 0;
+  margin: 0;
+ }
+
+ .resize-modal .proportion .controls label input {
+   display: inline-block;
+   float: none;
+   margin: 0 3px 3px 14px !important;
+ }
+
+ .resize-modal input[readonly] {
+   cursor: default !important;
+ }
+
+.resize-modal .proportion .controls:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-width: 1px 1px 1px 0;
+}
+
+.resize-modal .proportion .controls.allow-arbitrary:before {
+  display: none;
+}
+
