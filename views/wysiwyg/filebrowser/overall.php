@@ -25,7 +25,6 @@
 	(
 		'filebrowser/bootstrap/bootstrap.css',
 		'filebrowser/global.css',
-		'filebrowser/directories.css',
 		'filebrowser/contextmenu.css',
 	);
 ?>

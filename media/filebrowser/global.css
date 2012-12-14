@@ -1,3 +1,5 @@
+/* reset */
+
 * {
   padding: 0;
   margin: 0
@@ -10,39 +12,15 @@ button::-moz-focus-inner {
   border: 0 !important;
 }
 
+/* overall layout */
+
 body,
 html {
   height:100%;
 }
 
-.sidebar-nav {
-  padding: 0;
-}
-
-.modal form {
-  margin-bottom: 0
-}
-
 a {
   outline: none;
-}
-
-.modal-footer .spinner {
-  width: 18px;
-  height: 18px;
-  background-image: url("images/spinner.gif");
-  background-position: center center;
-  background-repeat: no-repeat;
-  float: left;
-  display: block
-}
-
-#files {
-  margin: 0 20px 0 260px ;
-}
-
-#files-row {
-  overflow: auto;
 }
 
 #header>div{
@@ -53,7 +31,249 @@ a {
   padding-left: 0;
 }
 
-/*-----------------------------  FILES ----------------------------------------*/
+#left,
+#files {
+  position: relative;
+  min-height: 100%;
+  margin-top: -58px;
+}
+
+#left {
+  width: 220px;
+  float: left;
+  margin-left: 20px;
+  margin-bottom: 0;
+}
+
+#files {
+  margin-right: 20px;
+  margin-left: 260px;
+}
+
+#files:after,
+#files:before {
+  content: '';
+  position: absolute;
+  height: 10px;
+  left: 0;
+  right: 10px;
+  background: 0 0 repeat-x url("data:image/png; base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAUCAYAAABMDlehAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAD9JREFUeNo8ykEKABAYROHJCewUhfufCmVhxQ3438Ysvpp6ujYn6cCCCQMa9H+nrPUgrocACTJUKJ9IvJ8AAwDoZhYTZkpoLAAAAABJRU5ErkJggg==");
+  z-index: 2;
+}
+
+#files:before {
+  top: 110px;
+  background-position: 0 0;
+}
+
+#files:after {
+  bottom: 10px;
+  background-position: 0 100%;
+}
+
+
+#dirs::-webkit-scrollbar,
+#files-row::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+  border-radius: 4px;
+}
+
+#dirs:hover::-webkit-scrollbar,
+#files-row:hover::-webkit-scrollbar {
+  -webkit-box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2), inset -1px -1px 1px rgba(0, 0, 0, 0.1);
+}
+
+#dirs::-webkit-scrollbar-thumb,
+#files-row::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.10), inset 0 -1px 0 rgba(0, 0, 0, 0.07);
+  border-radius: 4px;
+  min-height: 8px;
+}
+
+#dirs:hover::-webkit-scrollbar-thumb,
+#files-row:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+#dirs::-webkit-scrollbar-button,
+#files-row::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+#dirs::-webkit-scrollbar-corner,
+#files-row::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+/*  Folders tree (left column)  */
+
+#dirs {
+  position: absolute;
+  width: 100%;
+  top: 58px;
+  bottom: 0;
+  overflow: auto;
+  margin-bottom: 10px !important;
+}
+
+#dirs p {
+  margin-bottom: 0;
+}
+
+#dirs #root {
+  margin: 30px 0 15px;
+}
+
+.directories {
+  padding: 0 0 0 10px;
+  list-style: none;
+  font-size: 13px;
+  position: relative;
+}
+
+.directories div {
+  margin: 0;
+  padding: 1px 0 1px 14px;
+}
+
+.directories div p em {
+  position: absolute;
+  width: 15px;
+  min-height: 100%;
+  right: 0;
+  top: 0;
+  z-index:2;
+  background: -moz-linear-gradient(left, rgba(245,245,245,0) 0%, rgba(245,245,245, 1) 100%);
+  background: -webkit-gradient(linear, left top, right top, color-start(0%,rgba(245,245,245,0)), color-stop(100%,rgba(245,245,245, 1)));
+  background: -webkit-linear-gradient(left, rgba(245,245,245,0) 0%,rgba(245,245,245, 1) 100%);
+  background: -o-linear-gradient(left, rgba(245,245,245,0) 0%,rgba(245,245,245, 1) 100%);
+  background: -ms-linear-gradient(left, rgba(245,245,245,0) 0%,rgba(245,245,245, 1) 100%);
+  background: linear-gradient(left, rgba(245,245,245,0) 0%, rgba(245,245,245, 1) 100%);
+}
+
+.directories>div{
+  padding-left:0 !important
+}
+
+.directories div p {
+  white-space:nowrap;
+  position: relative;
+  padding-left: 100px;
+  margin: 0 0 0 -100px;
+}
+
+.directories div p:hover {
+  background-color: #eee;
+}
+
+.directories div p.selected {
+  background: #0088CC;
+}
+
+.directories div p.selected em {
+  background: -moz-linear-gradient(left, rgba(0,136,204,0) 0%, rgba(0,136,204, 1) 100%);
+  background: -webkit-gradient(linear, left top, right top, color-start(0%,rgba(0,136,204,0)), color-stop(100%,rgba(0,136,204, 1)));
+  background: -webkit-linear-gradient(left, rgba(0,136,204,0) 0%,rgba(0,136,204, 1) 100%);
+  background: -o-linear-gradient(left, rgba(0,136,204,0) 0%,rgba(0,136,204, 1) 100%);
+  background: -ms-linear-gradient(left, rgba(0,136,204,0) 0%,rgba(0,136,204, 1) 100%);
+  background: linear-gradient(left, rgba(0,136,204,0) 0%, rgba(0,136,204, 1) 100%);
+}
+
+
+.directories div p.overDrop a{
+  background-color: #444;
+  color: #fff;
+}
+
+.directories div a {
+  display: block;
+  text-decoration: none;
+  padding: 3px 0;
+  margin-left: 17px;
+  white-space:nowrap;
+  line-height: 18px;
+}
+
+.directories div.open>p a {
+}
+
+.directories div p.selected a {
+  color: #fff;
+}
+
+.directories div p.selected a:hover {
+  color: #000;
+}
+
+.directories div.process>p i {
+  background: url(images/directories/spinner.gif) 0 1px no-repeat;
+}
+
+.directories div i {
+  display: block;
+  float: left;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.directories div i:hover {
+  background-color: rgba(90,90,90, 0.4);
+}
+
+.directories div.open>p i {
+  background-position: -313px -119px;
+}
+
+#root>p>i,
+.directories p.noChild i {
+  cursor: default;
+}
+
+.directories p.noChild i {
+  opacity: 0.2;
+}
+
+.directories p.noChild i:hover,
+#root>p i:hover{
+  background-color: transparent;
+}
+
+.directories p.noChild strong.disableOpen {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: url('images/pixel.gif') 0 0 repeat;
+  z-index: 100;
+}
+
+
+/* files (right column) */
+
+#breadcrumb {
+  position: absolute;
+  left: 0;
+  top: 58px;
+  width: 100%;
+}
+
+.breadcrumb {
+  margin: 0;
+}
+
+#files-row {
+  position: absolute;
+  width: 100%;
+  top: 110px;
+  bottom: 10px;
+  overflow: auto;
+  padding: 10px 0;
+}
 
 .file {
   float: left;
@@ -178,6 +398,32 @@ a {
   background-size: 40px 40px;
 }
 
+/* modal styles bootstrap correction */
+
+.modal,
+.modal-open {
+  margin-top: 0;
+  top: 100px;
+}
+
+.modal form {
+  margin-bottom: 0
+}
+
+.sidebar-nav {
+  padding: 0;
+}
+
+.modal-footer .spinner {
+  width: 18px;
+  height: 18px;
+  background-image: url("images/spinner.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  float: left;
+  display: block
+}
+
 /* file uploader */
 #upload-link {
   position: relative;
@@ -200,11 +446,6 @@ input[multiple] {
 .attach-another {
   position: relative;
   overflow: hidden;
-}
-
-#upload-modal.modal {
-  margin-top: 0;
-  top: 100px;
 }
 
 #upload-modal ul.upload {

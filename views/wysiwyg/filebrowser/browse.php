@@ -97,25 +97,26 @@
 	</div>
 </div>
 <!-- /Navigation bar -->
-
-<div id="dirs" class="well sidebar-nav">
-	<!-- Directories tree -->
-	<div class="directories">
-		<div id="root">
-			<p>
-				<i class="icon-home"></i>
-				<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
-			</p>
-			<?php foreach ($dirs as $dir => $parents): ?>
-				<div name="<?php echo $parents ?>">
-					<p>
-						<i class="icon-chevron-right"></i><a href=""><?php echo $dir ?></a>
-						<em></em>
-					</p>
-				</div>
-			<?php endforeach ?>
+<div id="left">
+	<div id="dirs" class="well sidebar-nav">
+		<!-- Directories tree -->
+		<div class="directories">
+			<div id="root">
+				<p>
+					<i class="icon-home"></i>
+					<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
+				</p>
+				<?php foreach ($dirs as $dir => $parents): ?>
+					<div name="<?php echo $parents ?>">
+						<p>
+							<i class="icon-chevron-right"></i><a href=""><?php echo $dir ?></a>
+							<em></em>
+						</p>
+					</div>
+				<?php endforeach ?>
+			</div>
+			<!-- /Directories tree -->
 		</div>
-		<!-- /Directories tree -->
 	</div>
 </div>
 <div id="files">

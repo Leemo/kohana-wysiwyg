@@ -1,10 +1,5 @@
 ;
 (function($) {
-  // When filebrowser window resized,
-  // recalculate new window height
-  $(window).bind("load resize", function(){
-    $.recalculateHeight();
-  });
 
   // This global variable gets value
   // on each selecting of folders
@@ -363,12 +358,6 @@
   }); // End document ready
 
   $.extend({
-    recalculateHeight: function() {
-      var c = $("body").height() - $("div.navbar").height()
-      $("#dirs").height(c - 40 + "px");
-      $("#files-row").height(c - $("#breadcrumb").height()- 65 +"px");
-    },
-
     getUrlParam : function(paramName) { // for correct transmitt data to CKEdirtor
       var reParam = new RegExp("(?:[\?&]|&amp;)"+paramName+"=([^&]+)", "i") ;
       var match = window.location.search.match(reParam) ;
