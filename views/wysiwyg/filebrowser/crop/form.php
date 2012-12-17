@@ -9,6 +9,6 @@
 <?php echo Form::close() ?>
 </div>
 <div class="modal-footer">
-	<?php echo HTML::anchor("#", __('Save file'), array('class' => 'btn btn-success btn-loader', 'data-dismiss' => 'modal')) ?>
+	<?php echo HTML::anchor("#", __('Save file'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
 	<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
 </div>
