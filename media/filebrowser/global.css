@@ -12,10 +12,16 @@ button::-moz-focus-inner {
   border: 0 !important;
 }
 
-/* overall layout */
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+  /* overall layout */
 
-body,
-html {
+  body,
+  html {
   height:100%;
 }
 
@@ -171,10 +177,6 @@ a {
   margin: 0 0 0 -100px;
 }
 
-.directories div p:hover {
-  background-color: #eee;
-}
-
 .directories div p.selected {
   background: #0088CC;
 }
@@ -189,9 +191,9 @@ a {
 }
 
 
-.directories div p.overDrop a{
-  background-color: #444;
-  color: #fff;
+.directories div p.overDrop {
+  background: #e8e8e8; /* IE < 9 */
+  background: rgba(0,0,0,0.1);
 }
 
 .directories div a {
@@ -203,7 +205,7 @@ a {
   line-height: 18px;
 }
 
-.directories div.open>p a {
+.directories div.open > p a {
 }
 
 .directories div p.selected a {
@@ -214,8 +216,10 @@ a {
   color: #000;
 }
 
-.directories div.process>p i {
+.directories div.process > p i {
   background: url(images/directories/spinner.gif) 0 1px no-repeat;
+  height: 17px !important;
+  margin-top: 3px;
 }
 
 .directories div i {
@@ -229,7 +233,7 @@ a {
   background-color: rgba(90,90,90, 0.4);
 }
 
-.directories div.open>p i {
+.directories div.open > p i {
   background-position: -313px -119px;
 }
 
@@ -243,7 +247,7 @@ a {
 }
 
 .directories p.noChild i:hover,
-#root>p i:hover{
+#root > p i:hover{
   background-color: transparent;
 }
 
@@ -274,6 +278,7 @@ a {
 #files-row {
   position: absolute;
   width: 100%;
+  left: 0;
   top: 110px;
   bottom: 10px;
   overflow: auto;
@@ -289,8 +294,13 @@ a {
   text-align: center;
   overflow: hidden;
   position: relative;
-  -moz-user-select: none;
   cursor: pointer;
+  background: #fff;
+}
+
+.file.dragged {
+  opacity: 0.5;
+  filter: Alpha(opacity=50);
 }
 
 .file:hover {
@@ -429,6 +439,27 @@ a {
 }
 
 /* file uploader */
+
+#files #drop-files {
+  display: none;
+  position: absolute;
+  z-index: -1;
+  border: 6px dashed rgba(0,0,0, 0.2);
+  width: auto;
+  right: 20px;
+  top: 4px;
+  bottom: 6px;
+  left: 1px;
+}
+
+#files.over #drop-files {
+  display: block;
+}
+
+#files.over .file {
+  z-index: -2;
+}
+
 #upload-link {
   position: relative;
   overflow: hidden;
@@ -465,10 +496,10 @@ input[multiple] {
 }
 
 #upload-modal ul.upload li div.progress{
-   display: inline-block;
-   width: 100px;
-   height: 10px;
-   margin-bottom: 0;
+  display: inline-block;
+  width: 100px;
+  height: 10px;
+  margin-bottom: 0;
 }
 
 #upload-modal ul.upload li.finished.ok:after {
@@ -518,17 +549,17 @@ input[multiple] {
   line-height: 50px;
   padding: 0;
   margin: 0;
- }
+}
 
- .resize-modal .proportion .controls label input {
-   display: inline-block;
-   float: none;
-   margin: 0 3px 3px 14px !important;
- }
+.resize-modal .proportion .controls label input {
+  display: inline-block;
+  float: none;
+  margin: 0 3px 3px 14px !important;
+}
 
- .resize-modal input[readonly] {
-   cursor: default !important;
- }
+.resize-modal input[readonly] {
+  cursor: default !important;
+}
 
 .resize-modal .proportion .controls:before {
   content: '';

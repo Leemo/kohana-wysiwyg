@@ -59,14 +59,14 @@
       },
       "hide" : function() {
         $("#upload-modal ul.upload").empty();
-        $(this).find("a.upload").unbind("click").siblings("a").children("input").unbind();
+        $(this).find("a.upload").off("click").siblings("a").children("input").off();
         $(document).trigger("Filebrowser:loadFiles");
       }
     });
     // End upload dialog
 
     //Disable default submit by pressing "enter" on some field of 'modal' form and provide ajax POST request
-    $("div.modal").delegate("form", "submit", function(){
+    $("div.modal").on("submit", "form", function(){
       $(this).parent().siblings("div.modal-footer").children("a.btn-success").click();
       return false;
     });
@@ -74,7 +74,12 @@
     // End modal windows
 
     // Init folders tree
-    $("div.directories").folderTree().contextMenu({
+
+    $.tree = $("div.directories");
+    $.draggingFile = null;
+
+
+    $.tree.folderTree().contextMenu({
       closeType: {
         zone:   'any',
         events: 'closeFolderClick,openFolderClick'
@@ -189,18 +194,67 @@
       list: filesMenu.slice(0,2).concat(filesMenu.slice(8))
     })
     // delegate dbl-click handler of files
-    .delegate('div.file', 'dblclick', function(){
+    .on("dblclick", "div.file", function(){
       $(this).trigger("Filebrowser:file:select");
+    })
+    // bing drag-n-drop files to foldersю
+    .on("dragstart", "div.file", function(e){
+      $.draggingFile = $(this).addClass("dragged");
+      var dt = e.originalEvent.dataTransfer;
+      dt.effectAllowed = "copy";
+      dt.setData("Text", $(this).find("p.name span").text());
+    })
+    .on("dragend", "div.file", function(){
+      $(this).removeClass("dragged");
+      $.draggingFile = null;
+    })
+    .on("selectstart", "div.file", function(){
+			this.dragDrop && this.dragDrop();
+			return false;
     });
 
+    // bind drag-n-drop external files to upload
+    $("#files").on({
+      dragover: function(e){
+        var dt = e.originalEvent.dataTransfer;
+        if(!dt) return;
+        //FF
+        if(dt.types.contains&&!dt.types.contains("Files")) return;
+        //Chrome
+        if(dt.types.indexOf&&dt.types.indexOf("Files")==-1) return;
+
+        e.originalEvent.dataTransfer.dropEffect = 'copy';
+        $(this).addClass("over");
+        return false;
+      },
+
+      dragenter: function(){
+        return false;
+      },
+
+      dragleave: function() {
+        $(this).removeClass("over");
+        return false;
+      },
+
+      drop: function(e) {
+        e.stopPropagation();
+        $(this).removeClass("over");
+        var files = e.originalEvent.dataTransfer.files;
+        if (files.length > 0 ) $.createFilesModal(e.originalEvent.dataTransfer.files, "upload-modal");
+        return false;
+      }
+    });
+
+
     // Global events
-    $(document).bind(
+    $(document).on(
     {
       // Reload files list of current directory
       "Filebrowser:loadFiles" : function() {
         $("#files-row").empty();
         // Reload files list from server
-        $.getJSON(global_config.files_url+path, function(data){
+        $.getJSON(global_config.files_url + path, function(data){
           $("#files-row").empty().append($("#tpl-files").tmpl(data));
           $("#breadcrumb").breadcrumbUpdate();
 
@@ -244,7 +298,7 @@
             });
           },
           "hide" : function() {
-            $(this).find("a.btn-success").unbind("click");
+            $(this).find("a.btn-success").off("click");
           }
         }).modal();
       },
@@ -253,7 +307,7 @@
       "Filebrowser:file:delete" : function(e) {
         $("#file-delete-modal").on({
           "hide" : function(){
-            $(this).find("a.btn-success").unbind("click").end().find("form").unbind("submit");
+            $(this).find("a.btn-success").off("click").end().find("form").off("submit");
           },
           "show" : function(){
             $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
@@ -275,7 +329,6 @@
               }
             }
           });
-
           return false;
         });
       },
@@ -307,9 +360,9 @@
       "Filebrowser:image:resize" : function(e) {
         $("#image-resize-modal").on({
           "hide" : function(){
-            $(this).find("a.btn-success").unbind("click").end()
-            .find("form").unbind("submit")
-            .find("input").unbind().removeAttr("readonly checked").end()
+            $(this).find("a.btn-success").off("click").end()
+            .find("form").off("submit")
+            .find("input").off().removeAttr("readonly checked").end()
             .find("div.proportion div.controls").removeClass("allow-arbitrary");
           },
 
@@ -404,7 +457,7 @@
           $(this).html("");
         }).modal().find("a.btn-success").click(function() {
           $("#dir-modal form").ajaxSubmit({
-            url:      'wysiwyg/filebrowser/' + mission + "/" + dir.buildFullPath(),
+            url:      "wysiwyg/filebrowser/" + mission + "/" + dir.buildFullPath(),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
               if(data.ok !== undefined) {
@@ -418,11 +471,28 @@
               }
             }
           });
-
           return false;
         }); // end of btn click handler
 
-      } // end of dir del/rename events handler
+      }, // end of dir del/rename events handler
+
+      "Filebrowser:dir:file:move:to" : function(e) {
+        var dir = $(e.target);
+
+        $.post("wysiwyg/filebrowser/to" + path + e.fileName, {
+          path: "new" + dir.buildFullPath() + "to/" + e.fileName
+        },
+
+        function(data){
+         if(data.ok !== undefined) {
+           $(dir).removeClass("process");
+           $(document).trigger('Filebrowser:loadFiles');
+         }
+         else if (data.errors !== undefined) {
+  //todo: error processing
+         }
+        }, "json")
+      }
 
     }) // end of user event handlers
     .trigger("Filebrowser:loadFiles");
@@ -430,17 +500,19 @@
   }); // End document ready
 
   $.extend({
-    getUrlParam : function(paramName) { // for correct transmitt data to CKEdirtor
+    // for correct transmitt data to CKEdirtor
+    getUrlParam : function(paramName) {
       var reParam = new RegExp("(?:[\?&]|&amp;)"+paramName+"=([^&]+)", "i") ;
       var match = window.location.search.match(reParam) ;
       return (match && match.length > 1) ? match[1] : '' ;
     },
 
     getSelectedFilePath : function(contextMenuEvent) {
-      return path+$(contextMenuEvent.target).find("p.name span").text()
+      return path+$(contextMenuEvent.target).find("p.name span").text();
     },
 
-    parseSizeFormRel : function(element){ // create object from rel attribute value
+    // create object from rel attribute value
+    parseSizeFormRel : function(element){
       var relVal = $(element).attr("rel");
       if(relVal.indexOf("{") == 0) {
         return Function("var c = new Object(); c=" + relVal + "; return c")();
@@ -449,6 +521,20 @@
         console.warn ("parseSizeFormRel() : element " + element + "has non-object code in 'rel' attribute value or has no 'rel' attribute");
         return false;
       }
+    },
+
+    createFilesModal: function(filesList, modalId){
+      var modal = $("#" + modalId),
+      ul = modal.find("ul.upload");
+      // creating file list
+      $.each(filesList, function(i, item){
+        $("<li/>", {
+          "html" :  item.name+" <em>("+(item.size/1000).toFixed(2)+" Kb)</em>"
+          + "<div class='progress progress-striped active'><div class='bar'></div></div>"
+          +"<span class='note'></span></li>"
+        }).data("file", item).appendTo(ul);
+      });
+      modal.find("a.upload").removeClass("disabled").end().modal('show');
     }
 
   });
@@ -477,17 +563,7 @@
     // assemble selected files to modal, read properties
     getFileToModal: function(uploadModalId){
       this.change(function(){
-        var modal = $("#" + uploadModalId),
-        ul = modal.find("ul.upload");
-        // creating file list
-        $.each(this.files, function(i, item){
-          $("<li/>", {
-            "html" :  item.name+" <em>("+(item.size/1000).toFixed(2)+" Kb)</em>"
-            + "<div class='progress progress-striped active'><div class='bar'></div></div>"
-            +"<span class='note'></span></li>"
-          }).data("file", item).appendTo(ul);
-        });
-        modal.find("a.upload").removeClass("disabled").end().modal('show');
+        $.createFilesModal(this.files, uploadModalId)
       });
     },
 

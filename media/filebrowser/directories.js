@@ -109,6 +109,36 @@
           $("#breadcrumb").breadcrumbUpdate(); // method defined in global.js
         });
         return false;
+      })
+
+      // drag-n-drop events handlers (not to drag folders but to recive files dropped over this folder)
+      this.children("p").not(".selected").on({
+        dragover: function(e){
+          e.originalEvent.dataTransfer.dropEffect = 'copy';
+          $(this).addClass("overDrop");
+          return false;
+        },
+
+        dragenter: function(){
+          $(this).addClass("overDrop");
+          return false;
+        },
+
+        dragleave: function() {
+          $(this).removeClass("overDrop");
+          return false;
+        },
+
+        drop: function(e) {
+          // fire event 'Filebrowser:dir:file:move:to' listened in global.js
+          e.stopPropagation();
+          $.draggingFile.trigger("dragend");
+          $(this).removeClass("overDrop").parent().addClass("process").trigger({
+            type: "Filebrowser:dir:file:move:to",
+            fileName: e.originalEvent.dataTransfer.getData("text")
+          });
+          return false;
+        }
       });
     }; // end of prosessFolder()
 
