@@ -1,5 +1,5 @@
 [WYSIWYG](http://ckeditor.com/) integration module
-for [Kohana PHP framework]([WYSIWYG](http://kohanaframework.org).
+for [Kohana PHP framework](http://kohanaframework.org).
 
 This module allows you to:
 * Use a visual editor to work with HTML hypertext
