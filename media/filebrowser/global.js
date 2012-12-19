@@ -279,7 +279,7 @@
 
             $(this).find("a.btn-success").click(function() {
               $("#file-rename-modal form").ajaxSubmit({
-                url:      'wysiwyg/filebrowser/rename/'+$.getSelectedFilePath(e),
+                url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
                 dataType: "json",
                 success:  function(data, statusText, xhr, $form) {
                   $form.find("div.control-group").removeClass("error").find(".help-inline").remove();
@@ -484,12 +484,22 @@
         },
 
         function(data){
+
+         $(dir).removeClass("process");
+
          if(data.ok !== undefined) {
-           $(dir).removeClass("process");
            $(document).trigger('Filebrowser:loadFiles');
          }
-         else if (data.errors !== undefined) {
-  //todo: error processing
+         else if (data.error !== undefined) {
+           var alert = $("#error-modal").find("div.alert");
+           $("#error-modal").on({
+             "show": function(){
+               alert.text(data.error)
+             },
+             "hide": function(){
+              alert.empty()
+             }
+           }).modal();
          }
         }, "json")
       }

@@ -576,3 +576,6 @@ input[multiple] {
   display: none;
 }
 
+#error-modal {
+  width: 480px !important
+}
