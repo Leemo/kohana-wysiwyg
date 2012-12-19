@@ -280,7 +280,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	 * returns JSON `{ok: true}`.
 	 *
 	 * If something's wrong,
-	 * returns JSON `{errors: {filename: <error message>}}`.
+	 * returns JSON `{error: <error message>}`.
 	 */
 	public function action_move()
 	{
@@ -299,30 +299,33 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		if ( ! is_file($from_dir.$file))
 		{
 			return $this->response->json(array(
-				'errors' => array(__('Desired file :file doesn\'t exist', array(':file' => $file)))
+				'error' => __('Desired file :file doesn\'t exist', array(':file' => $file))
 				));
 		}
 
 		if (is_file($to_dir.$file))
 		{
 			return $this->response->json(array(
-				'errors' => array(__('File :file already exists in target directory', array(':file' => $file)))
+				'error' => __('File :file already exists in target directory', array(':file' => $file))
 				));
 		}
 
-		// If everything's ok
-		try
+		if ($from_dir.$file != $to_dir.$file)
 		{
-			// Try to rename a file
-			rename($from_dir.$file, $to_dir.$file);
-		}
-		catch (Exception $e)
-		{
-			// If something's wrong,
-			// return error message
-			return $this->response->json(array(
-				'error' => array($e->getMessage())
-				));
+			// If everything's ok
+			try
+			{
+				// Try to rename a file
+				rename($from_dir.$file, $to_dir.$file);
+			}
+			catch (Exception $e)
+			{
+				// If something's wrong,
+				// return error message
+				return $this->response->json(array(
+					'error' => $e->getMessage()
+					));
+			}
 		}
 
 		return $this->response->ok();
