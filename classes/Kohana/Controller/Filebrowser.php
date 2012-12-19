@@ -591,7 +591,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		return Validation::factory($_POST)
 			->rules('filename', array(
 					array('not_empty'),
-					array('regex', array(':value', '/^[a-zA-Z_-]$/')),
+					array('regex', array(':value', '/[a-zA-Z0-9_\-]/')),
 					array('Filebrowser::file_not_exists', array($path, ':value', $extension))
 					));
 	}
