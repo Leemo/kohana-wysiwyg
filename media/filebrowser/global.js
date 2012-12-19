@@ -479,8 +479,8 @@
       "Filebrowser:dir:file:move:to" : function(e) {
         var dir = $(e.target);
 
-        $.post("wysiwyg/filebrowser/to" + path + e.fileName, {
-          path: "new" + dir.buildFullPath() + "to/" + e.fileName
+        $.post("wysiwyg/filebrowser/move" + path + e.fileName, {
+          path: dir.buildFullPath() + e.fileName
         },
 
         function(data){

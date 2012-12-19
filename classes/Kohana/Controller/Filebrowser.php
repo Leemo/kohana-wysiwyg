@@ -191,37 +191,6 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		}
 	}
 
-	public function action_move()
-	{
-		$this->auto_render = FALSE;
-
-		$response = array();
-
-		// TODO: file checking
-
-		if (isset($_POST['to']))
-		{
-			$from = DOCROOT.$this->_directory.$this->_path;
-			$to   = DOCROOT.$this->_directory.$_POST['to'].DIRECTORY_SEPARATOR.pathinfo($this->_path, PATHINFO_BASENAME);
-
-			try
-			{
-				copy($from, $to);
-				unlink($from);
-
-				$response['result'] = 'ok';
-			}
-			catch(Exception $e)
-			{
-				$response['error'] = __('Something\'s wrong');
-			}
-		}
-
-		return $this
-			->response
-			->body(json_encode($response));
-	}
-
 	public function action_download()
 	{
 		$this->auto_render = FALSE;
@@ -299,6 +268,61 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 					'filename' => __('Server error. Message: :message', array(
 						':message' => $e->getMessage()
 						)))));
+		}
+
+		return $this->response->ok();
+	}
+
+	/**
+	 * File move.
+	 *
+	 * If everything's ok,
+	 * returns JSON `{ok: true}`.
+	 *
+	 * If something's wrong,
+	 * returns JSON `{errors: {filename: <error message>}}`.
+	 */
+	public function action_move()
+	{
+		$this->auto_render = FALSE;
+
+		$from_dir = rtrim(DOCROOT.$this->_directory
+			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
+			.DIRECTORY_SEPARATOR;
+
+		$to_dir = rtrim(DOCROOT.$this->_directory
+			.pathinfo(ltrim(Arr::get($_POST, 'path'), '/'), PATHINFO_DIRNAME), '.')
+			.DIRECTORY_SEPARATOR;
+
+		$file = pathinfo($this->_path, PATHINFO_BASENAME);
+
+		if ( ! is_file($from_dir.$file))
+		{
+			return $this->response->json(array(
+				'errors' => array(__('Desired file :file doesn\'t exist', array(':file' => $file)))
+				));
+		}
+
+		if (is_file($to_dir.$file))
+		{
+			return $this->response->json(array(
+				'errors' => array(__('File :file already exists in target directory', array(':file' => $file)))
+				));
+		}
+
+		// If everything's ok
+		try
+		{
+			// Try to rename a file
+			rename($from_dir.$file, $to_dir.$file);
+		}
+		catch (Exception $e)
+		{
+			// If something's wrong,
+			// return error message
+			return $this->response->json(array(
+				'error' => array($e->getMessage())
+				));
 		}
 
 		return $this->response->ok();
