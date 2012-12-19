@@ -133,6 +133,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			$dirs[$key] = sizeof(Filebrowser::list_dirs($dirname));
 		}
 
+		if ( ! isset($filter['allowed']))
+		{
+			$filter['allowed'] = NULL;
+		}
+
 		$this->template->content = View::factory('wysiwyg/filebrowser/browse')
 			->bind('files', $files)
 			->set('dirs', $dirs)
