@@ -31,6 +31,11 @@
       navBar["upload-link"] = function(){};
       // multi-upload by html5 files API, modal id must be in argument
       filesInput.getFileToModal("upload-modal");
+
+      if($.browser.mozilla && $.browser.version < 18) {
+        var accept = filesInput[0].accept;
+        $("input[type=file]").attr("accept", accept.replace(/,?(\w+)\/(\w+)/g, "$1/*,"));
+      }
     }
 
     else filesInput.remove(); // remove multi=upload input from link, standart single upload in modal
@@ -74,10 +79,40 @@
     // End modal windows
 
     // Init folders tree
-
     $.tree = $("div.directories");
     $.draggingFile = null;
 
+    // bind drag-n-drop handlers to folders for moving files to folders
+    $.tree.on({
+      dragover: function(e){
+        e.originalEvent.dataTransfer.dropEffect = 'copy';
+        $(this).addClass("overDrop");
+        return false;
+      },
+
+      dragenter: function(){
+        $(this).addClass("overDrop");
+        return false;
+      },
+
+      dragleave: function() {
+        $(this).removeClass("overDrop");
+        return false;
+      },
+
+      drop: function(e) {
+        // fire event 'Filebrowser:dir:file:move:to' listened in global events listener code
+        e.stopPropagation();
+        $.draggingFile.trigger("dragend");
+        $(this).removeClass("overDrop").parent().addClass("process").trigger({
+          type: "Filebrowser:dir:file:move:to",
+          fileName: e.originalEvent.dataTransfer.getData("text")
+        });
+        return false;
+      }
+    }, "p:not(.selected)");
+
+    // bind contect menu to folders and files
 
     $.tree.folderTree().contextMenu({
       closeType: {
@@ -185,7 +220,6 @@
       targetSelector: "div.picture",
       list:           filesMenu
     })
-    // Bind context menu to delegate
     // for non-picture file elements in files area
     .contextMenu({
       containerClass : "contextMenu dropdown-menu",
@@ -193,25 +227,31 @@
       targetSelector: "div.non_picture",
       list: filesMenu.slice(0,2).concat(filesMenu.slice(8))
     })
-    // delegate dbl-click handler of files
-    .on("dblclick", "div.file", function(){
-      $(this).trigger("Filebrowser:file:select");
-    })
-    // bing drag-n-drop files to foldersю
-    .on("dragstart", "div.file", function(e){
-      $.draggingFile = $(this).addClass("dragged");
-      var dt = e.originalEvent.dataTransfer;
-      dt.effectAllowed = "copy";
-      dt.setData("Text", $(this).find("p.name span").text());
-    })
-    .on("dragend", "div.file", function(){
-      $(this).removeClass("dragged");
-      $.draggingFile = null;
-    })
-    .on("selectstart", "div.file", function(){
-			this.dragDrop && this.dragDrop();
-			return false;
-    });
+
+    // delegate all other handlers to files
+    .on({
+      // delegate dbl-click handler of files
+      dblclick: function(){
+        $(this).trigger("Filebrowser:file:select");
+      },
+      // bing drag-n-drop files to folders
+      dragstart: function(e){
+        $.draggingFile = $(this).addClass("dragged");
+        var dt = e.originalEvent.dataTransfer;
+        dt.effectAllowed = "copy";
+        dt.setData("Text", $(this).find("p.name span").text());
+      },
+      dragend: function(){
+        $(this).removeClass("dragged");
+        $.draggingFile = null;
+      },
+      // for old IE
+      selectstart: function(){
+        this.dragDrop && this.dragDrop(); // only IE method
+        return false;
+      }
+    }, "div.file");
+    // end of 'files' elements handlers delegating
 
     // bind drag-n-drop external files to upload
     $("#files").on({
@@ -227,16 +267,13 @@
         $(this).addClass("over");
         return false;
       },
-
       dragenter: function(){
         return false;
       },
-
       dragleave: function() {
         $(this).removeClass("over");
         return false;
       },
-
       drop: function(e) {
         e.stopPropagation();
         $(this).removeClass("over");
@@ -247,7 +284,7 @@
     });
 
 
-    // Global events
+    // Global events listener
     $(document).on(
     {
       // Reload files list of current directory
@@ -338,7 +375,7 @@
         location.replace("wysiwyg/filebrowser/download/"+$.getSelectedFilePath(e));
       },
 
-      // When we select file
+      // When we select file to insert in editor page
       "Filebrowser:file:select" : function(e) {
         window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), "/" + global_config.root + $.getSelectedFilePath(e));
         window.close();
@@ -366,45 +403,40 @@
             .find("div.proportion div.controls").removeClass("allow-arbitrary");
           },
 
-            "show" : function(){
-              $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
-              var imgSize = $.parseSizeFormRel(e.target),
-              form = $(this).find("form"),
-              prop = imgSize.width / imgSize.height,
-              checkbox = form.find("input[type=checkbox]"),
-              sides = {},
-              revers = {
-                width: "height",
-                height: "width"
-              };
+          "show" : function(){
+            $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
+            var imgSize = $.parseSizeFormRel(e.target),
+            form = $(this).find("form"),
+            prop = imgSize.width / imgSize.height,
+            sides = {},
+            revers = {
+              width: "height",
+              height: "width"
+            };
 
-              $.each(["width", "height"], function(i, item){
-                sides[item] = form.find("input[name=" + item + "]")
-              });
+            $.each(["width", "height"], function(i, item){
+              sides[item] = form.find("input[name=" + item + "]")
+            });
 
-              var inputEvent = "oninput" in sides["width"][0] ? "input" : "keyup";
+            var inputEvent = "oninput" in sides["width"][0] ? "input" : "keyup";
 
-              for(var side in imgSize) {
-                $(this).find("#current-" + side).text(imgSize[side]);
-                sides[side].val(imgSize[side])
-                .on(inputEvent + " focus blur", function(e){
-                  if (e.type == inputEvent &&  ! checkbox[0].checked) {
-                    var v = this.value;
-                    sides[revers[this.name]].val(parseInt(this.name == "width" ? v / prop : v * prop));
-                  }
+            for(var side in imgSize) {
+              $(this).find("#current-" + side).text(imgSize[side]);
+              sides[side].val(imgSize[side])
+              .on(inputEvent + " focus blur", function(e){
+                if (e.type == inputEvent) {
+                  var v = this.value;
+                  sides[revers[this.name]].val(parseInt(this.name == "width" ? v / prop : v * prop));
+                }
 
-                  else if (e.type == "focus" && ! checkbox[0].checked) {
-                    sides[revers[this.name]].attr("readonly", "readonly");
-                  }
+                else if (e.type == "focus") {
+                  sides[revers[this.name]].attr("readonly", "readonly");
+                }
 
-                  else form.find("input").removeAttr("readonly");
-                });
-              }
-
-              checkbox.change(function(){
-                $(this).parent().parent().toggleClass("allow-arbitrary");
+                else form.find("input").removeAttr("readonly");
               });
             }
+          }
 
         }).modal()
         .find("a.btn-success").click(function() {
@@ -455,7 +487,8 @@
 
         $("#dir-modal").on("hide", function() {
           $(this).html("");
-        }).modal().find("a.btn-success").click(function() {
+        }).modal()
+        .find("a.btn-success").click(function() {
           $("#dir-modal form").ajaxSubmit({
             url:      "wysiwyg/filebrowser/" + mission + "/" + dir.buildFullPath(),
             dataType: "json",
@@ -485,22 +518,17 @@
 
         function(data){
 
-         $(dir).removeClass("process");
+          $(dir).removeClass("process");
 
-         if(data.ok !== undefined) {
-           $(document).trigger('Filebrowser:loadFiles');
-         }
-         else if (data.error !== undefined) {
-           var alert = $("#error-modal").find("div.alert");
-           $("#error-modal").on({
-             "show": function(){
-               alert.text(data.error)
-             },
-             "hide": function(){
-              alert.empty()
-             }
-           }).modal();
-         }
+          if(data.ok !== undefined) {
+            $(document).trigger('Filebrowser:loadFiles');
+          }
+          else if (data.error !== undefined) {
+            var alert = $("#error-modal").find("div.alert");
+            $("#error-modal").on("show hide", function(e){
+              alert.text(e.type == "show" ? data.error : "");
+            }).modal();
+          }
         }, "json")
       }
 
@@ -550,12 +578,6 @@
   });
 
   $.extend($.fn, {
-    // check folder: is dragging file icon lay over this folder
-    draggingOver: function(ev) {
-      var area = this.getD().folderRect;
-      return (area.left < ev.clientX && area.right > ev.clientX &&
-        area.top < ev.clientY && area.bottom > ev.clientY) ? true : false;
-    },
 
     // update breadcrumb on change path
     breadcrumbUpdate: function(){
@@ -578,7 +600,7 @@
     },
 
     fileUpload: function(url, fileDataKey) {
-    /* method to be used for each uploading file and must be called on <li> element,
+      /* method to be used for each uploading file and must be called on <li> element,
       created in previous method and contain file as jQuery.data().
      * Method send files by XMLHttpRequest() as binary data, emulating file request structure.
      * url - the URL to send request,

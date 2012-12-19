@@ -13,7 +13,7 @@
 		<?php echo HTML::anchor("#", __('Upload'), array('class' => 'btn btn-success upload', 'data-dismiss' => 'modal')) ?>
 		<a href ="javascript:void(0)" class="btn btn-success attach-another">
 			<?php echo __('Attach another file') ?>
-			<input type="file" name="files[]" multiple = "multiple"<?php if (is_array($accept) AND sizeof($accept) > 0): ?> accept=".<?php echo implode(',.', $accept) ?>"<?php endif ?> />
+			<input type="file" name="files[]" multiple = "multiple"<?php if (is_array($accept) AND sizeof($accept) > 0): ?> accept="<?php echo implode(',', Arr::map('File::mime_by_ext', $accept)) ?>"<?php endif ?> />
 		</a>
 	</div>
 </div>
@@ -67,14 +67,6 @@
 					<?php echo Form::input('height', '', array('type' => 'number', 'class' => 'input-small')) ?>
 					<span class="add-on" id="file-extension">px</span>
 				</div>
-			</div>
-		</div>
-		<div class="control-group proportion">
-			<div class="controls">
-				<label class="checkbox">
-					<?php echo Form::input('alow-arbitrary', '', array('type' => 'checkbox')) ?>
-					<?php echo __('Arbitrary proportion') ?>
-				</label>
 			</div>
 		</div>
 		<?php echo Form::close() ?>
