@@ -150,19 +150,21 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		if ($_FILES)
 		{
 			// Check if file already exists
-			if(is_file($path.$_FILES['Filedata']['name']))
+			if (is_file($path.$_FILES['Filedata']['name']))
 			{
-				return $this->response->json(array(
-					'error' => __('FIle :file already exists in :path', array(
+				return $this->response->json(array('errors' => array(
+					'filename' => __('FIle :file already exists in :path', array(
 						':file' => $_FILES['Filedata']['name'],
 						':path' => $this->_path
-						))));
+						)))));
 			}
 
 			$extension = strtolower(pathinfo($_FILES['Filedata']['name'], PATHINFO_EXTENSION));
 
+			$filename = pathinfo($_FILES['Filedata']['name'], PATHINFO_FILENAME);
+
 			// Then we need to check filename
-			$validation = $this->_files_validation(array('filename' => $_FILES['Filedata']['name']), $path, $extension);
+			$validation = $this->_files_validation(array('filename' => $filename), $path, $extension);
 
 			if ( ! $validation->check())
 			{
@@ -174,7 +176,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			try
 			{
 				// Normalize file extensions
-				$filename = pathinfo($_FILES['Filedata']['name'], PATHINFO_FILENAME).'.'.$extension;
+				$filename = $filename.'.'.$extension;
 
 				Upload::save($_FILES['Filedata'], $filename, DOCROOT.$this->_directory.$this->_path);
 			}
@@ -588,7 +590,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	 */
 	protected function _files_validation(array $array, $path, $extension = NULL)
 	{
-		return Validation::factory($_POST)
+		return Validation::factory($array)
 			->rules('filename', array(
 					array('not_empty'),
 					array('regex', array(':value', '/[a-zA-Z0-9_\-]/')),
