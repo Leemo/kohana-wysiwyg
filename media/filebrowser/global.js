@@ -406,6 +406,7 @@
           "show" : function(){
             $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
             var imgSize = $.parseSizeFormRel(e.target),
+            name = $(e.target).find("p.name").text().split("."),
             form = $(this).find("form"),
             prop = imgSize.width / imgSize.height,
             sides = {},
@@ -413,6 +414,10 @@
               width: "height",
               height: "width"
             };
+
+            var inp = form[0].filename;
+            inp.value = name[0]+"_resized";
+            $(inp).siblings("span").text("." + name[1]);
 
             $.each(["width", "height"], function(i, item){
               sides[item] = form.find("input[name=" + item + "]")
@@ -436,6 +441,7 @@
                 else form.find("input").removeAttr("readonly");
               });
             }
+
           }
 
         }).modal()
