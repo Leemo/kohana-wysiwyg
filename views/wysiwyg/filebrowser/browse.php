@@ -55,17 +55,21 @@
 		<?php echo Form::open(NULL, array('class' => 'form-horizontal')) ?>
 		<div class="resize-fields">
 			<div class="control-group">
-				<?php echo Form::label(NULL, __('Dimensions').':', array('class' => 'control-label')) ?>
+				<?php echo Form::label(NULL, __('Dimensions').':&nbsp;', array('class' => 'control-label')) ?>
 				<div class="input-append">
 					<?php echo Form::input('width', '', array('type' => 'number', 'class' => 'input-mini')) ?>
 					<span class="add-on"><?php echo __('px') ?></span>
+				</div>
+				<div class="input-append times">
 					&nbsp;&times;&nbsp;
+				</div>
+				<div class="input-append">
 					<?php echo Form::input('height', '', array('type' => 'number', 'class' => 'input-mini')) ?>
 					<span class="add-on"><?php echo __('px') ?></span>
 				</div>
 			</div>
 			<div class="control-group">
-				<?php echo Form::label('filename', __('Save as').':') ?>
+				<?php echo Form::label('filename', __('Save as').':&nbsp;', array('class' => 'control-label')) ?>
 				<div class="input-append">
 					<?php echo Form::input('filename') ?>
 					<span class="add-on file-extension">.jpg</span>
