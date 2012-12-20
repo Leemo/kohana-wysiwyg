@@ -51,21 +51,24 @@
 		<h3><?php echo __('Resize image') ?></h3>
 	</div>
 	<div class="modal-body resize-modal">
-		<div class="alert alert-info"><strong><?php echo __('Current image size') ?>: </strong><span id="current-width"></span>&times;<span id="current-height"></span></div>
+		<div class="alert alert-info"><strong><?php echo __('Current image dimensions') ?>: </strong><span id="current-width"></span>&times;<span id="current-height"></span></div>
 		<?php echo Form::open(NULL, array('class' => 'form-horizontal')) ?>
 		<div class="resize-fields">
 			<div class="control-group">
-				<?php echo Form::label('width', __('Width').':', array('class' => 'control-label')) ?>
-				<div class="controls input-append">
-					<?php echo Form::input('width', '', array('type' => 'number', 'class' => 'input-small')) ?>
-					<span class="add-on" id="file-extension">px</span>
+				<?php echo Form::label(NULL, __('Dimensions').':', array('class' => 'control-label')) ?>
+				<div class="input-append">
+					<?php echo Form::input('width', '', array('type' => 'number', 'class' => 'input-mini')) ?>
+					<span class="add-on"><?php echo __('px') ?></span>
+					&nbsp;&times;&nbsp;
+					<?php echo Form::input('height', '', array('type' => 'number', 'class' => 'input-mini')) ?>
+					<span class="add-on"><?php echo __('px') ?></span>
 				</div>
 			</div>
 			<div class="control-group">
-				<?php echo Form::label('height', __('Height').':', array('class' => 'control-label')) ?>
-				<div class="controls input-append">
-					<?php echo Form::input('height', '', array('type' => 'number', 'class' => 'input-small')) ?>
-					<span class="add-on" id="file-extension">px</span>
+				<?php echo Form::label('filename', __('Save as').':') ?>
+				<div class="input-append">
+					<?php echo Form::input('filename') ?>
+					<span class="add-on file-extension">.jpg</span>
 				</div>
 			</div>
 		</div>
