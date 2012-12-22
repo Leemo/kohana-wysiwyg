@@ -509,15 +509,86 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function action_resize()
 	{
-		try
+		$this->auto_render = FALSE;
+
+		if ( ! Filebrowser::is_image($this->_file['path']))
 		{
-			$file = Filebrowser::parse_path('media\\uploads\\', '123');
-			echo Debug::vars($file);
+			throw new HTTP_Exception_403;
 		}
-		catch (Filebrowser_Exception $e)
+
+		if ($_POST)
 		{
-			throw new HTTP_Exception_404;
+			$_POST = Arr::extract($_POST, array(
+				'filename',
+				'width',
+				'height'
+				));
+
+			// Validate fle
+			$validation = $this
+				->_files_validation($_POST, $this->_file['dir'], $this->_file['ext'])
+				->label('filename', __('Filename'));
+
+			if ( ! $validation->check())
+			{
+				return $this->response->json(array(
+					'errors' => $validation->errors('wysiwyg')
+					));
+			}
+
+			// Validate dimentions
+			$validation = Validation::factory($_POST);
+
+			// If crop-parameters isn't valid
+			if ( ! $validation->check())
+			{
+				$message = array();
+
+				foreach($validation->errors('wysiwyg') as $row => $error)
+				{
+					$message[] = $row.': '.$error;
+				}
+
+				// Send message
+				throw new HTTP_Exception_400(implode("\n", $message));
+			}
+
+
+			try
+			{
+				// Crop and resize an image
+				Image::factory($this->_file['path'])
+					->resize($_POST['width'], $_POST['height'])
+					->save($this->_file['dir'].DIRECTORY_SEPARATOR.$_POST['filename'].'.'.$this->_file['ext']);
+			}
+			catch(Exception $e)
+			{
+				// If something's wrong,
+				// return error message
+				$message = explode(':', $e->getMessage());
+
+				return $this->response->json(array(
+					'errors' => array(
+						'filename' => __('Server error. Message: :message', array(
+							':message' => $message[sizeof($message) - 1]
+							)))));
+			}
+
+			return $this->response->ok();
 		}
+
+    $path = str_replace(DIRECTORY_SEPARATOR, '/', $this->_path);
+
+		$file = $this->_config['public_directory'].'/'
+			.$this->_config['uploads_directory'].'/'
+			.$path;
+
+
+		$this->template = View::factory('wysiwyg/filebrowser/crop')
+			->bind('image',  $file)
+			->set('path',    $path)
+			->bind('width',  $dimensions[0])
+			->bind('height', $dimensions[1]);
 	}
 
 	protected function _rotate($degrees)
