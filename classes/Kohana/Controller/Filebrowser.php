@@ -351,10 +351,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function action_crop()
 	{
-		$file = DOCROOT.$this->_directory.$this->_path;
-
-		if ( ! is_file($file) OR ! $dimentions = Filebrowser::is_image($file))
-			throw new HTTP_Exception_404;
+		if ( ! ($dimensions = Filebrowser::is_image($this->_file['path'])))
+		{
+			throw new HTTP_Exception_403;
+		}
 
 		if ($_POST)
 		{
@@ -370,15 +370,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				'offset_y'
 				));
 
-			$path  = rtrim(DOCROOT.$this->_directory
-				.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
-				.DIRECTORY_SEPARATOR;
-
-			$extension = pathinfo($this->_path, PATHINFO_EXTENSION);
-
 			// Validate fle
 			$validation = $this
-				->_files_validation($_POST, $path, $extension)
+				->_files_validation($_POST, $this->_file['dir'], $this->_file['ext'])
 				->label('filename', __('Filename'));
 
 			if ( ! $validation->check())
@@ -408,7 +402,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				$message = array();
 
 				foreach($validation->errors('wysiwyg') as $row => $error)
+				{
 					$message[] = $row.': '.$error;
+				}
 
 				// Send message
 				throw new HTTP_Exception_400(implode("\n", $message));
@@ -418,11 +414,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			try
 			{
 				// Crop and resize an image
-				Image::factory($file)
+				Image::factory($this->_file['path'])
 					->resize($_POST['image_width'], $_POST['image_height'])
 					->crop($_POST['crop_width'], $_POST['crop_height'],
 						$_POST['offset_x'], $_POST['offset_y'])
-					->save($path.$_POST['filename'].'.'.$extension);
+					->save($this->_file['dir'].DIRECTORY_SEPARATOR.$_POST['filename'].'.'.$this->_file['ext']);
 			}
 			catch(Exception $e)
 			{
@@ -448,10 +444,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 
 		$this->template = View::factory('wysiwyg/filebrowser/crop')
-			->bind('image', $file)
-			->set('path', $path)
-			->bind('width', $dimentions[0])
-			->bind('height', $dimentions[1]);
+			->bind('image',  $file)
+			->set('path',    $path)
+			->bind('width',  $dimensions[0])
+			->bind('height', $dimensions[1]);
 	}
 
 	/**
