@@ -9,6 +9,8 @@ using filebrowser
 
 # Installation
 
+Please, note - for this module the module [Image](https://github.com/kohana/image) is required!
+
 ## Enable WYSIWYG module
 
 Edit your bootstrap file `APPPATH/bootstrap.php` and enable WYSIWYG module:
@@ -16,6 +18,7 @@ Edit your bootstrap file `APPPATH/bootstrap.php` and enable WYSIWYG module:
 ~~~
 Kohana::modules(array(
   // Some modules
+  'image'   => MODPATH.'image',  // this module is required for our WYSIWYG module
   'wysiwyg' => MODPATH.'wysiwyg',
   // Some other modules
   ));
