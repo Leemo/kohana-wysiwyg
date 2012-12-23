@@ -109,7 +109,10 @@
           $("#breadcrumb").breadcrumbUpdate(); // method defined in global.js
         });
         return false;
-      });
+      })
+
+      // drag-n-drop events handlers (not to drag folders but to recive files dropped over this folder)
+ //     this.children("p").on($.foldersDragDropHandlers);
     }; // end of prosessFolder()
 
     $("div",this).each(function(){

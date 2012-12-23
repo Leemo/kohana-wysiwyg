@@ -29,16 +29,20 @@
             $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
 
             btnSuccess.click(function() {
+              var btn = $(this).addClass("btn-loader");
+
               $("#crop-form").ajaxSubmit({
                 url: location.href,
                 dataType: "json",
                 success:  function(data, statusText, xhr, $form) {
                   $form.find("div.control-group").removeClass("error").find(".help-inline").remove();
-                  if(data.ok !== undefined) {
+                  btn.removeClass("btn-loader");
+
+                  if(data.errors === undefined) {
                     $(document).trigger("Filebrowser:crop:afterSave");
                     $("#save-modal").modal("hide");
                   }
-                  else if(data.errors !== undefined) {
+                  else {
                     $form.find(".control-group").addClass("error")
                     .append('<span class="help-inline">'+data.errors.filename+"</span>");
                   }

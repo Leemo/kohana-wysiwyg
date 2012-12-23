@@ -13,7 +13,7 @@
 		<?php echo HTML::anchor("#", __('Upload'), array('class' => 'btn btn-success upload', 'data-dismiss' => 'modal')) ?>
 		<a href ="javascript:void(0)" class="btn btn-success attach-another">
 			<?php echo __('Attach another file') ?>
-			<input type="file" name="files[]" multiple = "multiple" />
+			<input type="file" name="files[]" multiple = "multiple"<?php if (is_array($accept) AND sizeof($accept) > 0): ?> accept="<?php echo implode(',', Arr::map('File::mime_by_ext', $accept)) ?>"<?php endif ?> />
 		</a>
 	</div>
 </div>
@@ -44,6 +44,47 @@
 </div>
 <!-- /File rename modal -->
 
+<!-- Image resize modal window -->
+<div id="image-resize-modal" class="modal hide fade">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">&times;</a>
+		<h3><?php echo __('Resize image') ?></h3>
+	</div>
+	<div class="modal-body resize-modal">
+		<div class="alert alert-info"><strong><?php echo __('Current image dimensions') ?>: </strong><span id="current-width"></span>&times;<span id="current-height"></span></div>
+		<?php echo Form::open(NULL, array('class' => 'form-horizontal')) ?>
+		<div class="resize-fields">
+			<div class="control-group">
+				<?php echo Form::label(NULL, __('Dimensions').':&nbsp;', array('class' => 'control-label')) ?>
+				<div class="input-append">
+					<?php echo Form::input('width', '', array('type' => 'number', 'class' => 'input-mini')) ?>
+					<span class="add-on"><?php echo __('px') ?></span>
+				</div>
+				<div class="input-append times">
+					&nbsp;&times;&nbsp;
+				</div>
+				<div class="input-append">
+					<?php echo Form::input('height', '', array('type' => 'number', 'class' => 'input-mini')) ?>
+					<span class="add-on"><?php echo __('px') ?></span>
+				</div>
+			</div>
+			<div class="control-group">
+				<?php echo Form::label('filename', __('Save as').':&nbsp;', array('class' => 'control-label')) ?>
+				<div class="input-append">
+					<?php echo Form::input('filename') ?>
+					<span class="add-on file-extension">.jpg</span>
+				</div>
+			</div>
+		</div>
+		<?php echo Form::close() ?>
+	</div>
+	<div class="modal-footer">
+		<?php echo HTML::anchor("#", __('Save'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
+		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+	</div>
+</div>
+<!-- /Image resize modal window -->
+
 <!-- File delete modal window -->
 <div id="file-delete-modal" class="modal hide fade">
 	<div class="modal-header">
@@ -71,6 +112,22 @@
 <div id="dir-modal" class="modal hide fade">
 </div>
 <!-- /Directory add/rename modal window -->
+
+<!-- Error window -->
+<div id="error-modal" class="modal hide fade">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">&times;</a>
+		<h3><?php echo __('Error') ?></h3>
+	</div>
+	<div class="modal-body">
+		<div class="alert alert-danger"></div>
+	</div>
+	<div class="modal-footer">
+		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
+	</div>
+</div>
+<!-- /Error window -->
+
 <!-- /Modal windows -->
 
 <!-- Navigation bar -->
@@ -82,7 +139,7 @@
 					<a href ="javascript:void(0)" id="upload-link">
 						<i class="icon-upload icon-white"></i>
 						<?php echo __('Upload files') ?>
-						<input type="file" name="files[]" multiple = "multiple" />
+						<input type="file" name="files[]" multiple = "multiple"<?php if (is_array($accept) AND sizeof($accept) > 0): ?> accept="<?php echo implode(',', Arr::map('File::mime_by_ext', $accept)) ?>"<?php endif ?> />
 					</a>
 				</li>
 				<li class="divider-vertical"></li>
@@ -97,25 +154,26 @@
 	</div>
 </div>
 <!-- /Navigation bar -->
-
-<div id="dirs" class="well sidebar-nav">
-	<!-- Directories tree -->
-	<div class="directories">
-		<div id="root">
-			<p>
-				<i class="icon-home"></i>
-				<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
-			</p>
-			<?php foreach ($dirs as $dir => $parents): ?>
-				<div name="<?php echo $parents ?>">
-					<p>
-						<i class="icon-chevron-right"></i><a href=""><?php echo $dir ?></a>
-						<em></em>
-					</p>
-				</div>
-			<?php endforeach ?>
+<div id="left">
+	<div id="dirs" class="well sidebar-nav">
+		<!-- Directories tree -->
+		<div class="directories">
+			<div id="root">
+				<p>
+					<i class="icon-home"></i>
+					<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
+				</p>
+				<?php foreach ($dirs as $dir => $parents): ?>
+					<div name="<?php echo $parents ?>">
+						<p>
+							<i class="icon-chevron-right"></i><a href=""><?php echo $dir ?></a>
+							<em></em>
+						</p>
+					</div>
+				<?php endforeach ?>
+			</div>
+			<!-- /Directories tree -->
 		</div>
-		<!-- /Directories tree -->
 	</div>
 </div>
 <div id="files">
@@ -151,7 +209,7 @@
 <!-- Files list -->
 <script id="tpl-files" type="text/x-jquery-tmpl">
 	{{each(key, value) files}}
-	<div class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}{{if value.width && value.height}} (${value.width} x ${value.height}),{{/if}} ${value.size}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
+	<div draggable="true" class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}{{if value.width && value.height}} (${value.width} x ${value.height}),{{/if}} ${value.size}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
 			 <div class="icon{{if value.type}} ${value.type}{{/if}}">
 			{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
 			<div class="fileOverlay"></div>
@@ -165,6 +223,7 @@
 		</span>
 	</div>
 	{{/each}}
+	<div id="drop-files"></div>
 </script>
 <!-- /Files list -->
 

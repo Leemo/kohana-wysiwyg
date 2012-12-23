@@ -20,6 +20,11 @@ body {
   background: #ababab;
 }
 
+.modal, .modal.fade-in {
+  margin-top: 0;
+  top: 80px !important;
+}
+
 #tools {
   margin: 0;
 }

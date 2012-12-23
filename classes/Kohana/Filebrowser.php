@@ -46,7 +46,7 @@ class Kohana_Filebrowser {
 	 */
 	protected static function _list($directory, $dirs, $files, array $filter = NULL)
 	{
-		$directory = DOCROOT.$directory;
+		$directory = $directory;
 
 		$return = array();
 
@@ -346,6 +346,35 @@ class Kohana_Filebrowser {
 		}
 
 		return ! file_exists($file);
+	}
+
+	/**
+	 *
+	 * @param type $dir
+	 * @param type $path
+	 * @return type
+	 * @throws Filebrowser_Exception
+	 */
+	public static function parse_path($dir, $path)
+	{
+		$fullpath = realpath(DOCROOT.$dir.$path);
+		$pubpath	= realpath(DOCROOT.$dir);
+
+		// Public directory protection
+		if ( ! $fullpath OR ! strstr($fullpath, $pubpath))
+		{
+			throw new Filebrowser_Exception;
+		}
+
+		$pathinfo = pathinfo($fullpath);
+
+		return array
+		(
+			'name' => $pathinfo['filename'],
+			'ext'  => (isset($pathinfo['extension'])) ? $pathinfo['extension'] : NULL,
+			'dir'  => $pathinfo['dirname'],
+			'path' => $fullpath
+		);
 	}
 
 } // End Kohana_Filebrowser

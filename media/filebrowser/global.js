@@ -1,10 +1,5 @@
 ;
 (function($) {
-  // When filebrowser window resized,
-  // recalculate new window height
-  $(window).bind("load resize", function(){
-    $.recalculateHeight();
-  });
 
   // This global variable gets value
   // on each selecting of folders
@@ -12,7 +7,6 @@
   path = "/";
 
   $(function(){
-
 
     // Bind handlers to nav-bar links
     var navBar = {
@@ -37,6 +31,11 @@
       navBar["upload-link"] = function(){};
       // multi-upload by html5 files API, modal id must be in argument
       filesInput.getFileToModal("upload-modal");
+
+      if($.browser.mozilla && $.browser.version < 18) {
+        var accept = filesInput[0].accept;
+        $("input[type=file]").attr("accept", accept.replace(/,?(\w+)\/(\w+)/g, "$1/*,"));
+      }
     }
 
     else filesInput.remove(); // remove multi=upload input from link, standart single upload in modal
@@ -44,7 +43,6 @@
     for (var id in navBar) $("#" + id).click(navBar[id]);
 
     // Modal windows
-
     // Initialize all modal windows
     $("div.modal").modal({
       show: false
@@ -66,15 +64,14 @@
       },
       "hide" : function() {
         $("#upload-modal ul.upload").empty();
-        $(this).find("a.upload").unbind("click");
+        $(this).find("a.upload").off("click").siblings("a").children("input").off();
         $(document).trigger("Filebrowser:loadFiles");
       }
     });
     // End upload dialog
 
-
     //Disable default submit by pressing "enter" on some field of 'modal' form and provide ajax POST request
-    $("div.modal").delegate("form", "submit", function(){
+    $("div.modal").on("submit", "form", function(){
       $(this).parent().siblings("div.modal-footer").children("a.btn-success").click();
       return false;
     });
@@ -82,7 +79,42 @@
     // End modal windows
 
     // Init folders tree
-    $("div.directories").folderTree().contextMenu({
+    $.tree = $("div.directories");
+    $.draggingFile = null;
+
+    // bind drag-n-drop handlers to folders for moving files to folders
+    $.tree.on({
+      dragover: function(e){
+        e.originalEvent.dataTransfer.dropEffect = 'copy';
+        $(this).addClass("overDrop");
+        return false;
+      },
+
+      dragenter: function(){
+        $(this).addClass("overDrop");
+        return false;
+      },
+
+      dragleave: function() {
+        $(this).removeClass("overDrop");
+        return false;
+      },
+
+      drop: function(e) {
+        // fire event 'Filebrowser:dir:file:move:to' listened in global events listener code
+        e.stopPropagation();
+        $.draggingFile.trigger("dragend");
+        $(this).removeClass("overDrop").parent().addClass("process").trigger({
+          type: "Filebrowser:dir:file:move:to",
+          fileName: e.originalEvent.dataTransfer.getData("text")
+        });
+        return false;
+      }
+    }, "p:not(.selected)");
+
+    // bind contect menu to folders and files
+
+    $.tree.folderTree().contextMenu({
       closeType: {
         zone:   'any',
         events: 'closeFolderClick,openFolderClick'
@@ -188,7 +220,6 @@
       targetSelector: "div.picture",
       list:           filesMenu
     })
-    // Bind context menu to delegate
     // for non-picture file elements in files area
     .contextMenu({
       containerClass : "contextMenu dropdown-menu",
@@ -196,18 +227,71 @@
       targetSelector: "div.non_picture",
       list: filesMenu.slice(0,2).concat(filesMenu.slice(8))
     })
-    // delegate dbl-click handler of files
-    .delegate('div.file', 'dblclick', function(){
-      $(this).trigger("Filebrowser:file:select");
+
+    // delegate all other handlers to files
+    .on({
+      // delegate dbl-click handler of files
+      dblclick: function(){
+        $(this).trigger("Filebrowser:file:select");
+      },
+      // bing drag-n-drop files to folders
+      dragstart: function(e){
+        $.draggingFile = $(this).addClass("dragged");
+        var dt = e.originalEvent.dataTransfer;
+        dt.effectAllowed = "copy";
+        dt.setData("Text", $(this).find("p.name span").text());
+      },
+      dragend: function(){
+        $(this).removeClass("dragged");
+        $.draggingFile = null;
+      },
+      // for old IE
+      selectstart: function(){
+        this.dragDrop && this.dragDrop(); // only IE method
+        return false;
+      }
+    }, "div.file");
+    // end of 'files' elements handlers delegating
+
+    // bind drag-n-drop external files to upload
+    $("#files").on({
+      dragover: function(e){
+        var dt = e.originalEvent.dataTransfer;
+        if(!dt) return;
+        //FF
+        if(dt.types.contains&&!dt.types.contains("Files")) return;
+        //Chrome
+        if(dt.types.indexOf&&dt.types.indexOf("Files")==-1) return;
+
+        e.originalEvent.dataTransfer.dropEffect = 'copy';
+        $(this).addClass("over");
+        return false;
+      },
+      dragenter: function(){
+        return false;
+      },
+      dragleave: function() {
+        $(this).removeClass("over");
+        return false;
+      },
+      drop: function(e) {
+        e.stopPropagation();
+        $(this).removeClass("over");
+        var files = e.originalEvent.dataTransfer.files;
+        if (files.length > 0 ) $.createFilesModal(e.originalEvent.dataTransfer.files, "upload-modal");
+        return false;
+      }
     });
 
-    // Global events
-    $(document).bind({
+
+    // Global events listener
+    $(document).on(
+    {
       // Reload files list of current directory
       "Filebrowser:loadFiles" : function() {
         $("#files-row").empty();
         // Reload files list from server
-        $.getJSON(global_config.files_url+path, function(data){
+        $.getJSON(global_config.files_url + path, function(data){
           $("#files-row").empty().append($("#tpl-files").tmpl(data));
           $("#breadcrumb").breadcrumbUpdate();
 
@@ -232,7 +316,7 @@
 
             $(this).find("a.btn-success").click(function() {
               $("#file-rename-modal form").ajaxSubmit({
-                url:      'wysiwyg/filebrowser/rename/'+$.getSelectedFilePath(e),
+                url:      'wysiwyg/filebrowser/rename'+$.getSelectedFilePath(e),
                 dataType: "json",
                 success:  function(data, statusText, xhr, $form) {
                   $form.find("div.control-group").removeClass("error").find(".help-inline").remove();
@@ -251,7 +335,7 @@
             });
           },
           "hide" : function() {
-            $(this).find("a.btn-success").unbind("click");
+            $(this).find("a.btn-success").off("click");
           }
         }).modal();
       },
@@ -260,7 +344,7 @@
       "Filebrowser:file:delete" : function(e) {
         $("#file-delete-modal").on({
           "hide" : function(){
-            $(this).find("a.btn-success").unbind("click").end().find("form").unbind("submit");
+            $(this).find("a.btn-success").off("click").end().find("form").off("submit");
           },
           "show" : function(){
             $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
@@ -282,7 +366,6 @@
               }
             }
           });
-
           return false;
         });
       },
@@ -292,7 +375,7 @@
         location.replace("wysiwyg/filebrowser/download/"+$.getSelectedFilePath(e));
       },
 
-      // When we select file
+      // When we select file to insert in editor page
       "Filebrowser:file:select" : function(e) {
         window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), "/" + global_config.root + $.getSelectedFilePath(e));
         window.close();
@@ -309,6 +392,79 @@
         window.open("/wysiwyg/filebrowser/crop/"+$.getSelectedFilePath(e), "cropresizerWin",
           "width="+openSize.w+", height="+openSize.h+", left="+(screen.availWidth-openSize.w)/2+", top="+(screen.availHeight-openSize.h)/2+", location=yes, resizable=yes");
       },
+
+      // Resize image
+      "Filebrowser:image:resize" : function(e) {
+        $("#image-resize-modal").on({
+          "hide" : function(){
+            $(this).find("a.btn-success").off("click").end()
+            .find("form").off("submit")
+            .find("input").off().removeAttr("readonly checked").end()
+            .find("div.proportion div.controls").removeClass("allow-arbitrary");
+          },
+
+          "show" : function(){
+            $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
+            var imgSize = $.parseSizeFormRel(e.target),
+            name = $(e.target).find("p.name").text().split("."),
+            form = $(this).find("form"),
+            prop = imgSize.width / imgSize.height,
+            sides = {},
+            revers = {
+              width: "height",
+              height: "width"
+            };
+
+            var inp = form[0].filename;
+            inp.value = name[0]+"_resized";
+            $(inp).siblings("span").text("." + name[1]);
+
+            $.each(["width", "height"], function(i, item){
+              sides[item] = form.find("input[name=" + item + "]")
+            });
+
+            var inputEvent = "oninput" in sides["width"][0] ? "input" : "keyup";
+
+            for(var side in imgSize) {
+              $(this).find("#current-" + side).text(imgSize[side]);
+              sides[side].val(imgSize[side])
+              .on(inputEvent + " focus blur", function(e){
+                if (e.type == inputEvent) {
+                  var v = this.value;
+                  sides[revers[this.name]].val(parseInt(this.name == "width" ? v / prop : v * prop));
+                }
+
+                else if (e.type == "focus") {
+                  sides[revers[this.name]].attr("readonly", "readonly");
+                }
+
+                else form.find("input").removeAttr("readonly");
+              });
+            }
+
+          }
+
+        }).modal()
+        .find("a.btn-success").click(function() {
+          $("#image-resize-modal form").ajaxSubmit({
+            url:      'wysiwyg/filebrowser/resize'+$.getSelectedFilePath(e),
+            dataType: "json",
+            success:  function(data, statusText, xhr, $form) {
+              if(data.ok !== undefined) {
+                $(document).trigger("Filebrowser:loadFiles");
+                $("#image-resize-modal").modal("hide");
+              } else if (data.error !== undefined) {
+                $form.find(".help-inline").remove();
+
+                $form.find("div.control-group").addClass("error")
+                .append('<span class="help-inline">'+data.error+"</span>");
+              }
+            }
+          });
+          return false;
+        });
+      },
+
       // Rotate image
       "Filebrowser:image:rotate:left" : function(e){
         $.get('wysiwyg/filebrowser/rotate_left/'+$.getSelectedFilePath(e), function(data){
@@ -337,9 +493,10 @@
 
         $("#dir-modal").on("hide", function() {
           $(this).html("");
-        }).modal().find("a.btn-success").click(function() {
+        }).modal()
+        .find("a.btn-success").click(function() {
           $("#dir-modal form").ajaxSubmit({
-            url:      'wysiwyg/filebrowser/' + mission + "/" + dir.buildFullPath(),
+            url:      "wysiwyg/filebrowser/" + mission + "/" + dir.buildFullPath(),
             dataType: "json",
             success:  function(data, statusText, xhr, $form) {
               if(data.ok !== undefined) {
@@ -353,11 +510,33 @@
               }
             }
           });
-
           return false;
         }); // end of btn click handler
 
-      } // end of dir del/rename events handler
+      }, // end of dir del/rename events handler
+
+      "Filebrowser:dir:file:move:to" : function(e) {
+        var dir = $(e.target);
+
+        $.post("wysiwyg/filebrowser/move" + path + e.fileName, {
+          path: dir.buildFullPath() + e.fileName
+        },
+
+        function(data){
+
+          $(dir).removeClass("process");
+
+          if(data.ok !== undefined) {
+            $(document).trigger('Filebrowser:loadFiles');
+          }
+          else if (data.error !== undefined) {
+            var alert = $("#error-modal").find("div.alert");
+            $("#error-modal").on("show hide", function(e){
+              alert.text(e.type == "show" ? data.error : "");
+            }).modal();
+          }
+        }, "json")
+      }
 
     }) // end of user event handlers
     .trigger("Filebrowser:loadFiles");
@@ -365,23 +544,19 @@
   }); // End document ready
 
   $.extend({
-    recalculateHeight: function() {
-      var c = $("body").height() - $("div.navbar").height()
-      $("#dirs").height(c - 40 + "px");
-      $("#files-row").height(c - $("#breadcrumb").height()- 65 +"px");
-    },
-
-    getUrlParam : function(paramName) { // for correct transmitt data to CKEdirtor
+    // for correct transmitt data to CKEdirtor
+    getUrlParam : function(paramName) {
       var reParam = new RegExp("(?:[\?&]|&amp;)"+paramName+"=([^&]+)", "i") ;
       var match = window.location.search.match(reParam) ;
       return (match && match.length > 1) ? match[1] : '' ;
     },
 
     getSelectedFilePath : function(contextMenuEvent) {
-      return path+$(contextMenuEvent.target).find("p.name span").text()
+      return path+$(contextMenuEvent.target).find("p.name span").text();
     },
 
-    parseSizeFormRel : function(element){ // create object from rel attribute value
+    // create object from rel attribute value
+    parseSizeFormRel : function(element){
       var relVal = $(element).attr("rel");
       if(relVal.indexOf("{") == 0) {
         return Function("var c = new Object(); c=" + relVal + "; return c")();
@@ -390,186 +565,125 @@
         console.warn ("parseSizeFormRel() : element " + element + "has non-object code in 'rel' attribute value or has no 'rel' attribute");
         return false;
       }
+    },
+
+    createFilesModal: function(filesList, modalId){
+      var modal = $("#" + modalId),
+      ul = modal.find("ul.upload");
+      // creating file list
+      $.each(filesList, function(i, item){
+        $("<li/>", {
+          "html" :  item.name+" <em>("+(item.size/1000).toFixed(2)+" Kb)</em>"
+          + "<div class='progress progress-striped active'><div class='bar'></div></div>"
+          +"<span class='note'></span></li>"
+        }).data("file", item).appendTo(ul);
+      });
+      modal.find("a.upload").removeClass("disabled").end().modal('show');
     }
 
   });
 
-  $.fn.draggingOver = function(ev) { // check folder: is dragging file icon lay over this folder
-    var area = this.getD().folderRect;
-    return (area.left < ev.clientX && area.right > ev.clientX &&
-      area.top < ev.clientY && area.bottom > ev.clientY) ? true : false;
-  }
+  $.extend($.fn, {
 
-  $.fn.breadcrumbUpdate = function(){
-    this.empty().append($("#tpl-breadcrumb")
-      .tmpl({
-        parts: path.replace(/^\/(.*)\/$/, '$1').split("/")
-      }));
-  };
+    // update breadcrumb on change path
+    breadcrumbUpdate: function(){
+      this.empty().append($("#tpl-breadcrumb")
+        .tmpl({
+          parts: path.replace(/^\/(.*)\/$/, '$1').split("/")
+        }));
+    },
 
+    // file multi-upload methods based on HTML5 File API
+    checkMultiUploadAPI: function(){ // check html5 files API support
+      return (this[0].multiple && this[0].files) ? true : false;
+    },
 
+    // assemble selected files to modal, read properties
+    getFileToModal: function(uploadModalId){
+      this.change(function(){
+        $.createFilesModal(this.files, uploadModalId)
+      });
+    },
 
-  // file multi-upload methods based on HTML5 File API
+    fileUpload: function(url, fileDataKey) {
+      /* method to be used for each uploading file and must be called on <li> element,
+      created in previous method and contain file as jQuery.data().
+     * Method send files by XMLHttpRequest() as binary data, emulating file request structure.
+     * url - the URL to send request,
+     * postDataKey - string, which will key of $_FILE array in server (analog value of <input> 'name' attribute .
+     */
+      if( ! this.data("file") || this.data("file") == "" || this.hasClass("finished")) return this;
+      var progress = this.children("div.progress"),
+      fill = progress.children("div"),
+      note = this.children("span.note"),
+      file = this.data("file"),
+      li = this;
 
-
-  $.fn.checkMultiUploadAPI = function(){ // check html5 files API support
-    return (this[0].multiple && this[0].files) ? true : false;
-  }
-
-  $.fileListPreCheck = function(inputElement){
-    // check selected in multiple input files before including to file list in upload modal
-    /* files checking to:
-    MIME-TYPE: by comparing with allowed types list form global config,
-    SIZE: by comparing with max size from global config,
-    VALID NAME: checking allowed symbols by regexp
-
-    Method return array of files and error notes for each file
-  */
-    var files = [], valid = [];
-    $.each(inputElement.files, function(i, file){
-      var check = {
-        "mime" : (file.type == "") ? true : ($.inArray(file.type, global_config.mime_types) == -1 ? true : false),
-        "size" : file.size*1 > global_config.max_upload_size*1 ? true : false,
-        "invalid" : ! /^[\w\.-]*$/.test(file.name)
-      },
-      note = "";
-      for(var n in check) {
-        note += check[n] === true ? (note != "" ? ", " : "") + global_config.upload_notes.file_err[n] : "";
+      var xhr = new XMLHttpRequest();
+      if(xhr.upload) {
+        xhr.upload.addEventListener("progress", function(e) {
+          if (e.lengthComputable) fill.width((e.loaded * 100) / e.total + "%");
+        }, false);
       }
-      files[i] = {
-        "file": file,
-        "note": note != "" ? note + "." : ""
-      };
-      if (note == "") valid.push(file.name); // files checked succefull
-    });
-    return {
-      "all" : files,
-      "valid" : valid
-    };
-  }
-
-  // assemble selected files to modal, read properties, check allowed type and size
-  $.fn.getFileToModal = function(uploadModalId){
-    var modal = $("#" + uploadModalId),
-    ul = modal.find("ul.upload"),
-    upload = modal.find("a.upload");
-
-    this.bind("change", function(){
-      var checked = $.fileListPreCheck(this);
-
-      $.post("/wysiwyg/filebrowser/status" + path, {
-        "files": checked.valid // check for already existing file
-      }, function(data){
-        // creating file list
-        var nothingToUpload = true; // to deactivate upload button if all files invalid and nothing to upload
-        $.each(checked.all, function(i, item){
-          if (data[item.file.name] === true) item.note = global_config.upload_notes.file_err["already_exist"];
-          if(item.note == "") nothingToUpload = false;
-          $("<li/>", {
-            "html" :  item.file.name+" <em>("+(item.file.size/1000).toFixed(2)+" Kb)</em>"
-            +(item.note == "" ? "<div class='progress progress-striped active'><div class='bar'></div></div>" : "")
-            +"<span class='note'>" + item.note + "</span></li>",
-            "class" : item.note == "" ? "allowed" : "disallowed"
-          }).data("file", item.note == "" ? item.file : "").appendTo(ul);
-        // all files showing in list but only allowed files put to <li> as jquery data
-        });
-        modal.find("a.upload")[ (nothingToUpload ? "add" : "remove")+"Class"]("disabled");
-        modal.modal('show');
-
-      });// end of post responce hundler
-    });
-  }
-
-  $.fn.fileUpload = function(url, fileDataKey) {
-    /* method to be used for each uploading file and must be called on <li> element,
-     created in previous method and contain file as jQuery.data().
-   * Method send files by XMLHttpRequest() as binary data, emulating file request structure.
-   * url - the URL to send request,
-   * postDataKey - string, which will key of $_FILE array in server (analog value of <input> 'name' attribute .
-   */
-    if( ! this.data("file") || this.data("file") == "" || this.hasClass("finished")) return this;
-    var progress = this.children("div.progress"),
-    fill = progress.children("div"),
-    note = this.children("span.note"),
-    file = this.data("file"),
-    li = this;
-
-    var xhr = new XMLHttpRequest();
- /*   var opera = "";
-    for (var i in xhr) {
-      opera += "'"+i+"': "+ xhr[i] + "\n"
-    }
-    alert (opera);
- */
-  if(xhr.upload) {
-    xhr.upload.addEventListener("progress", function(e) {
-      if (e.lengthComputable) fill.width((e.loaded * 100) / e.total + "%");
-    }, false);
-  }
-    // load and error events handlers
-    xhr.onreadystatechange = function () {
-      var obj, errorText = "";
-      if (this.readyState == 4) {
-        var xhr = this;
-        fill.width("100%").parent().fadeOut(function(){
-          li.addClass("finished");
-
-          if(xhr.status == 200) {
-            try {
-              obj = $.parseJSON(xhr.responseText);
-              for (var i in obj) errorText += obj[i]+" ";
-              note.text(errorText).parent().addClass("error");
-            }
-            catch(e) {
-              if(xhr.responseText == "Ok")  {
+      // load and error events handlers
+      xhr.onreadystatechange = function() {
+        var errorText = "";
+        if (this.readyState == 4) {
+          var xhr = this;
+          fill.width("100%").parent().fadeOut(function(){
+            li.addClass("finished");
+            if(xhr.status == 200) {
+              try {
+                var json = $.parseJSON(xhr.responseText);
+                for (var i in json.errors) errorText += json.errors[i]+" ";
+                note.text(errorText).parent().addClass("error");
+              }
+              catch (e) {
                 note.parent().addClass("ok");
               }
             }
+            else {
+              note.text(global_config.upload_notes.error + " status:" + xhr.status).parent().addClass("error");
+            }
+          });
+        }
+      };
 
-          } else {
-            note.text(global_config.upload_notes.error + " status:" + xhr.status).parent().addClass("error");
-          }
-        });
+      xhr.open("POST", url);
+
+      if(window.FormData) {
+        // W3C (Chrome, Safari, Firefox 4+)
+        var formData = new FormData();
+        formData.append(fileDataKey, file);
+        xhr.send(formData);
       }
-    };
 
-    xhr.open("POST", url);
+      else if (window.FileReader && xhr.sendAsBinary) {
+        // FF < 4
+        var boundary = "xxxxxxxxx";
+        // headers setting
+        xhr.setRequestHeader("Content-Type", "multipart/form-data, boundary="+boundary);
+        xhr.setRequestHeader("Cache-Control", "no-cache");
+        // body setting
+        var body = "--" + boundary + "\r\n";
+        body += "Content-Disposition: form-data; name='" + fileDataKey + "'; filename='" + file.name + "'\r\n";
+        body += "Content-Type: application/octet-stream\r\n\r\n";
+        body += (file.getAsBinary ? file.getAsBinary() : file.readAsBinary()) + "\r\n";
+        body += "--" + boundary + "--";
 
-    if(window.FormData) {
-      // W3C (Chrome, Safari, Firefox 4+)
-      var formData = new FormData();
-      formData.append(fileDataKey, file);
-      xhr.send(formData);
+        xhr.sendAsBinary(body);
+      }
+
+      else {
+        // Other
+        xhr.setRequestHeader('Upload-Filename', file.name);
+        xhr.setRequestHeader('Upload-Size', file.size);
+        xhr.setRequestHeader('Upload-Type', file.type);
+        xhr.send(file);
+      }
+      return li;
     }
 
-    else if (window.FileReader && xhr.sendAsBinary) {
-      // FF < 4
-      var boundary = "xxxxxxxxx";
-      // headers setting
-      xhr.setRequestHeader("Content-Type", "multipart/form-data, boundary="+boundary);
-      xhr.setRequestHeader("Cache-Control", "no-cache");
-      // body setting
-      var body = "--" + boundary + "\r\n";
-      body += "Content-Disposition: form-data; name='" + fileDataKey + "'; filename='" + file.name + "'\r\n";
-      body += "Content-Type: application/octet-stream\r\n\r\n";
-      body += (file.getAsBinary ? file.getAsBinary() : file.readAsBinary()) + "\r\n";
-      body += "--" + boundary + "--";
-
-      xhr.sendAsBinary(body);
-    }
-
-    else {
-      // Other
-      xhr.setRequestHeader('Upload-Filename', file.name);
-      xhr.setRequestHeader('Upload-Size', file.size);
-      xhr.setRequestHeader('Upload-Type', file.type);
-      xhr.send(file);
-    }
-
-
-    return li;
-  }
-
-
+  }); // end of methods
 
 })(jQuery);
