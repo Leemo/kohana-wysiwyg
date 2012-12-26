@@ -30,6 +30,13 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	 */
 	protected $_directory;
 
+	/**
+	 * Requested file info
+	 *
+	 * @var array
+	 */
+	protected $_file = array();
+
 	public function before()
 	{
 		parent::before();
@@ -52,6 +59,15 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			.DIRECTORY_SEPARATOR;
 
 		$this->_path = str_replace('/', DIRECTORY_SEPARATOR, $this->request->param('path'));
+
+		try
+		{
+			$this->_file = Filebrowser::parse_path($this->_directory, $this->_path);
+		}
+		catch (Filebrowser_Exception $e)
+		{
+			throw new HTTP_Exception_404;
+		}
 	}
 
 	public function action_browse()
@@ -67,18 +83,20 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$dirs = Filebrowser::list_dirs($this->_directory.$this->_path);
+		$dirs = Filebrowser::list_dirs($this->_file['path']);
 
 		foreach($dirs as $key => $val)
 		{
-			$dirname = $this->_directory.$this->_path.DIRECTORY_SEPARATOR.$key;
+			$dir = Filebrowser::parse_path($this->_directory, $this->_path.DIRECTORY_SEPARATOR.$key);
 
-			$subdirs = Filebrowser::list_dirs($dirname);
+			$subdirs = Filebrowser::list_dirs($dir['path']);
 
 			$dirs[$key] = sizeof($subdirs);
 		}
 
-		return $this->response->json(array('dirs' => $dirs));
+		return $this->response->json(array(
+			'dirs' => $dirs
+			));
 	}
 
 	public function action_images()
@@ -102,35 +120,31 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	protected function _filebrowser()
 	{
 		$filter = $this->_config['filters'][$this->request->action()];
-		$path   = $this->_directory.$this->_path;
 
 		if ($this->request->is_ajax())
 		{
 			$this->auto_render = FALSE;
 
 			return $this->response->json(array(
-				'files' => Filebrowser::list_files($path, $filter)
+				'files' => Filebrowser::list_files($this->_file['path'], $filter)
 				));
 		}
 		else
 		{
 			if ( ! empty($this->_path))
 			{
-				return $this->request
-					->redirect(Route::get('wysiwyg/filebrowser')->uri(array(
+				return HTTP::redirect(Route::get('wysiwyg/filebrowser')->uri(array(
 						'action' => $this->request->action()
 						)));
 			}
 		}
 
-		$dirs  = Filebrowser::list_dirs($path);
-		$files = Filebrowser::list_files($path, $filter);
+		$dirs  = Filebrowser::list_dirs($this->_file['path']);
+		$files = Filebrowser::list_files($this->_file['path'], $filter);
 
 		foreach($dirs as $key => $val)
 		{
-			$dirname = $this->_directory.$this->_path.DIRECTORY_SEPARATOR.$key;
-
-			$dirs[$key] = sizeof(Filebrowser::list_dirs($dirname));
+			$dirs[$key] = sizeof(Filebrowser::list_dirs($this->_file['path'].DIRECTORY_SEPARATOR.$key));
 		}
 
 		if ( ! isset($filter['allowed']))
@@ -148,28 +162,27 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$path  = rtrim(DOCROOT.$this->_directory
-			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
-			.DIRECTORY_SEPARATOR;
-
 		if ($_FILES)
 		{
+			//
+			$filename  = pathinfo($_FILES['Filedata']['name'], PATHINFO_FILENAME);
+			$extension = strtolower(pathinfo($_FILES['Filedata']['name'], PATHINFO_EXTENSION));
+
+			$file = $filename.'.'.$extension;
+
 			// Check if file already exists
-			if (is_file($path.$_FILES['Filedata']['name']))
+			if (is_file($this->_file['path'].$file))
 			{
 				return $this->response->json(array('errors' => array(
 					'filename' => __('FIle :file already exists in :path', array(
-						':file' => $_FILES['Filedata']['name'],
+						':file' => $file,
 						':path' => $this->_path
 						)))));
 			}
 
-			$extension = strtolower(pathinfo($_FILES['Filedata']['name'], PATHINFO_EXTENSION));
-
-			$filename = pathinfo($_FILES['Filedata']['name'], PATHINFO_FILENAME);
-
 			// Then we need to check filename
-			$validation = $this->_files_validation(array('filename' => $filename), $path, $extension);
+			$validation = $this
+				->_files_validation(array('filename' => $filename), $this->_file['path'], $extension);
 
 			if ( ! $validation->check())
 			{
@@ -180,10 +193,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 			try
 			{
-				// Normalize file extensions
-				$filename = $filename.'.'.$extension;
 
-				Upload::save($_FILES['Filedata'], $filename, DOCROOT.$this->_directory.$this->_path);
+				Upload::save($_FILES['Filedata'], $file, $this->_file['path']);
 			}
 			catch(Kohana_Exception $e)
 			{
@@ -196,20 +207,15 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		}
 	}
 
+	/**
+	 * Sending a file into browser
+	 */
 	public function action_download()
 	{
 		$this->auto_render = FALSE;
 
-		$file = DOCROOT.$this->_directory.$this->_path;
-
-		if ( ! file_exists($file) OR ! is_file($file))
-		{
-			return $this->response
-				->status(404);
-		}
-
 		$this->response
-			->send_file($file);
+			->send_file($this->_file['path']);
 	}
 
 	/**
@@ -226,19 +232,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$path  = rtrim(DOCROOT.$this->_directory
-			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
-			.DIRECTORY_SEPARATOR;
-
-		$extension = pathinfo($this->_path, PATHINFO_EXTENSION);
-
 		$_POST = Arr::extract($_POST, array('filename'));
 
-		$current_fname = DOCROOT.$this->_directory.$this->_path;
-		$new_fname     = $path.DIRECTORY_SEPARATOR.$_POST['filename']
-			.( ! empty($extension) ? '.'.$extension : '');
-
-		$is_directory = is_dir($current_fname);
+		$current_fname = $this->_file['path'];
+		$new_fname     = $this->_file['dir'].DIRECTORY_SEPARATOR
+			.$_POST['filename'].( ! empty($this->_file['ext']) ? '.'.$this->_file['ext'] : '');
 
 		// This means that the user doesn't enter anything,
 		// and we just need to pretend that everything's OK
@@ -248,8 +246,8 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		}
 
 		// Then we need to check filename
-		$validation = $this->_files_validation($_POST, $path, $extension)
-			->label('filename', ($is_directory ? 'Directory name' : 'File name'));
+		$validation = $this->_files_validation($_POST, $this->_file['dir'], $this->_file['ext'])
+			->label('filename', (is_dir($current_fname) ? 'Directory name' : 'File name'));
 
 		if ( ! $validation->check())
 		{
@@ -291,21 +289,26 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		$from_dir = rtrim(DOCROOT.$this->_directory
-			.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
-			.DIRECTORY_SEPARATOR;
-
-		$to_dir = rtrim(DOCROOT.$this->_directory
-			.pathinfo(ltrim(Arr::get($_POST, 'path'), '/'), PATHINFO_DIRNAME), '.')
-			.DIRECTORY_SEPARATOR;
-
-		$file = pathinfo($this->_path, PATHINFO_BASENAME);
-
-		if ( ! is_file($from_dir.$file))
+		// We can't move directories
+		if ( ! is_file($this->_file['path']))
 		{
 			return $this->response->json(array(
 				'error' => __('Desired file :file doesn\'t exist', array(':file' => $file))
 				));
+		}
+
+		$from_dir = $this->_file['dir'].DIRECTORY_SEPARATOR;
+
+		$to_dir = realpath(rtrim(DOCROOT.$this->_directory
+			.pathinfo(ltrim(Arr::get($_POST, 'path'), '/'), PATHINFO_DIRNAME), '.'))
+			.DIRECTORY_SEPARATOR;
+
+		$file = $this->_file['name'].'.'.$this->_file['ext'];
+
+		// Public directory protection
+		if ( ! strstr(realpath($to_dir), realpath(DOCROOT.$this->_directory)))
+		{
+			throw new HTTP_Exception_403;
 		}
 
 		if (is_file($to_dir.$file))
@@ -324,7 +327,7 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				rename($from_dir.$file, $to_dir.$file);
 			}
 			catch (Exception $e)
-			{
+			{ echo $from_dir.$file, "\n", $to_dir.$file;
 				// If something's wrong,
 				// return error message
 				return $this->response->json(array(
@@ -348,10 +351,10 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function action_crop()
 	{
-		$file = DOCROOT.$this->_directory.$this->_path;
-
-		if ( ! is_file($file) OR ! $dimentions = Filebrowser::is_image($file))
-			throw new HTTP_Exception_404;
+		if ( ! ($dimensions = Filebrowser::is_image($this->_file['path'])))
+		{
+			throw new HTTP_Exception_403;
+		}
 
 		if ($_POST)
 		{
@@ -367,15 +370,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				'offset_y'
 				));
 
-			$path  = rtrim(DOCROOT.$this->_directory
-				.pathinfo($this->_path, PATHINFO_DIRNAME), '.')
-				.DIRECTORY_SEPARATOR;
-
-			$extension = pathinfo($this->_path, PATHINFO_EXTENSION);
-
 			// Validate fle
 			$validation = $this
-				->_files_validation($_POST, $path, $extension)
+				->_files_validation($_POST, $this->_file['dir'], $this->_file['ext'])
 				->label('filename', __('Filename'));
 
 			if ( ! $validation->check())
@@ -405,7 +402,9 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				$message = array();
 
 				foreach($validation->errors('wysiwyg') as $row => $error)
+				{
 					$message[] = $row.': '.$error;
+				}
 
 				// Send message
 				throw new HTTP_Exception_400(implode("\n", $message));
@@ -415,11 +414,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 			try
 			{
 				// Crop and resize an image
-				Image::factory($file)
+				Image::factory($this->_file['path'])
 					->resize($_POST['image_width'], $_POST['image_height'])
 					->crop($_POST['crop_width'], $_POST['crop_height'],
 						$_POST['offset_x'], $_POST['offset_y'])
-					->save($path.$_POST['filename'].'.'.$extension);
+					->save($this->_file['dir'].DIRECTORY_SEPARATOR.$_POST['filename'].'.'.$this->_file['ext']);
 			}
 			catch(Exception $e)
 			{
@@ -436,17 +435,19 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 			return $this->response->ok();
 		}
+
     $path = str_replace(DIRECTORY_SEPARATOR, '/', $this->_path);
+
 		$file = $this->_config['public_directory'].'/'
 			.$this->_config['uploads_directory'].'/'
 			.$path;
 
 
 		$this->template = View::factory('wysiwyg/filebrowser/crop')
-			->bind('image', $file)
-			->set('path', $path)
-			->bind('width', $dimentions[0])
-			->bind('height', $dimentions[1]);
+			->bind('image',  $file)
+			->set('path',    $path)
+			->bind('width',  $dimensions[0])
+			->bind('height', $dimensions[1]);
 	}
 
 	/**
@@ -508,24 +509,102 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 	public function action_resize()
 	{
+		$this->auto_render = FALSE;
 
+		if ( ! Filebrowser::is_image($this->_file['path']))
+		{
+			throw new HTTP_Exception_403;
+		}
+
+		if ($_POST)
+		{
+			$_POST = Arr::extract($_POST, array(
+				'filename',
+				'width',
+				'height'
+				));
+
+			// Validate fle
+			$validation = $this
+				->_files_validation($_POST, $this->_file['dir'], $this->_file['ext'])
+				->label('filename', __('Filename'));
+
+			if ( ! $validation->check())
+			{
+				return $this->response->json(array(
+					'errors' => $validation->errors('wysiwyg')
+					));
+			}
+
+			// Validate dimentions
+			$validation = Validation::factory($_POST);
+
+			// If crop-parameters isn't valid
+			if ( ! $validation->check())
+			{
+				$message = array();
+
+				foreach($validation->errors('wysiwyg') as $row => $error)
+				{
+					$message[] = $row.': '.$error;
+				}
+
+				// Send message
+				throw new HTTP_Exception_400(implode("\n", $message));
+			}
+
+
+			try
+			{
+				// Crop and resize an image
+				Image::factory($this->_file['path'])
+					->resize($_POST['width'], $_POST['height'])
+					->save($this->_file['dir'].DIRECTORY_SEPARATOR.$_POST['filename'].'.'.$this->_file['ext']);
+			}
+			catch(Exception $e)
+			{
+				// If something's wrong,
+				// return error message
+				$message = explode(':', $e->getMessage());
+
+				return $this->response->json(array(
+					'errors' => array(
+						'filename' => __('Server error. Message: :message', array(
+							':message' => $message[sizeof($message) - 1]
+							)))));
+			}
+
+			return $this->response->ok();
+		}
+
+    $path = str_replace(DIRECTORY_SEPARATOR, '/', $this->_path);
+
+		$file = $this->_config['public_directory'].'/'
+			.$this->_config['uploads_directory'].'/'
+			.$path;
+
+
+		$this->template = View::factory('wysiwyg/filebrowser/crop')
+			->bind('image',  $file)
+			->set('path',    $path)
+			->bind('width',  $dimensions[0])
+			->bind('height', $dimensions[1]);
 	}
 
 	protected function _rotate($degrees)
 	{
 		$this->auto_render = FALSE;
 
-		$file = DOCROOT.$this->_directory.$this->_path;
-
-		if ( ! is_file($file) OR ! Filebrowser::is_image($file))
+		if ( ! is_file($this->_file['path']) OR
+			! Filebrowser::is_image($this->_file['path']))
 		{
 			return $this->response
 				->status(404);
 		}
 
-		Image::factory($file)
+		Image::factory($this->_file['path'])
 			->rotate($degrees)
-			->save($file);
+			->save($this->_file['path']);
 	}
 
 	/**
@@ -541,11 +620,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		if (Arr::get($_POST, 'agree'))
+		if (Arr::get($_POST, 'agree') AND is_file($this->_file['path']))
 		{
 			try
 			{
-				unlink(DOCROOT.$this->_directory.$this->_path);
+				unlink($this->_file['path']);
 			}
 			catch(Exception $e)
 			{
@@ -573,16 +652,15 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 
 		$config = $this->_config['thumbs'];
 
-		$image = DOCROOT.$this->_directory.$this->_path;
-
-		if ( ! is_file($image) OR ! ($dimentions = Filebrowser::is_image($image)))
+		if ( ! is_file($this->_file['path']) OR
+			! ($dimentions = Filebrowser::is_image($this->_file['path'])))
 		{
 			// Return a 404 status
 			return $this->response
 				->status(404);
 		}
 
-		$lastmod = filemtime($image);
+		$lastmod = filemtime($this->_file['path']);
 
 		// Check if the browser sent an "if-none-match: <etag>" header,
 		// and tell if the file hasn't changed
@@ -592,19 +670,19 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		if ($dimentions[0] <= $config['width'] AND $dimentions[1] <= $config['height'])
 		{
 			// Do nothing - return original image
-			$image = file_get_contents($image);
+			$image = file_get_contents($this->_file['path']);
 		}
 		else
 		{
 			// Resize image
-			$image = Image::factory($image)
+			$image = Image::factory($this->_file['path'])
 				->resize($config['width'], $config['height'])
 				->render();
 		}
 
 		// Send headers
 		$this->response
-			->headers('content-type', File::mime_by_ext(pathinfo($this->_path, PATHINFO_EXTENSION)))
+			->headers('content-type', File::mime_by_ext($this->_file['ext']))
 			->headers('last-modified', date('r', $lastmod));
 
 		// Send thumbnail content
@@ -625,41 +703,22 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		return Validation::factory($array)
 			->rules('filename', array(
 					array('not_empty'),
-					array('regex', array(':value', '/[a-zA-Z0-9_\-]/')),
+					array('regex', array(':value', '/^[a-zA-Z0-9_-]*$/i')), //
 					array('Filebrowser::file_not_exists', array($path, ':value', $extension))
 					));
 	}
-
-	/**
-	 * Optional GET params (like session_id etc)
-	 *
-	 * @var array
-	 */
-	protected $_optional_params = array();
 
 	public function after()
 	{
 		if ($this->auto_render)
 		{
 			$route = Route::get('wysiwyg/filebrowser');
-			$mime = array();
-			// TODO: make types array depended of opener dialog (for ex. only images, docs...).
-			// for provide this mime-types in config already selected to arrays by type of files
-			// Now using all allowed types
-			foreach($this->_config['mime_types'] as $m) {
-				$mime = array_merge($mime, $m);
-			}
 
 			$this->template->global_config = array
 			(
-				'root'       => $this->_config['public_directory'].'/'.$this->_config['uploads_directory'],
-				'dirs_url'   => $route->uri(array('action' => 'dirs')),
-				'files_url'  => $route->uri(array('action' => $this->request->action())),
-				'move_url'   => $route->uri(array('action' => 'move')),
-				'params'     => $this->_optional_params,
-				'mime_types' => $mime,
-				'max_upload_size' => $this->_config['max_upload_size'],
-				'upload_notes' => $this->_config['upload_notes'],
+				'root'      => $this->_config['public_directory'].'/'.$this->_config['uploads_directory'],
+				'dirs_url'  => $route->uri(array('action' => 'dirs')),
+				'files_url' => $route->uri(array('action' => $this->request->action()))
 			);
 		}
 
