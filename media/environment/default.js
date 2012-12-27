@@ -1,7 +1,5 @@
 (function($) {
   $.wysiwyg_config = {
-    // Main configuration
-    skin:        "kama",
     filebrowser: true,
 
     // Filebrowser settings

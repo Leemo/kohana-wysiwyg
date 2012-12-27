@@ -8,11 +8,11 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
  */
 CKEDITOR.plugins.add( 'teaser',
 {
-  requires  : [ 'fakeobjects', 'htmldataprocessor' ],
+  requires  : [ 'fakeobjects' ],
 
   init : function( editor ) {
     // Add the styles that renders our fake objects.
-    editor.addCss(
+    CKEDITOR.addCss(
       'img.teaser' +
       '{' +
       'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/teaser.gif' ) + ');' +
@@ -38,7 +38,7 @@ CKEDITOR.plugins.add( 'teaser',
     editor.ui.addButton( 'Teaser',
     {
       label : 'Insert Teaser Break',
-      icon : this.path + 'images/teaser.gif',
+      icon : this.path + 'images/teaser.png',
       command : 'teaser'
     });
 
