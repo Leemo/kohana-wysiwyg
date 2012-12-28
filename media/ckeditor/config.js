@@ -21,6 +21,6 @@ CKEDITOR.editorConfig = function(config)
 		{name: 'others', groups: ['Youtube', 'teaser']}
 	];
 
-    config.extraPlugins = 'youtube,teaser';
+    config.extraPlugins = 'youtube,teaser,autogrow';
 
 };

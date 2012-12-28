@@ -101,31 +101,31 @@ dl
 }
 
 
-table {
+.cke_contents table {
   border: 1px solid #DDDDDD;
   border-collapse: collapse;
   margin-bottom: 15px;
   max-width: 100%;
 }
 
-table th{
+.cke_contents table th{
   font-weight: bold;
   padding: 4px 7px;
   text-align: center;
   border: 1px solid #DDDDDD;
 }
 
-table td {
+.cke_contents table td {
   padding: 4px 7px;
   border: 1px solid #DDDDDD;
 }
 
-table tr:nth-child(odd) td {
+.cke_contents table tr:nth-child(odd) td {
   background-color: #F9F9F9;
 }
 
- ul,
- ol {
+ .cke_contents ul,
+ .cke_contents ol {
   margin: 0 0 15px 40px;
   list-style: none;
 }
@@ -134,17 +134,17 @@ table tr:nth-child(odd) td {
   list-style-type: decimal;
 }
 
- li {
+ .cke_contents li {
   line-height: 1.4;
   margin-bottom: 10px;
 }
 
- ul li {
+ .cke_contents ul li {
   position: relative;
   padding-left: 20px;
 }
 
- ul li:before {
+ .cke_contents ul li:before {
   content: '';
   position: absolute;
   left: 0;

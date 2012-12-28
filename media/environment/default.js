@@ -8,7 +8,9 @@
     filebrowserFlashBrowseUrl: "wysiwyg/filebrowser/flash",
     filebrowserUploadUrl:      "wysiwyg/filebrowser/upload",
     filebrowserImageUploadUrl: "wysiwyg/filebrowser/upload",
-    filebrowserFlashUploadUrl: "wysiwyg/filebrowser/upload"
+    filebrowserFlashUploadUrl: "wysiwyg/filebrowser/upload",
+
+    autoGrow_maxHeight: 500
   };
 
   $(function() {
