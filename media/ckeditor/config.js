@@ -6,7 +6,7 @@
 CKEDITOR.editorConfig = function(config)
 {
 	config.toolbarGroups = [
-		{name: 'clipboard',   groups: [ 'clipboard', 'undo', 'mode' ]},
+		{name: 'clipboard', groups: [ 'clipboard', 'undo', 'mode' ]},
 		{name: 'links'},
 		{name: 'insert'},
 		{name: 'tools'},
@@ -16,8 +16,7 @@ CKEDITOR.editorConfig = function(config)
 		{name: 'styles'}
 	];
 
-    config.extraPlugins = 'youtube,teaser,autogrow';
-    config.removeButtons = 'Smiley,CreateDiv,PageBreak,Iframe,Font,Blockquote';
-    config.removeDialogTabs = 'flash:Upload;image:Upload;link:upload;link:Advanced'
-
+   config.extraPlugins = 'youtube,teaser,autogrow';
+   config.removeButtons = 'Smiley,CreateDiv,PageBreak,Iframe,Font,Blockquote';
+   config.removeDialogTabs = 'flash:Upload;image:Upload;link:upload'
 };
