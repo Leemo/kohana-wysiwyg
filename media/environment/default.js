@@ -42,17 +42,20 @@
   // jQuery method for init CKEditor with required configuration detect by class name "simple" or "pure"
   // Use this method to init CKEditor in all cases variable editor configuration
 
-  $.fn.ckeditorStart = function() {
+  $.fn.ckeditorInit = function(options) {
     this.each(function(){
-      if($(this).hasClass("simple")) $(this).ckeditor($.wysiwyg_config.simple);
-      else if($(this).hasClass("pure")) $(this).ckeditor($.wysiwyg_config.pure);
-      else $(this).ckeditor($.wysiwyg_config.standart);
+      var element = $(this),
+      resultConfig = $.wysiwyg_config.standart;
+      $.each(["simple", "pure"], function(i, item){
+        if(element.hasClass(item)) resultConfig = $.wysiwyg_config[item];
+      });
+      $(this).ckeditor($.extend(resultConfig, options));
     });
   }
 
   $(function() {
 
-    $(".rte").ckeditorStart();
+    $(".rte").ckeditorInit();
 
     CKEDITOR.on( 'instanceReady', function(ev) {
       var editor = ev.editor,
