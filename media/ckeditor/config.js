@@ -5,18 +5,36 @@
 
 CKEDITOR.editorConfig = function(config)
 {
-	config.toolbarGroups = [
-		{name: 'clipboard', groups: [ 'clipboard', 'undo', 'mode' ]},
-		{name: 'links'},
-		{name: 'insert'},
-		{name: 'tools'},
-		'/',
-		{name: 'basicstyles', groups: [ 'basicstyles', 'colors', 'cleanup' ]},
-		{name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ]},
-		{name: 'styles'}
-	];
+  var custom = {
+    toolbarGroups: [
+      {name: 'clipboard', groups: [ 'clipboard', 'undo', 'mode' ]},
+      {name: 'links'},
+      {name: 'insert'},
+      {name: 'tools'},
+      '/',
+      {name: 'basicstyles', groups: [ 'basicstyles', 'colors', 'cleanup' ]},
+      {name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ]},
+      {name: 'styles'}
+    ],
 
-   config.extraPlugins = 'youtube,teaser,autogrow';
-   config.removeButtons = 'Smiley,CreateDiv,PageBreak,Iframe,Font,Blockquote';
-   config.removeDialogTabs = 'flash:Upload;image:Upload;link:upload'
-};
+    extraPlugins: 'youtube,teaser,autogrow',
+    removeButtons: 'Smiley,CreateDiv,PageBreak,Iframe,Font,Blockquote',
+    removeDialogTabs: 'flash:Upload,image:Upload,link:upload',
+
+    filebrowser: true,
+    // Filebrowser settings
+    filebrowserBrowseUrl: "wysiwyg/filebrowser/browse",
+    filebrowserImageBrowseUrl: "wysiwyg/filebrowser/images",
+    filebrowserFlashBrowseUrl: "wysiwyg/filebrowser/flash",
+    filebrowserUploadUrl: "wysiwyg/filebrowser/upload",
+    filebrowserImageUploadUrl: "wysiwyg/filebrowser/upload",
+    filebrowserFlashUploadUrl: "wysiwyg/filebrowser/upload",
+
+    autoGrow_maxHeight: 500
+  }
+
+  for(var property in custom) {
+    config[property] = custom[property];
+  }
+
+}
