@@ -1,30 +1,40 @@
-/*
-Copyright (c) 2003-2011, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.html or http://ckeditor.com/license
-*/
+/**
+ * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.html or http://ckeditor.com/license
+ */
 
-CKEDITOR.editorConfig = function( config )
+CKEDITOR.editorConfig = function(config)
 {
-  config.toolbar_Basic =
-[
-	{name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-  { name: 'document', items : [ 'Source','-','RemoveFormat'] },
-  { name: 'tools', items : [ 'Maximize', 'ShowBlocks','-','About' ] },
-//	{ name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ] },
-	'/',
-	{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
-	{ name: 'colors', items : [ 'TextColor','BGColor' ] },
-  { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv','-','Teaser'] },
-	'/',
-	{ name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
-  { name: 'insert', items : [ 'Image','Flash','Youtube','Table','HorizontalRule','SpecialChar'] },
-  { name: 'links', items : [ 'Link','Unlink','Anchor'] }
+  var custom = {
+    toolbarGroups: [
+      {name: 'clipboard', groups: [ 'clipboard', 'undo', 'mode' ]},
+      {name: 'links'},
+      {name: 'insert'},
+      {name: 'tools'},
+      '/',
+      {name: 'basicstyles', groups: [ 'basicstyles', 'colors', 'cleanup' ]},
+      {name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ]},
+      {name: 'styles'}
+    ],
 
-];
-config.toolbar = 'Basic';
-	// Define changes to default configuration here. For example:
-	// config.language = 'fr';
-	// config.uiColor = '#AADC6E';
-config.extraPlugins = 'youtube,teaser';
+    extraPlugins: 'youtube,teaser,autogrow',
+    removeButtons: 'Smiley,CreateDiv,PageBreak,Iframe,Font,Blockquote',
+    removeDialogTabs: 'flash:Upload,image:Upload,link:upload',
 
-};
+    filebrowser: true,
+    // Filebrowser settings
+    filebrowserBrowseUrl: "wysiwyg/filebrowser/browse",
+    filebrowserImageBrowseUrl: "wysiwyg/filebrowser/images",
+    filebrowserFlashBrowseUrl: "wysiwyg/filebrowser/flash",
+    filebrowserUploadUrl: "wysiwyg/filebrowser/upload",
+    filebrowserImageUploadUrl: "wysiwyg/filebrowser/upload",
+    filebrowserFlashUploadUrl: "wysiwyg/filebrowser/upload",
+
+    autoGrow_maxHeight: 500
+  }
+
+  for(var property in custom) {
+    config[property] = custom[property];
+  }
+
+}

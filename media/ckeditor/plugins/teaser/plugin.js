@@ -8,28 +8,22 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
  */
 CKEDITOR.plugins.add( 'teaser',
 {
-  requires  : [ 'fakeobjects', 'htmldataprocessor' ],
+  requires  : [ 'fakeobjects' ],
+  lang: ['ru', 'en'],
 
   init : function( editor ) {
     // Add the styles that renders our fake objects.
-    editor.addCss(
+    CKEDITOR.addCss(
       'img.teaser' +
       '{' +
-      'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/teaser.gif' ) + ');' +
-      'background-position: center center;' +
-      'background-repeat: no-repeat;' +
+      'background: #dedede center 40% no-repeat url(' + CKEDITOR.getUrl( this.path + 'images/teaser.png' ) + ');' +
       'clear: both;' +
       'display: block;' +
       'float: none;' +
       'width: 100%;' +
-      'border-top: #999999 1px dotted;' +
-      'border-bottom: #999999 1px dotted;' +
-      'height: 5px;' +
-      '}' +
-      'img.cke_drupal_break' +
-      '{' +
-      'border-top: #FF0000 1px dotted;' +
-      'border-bottom: #FF0000 1px dotted;' +
+      'border-top: #666 1px dotted;' +
+      'border-bottom: #666 1px dotted;' +
+      'height: 6px;' +
       '}'
       );
 
@@ -37,22 +31,22 @@ CKEDITOR.plugins.add( 'teaser',
 
     editor.ui.addButton( 'Teaser',
     {
-      label : 'Insert Teaser Break',
-      icon : this.path + 'images/teaser.gif',
-      command : 'teaser'
+      label : editor.lang.teaser.button,
+      icon : this.path + 'images/teaser.png',
+      command : 'teaser',
+      toolbar: "insert"
     });
 
     editor.addCommand( 'teaser',
     {
       exec : function() {
-        // There should be only one <!--break--> in document. So, look
-        // for an image with class "cke_drupal_break" (the fake element).
+
         var images = editor.document.getElementsByTag( 'img' );
         for ( var i = 0, len = images.count() ; i < len ; i++ )
         {
           var img = images.getItem( i );
           if ( img.hasClass( 'teaser' ) ) {
-            if ( confirm('The document already contains a teaser break. Do you want to proceed by removing it first?' ))
+            if (confirm(editor.lang.teaser.alert))
             {
               img.remove();
               break;
@@ -79,6 +73,11 @@ CKEDITOR.plugins.add( 'teaser',
         };
       }
       var fakeElement = editor.createFakeElement( new CKEDITOR.dom.comment( text ), text, 'hr' );
+
+      fakeElement.setAttributes({
+        alt: editor.lang.teaser.fakeTitle,
+        title: editor.lang.teaser.fakeTitle
+      });
 
       // This is the trick part. We can't use editor.insertElement()
       // because we need to put the comment directly at <body> level.
