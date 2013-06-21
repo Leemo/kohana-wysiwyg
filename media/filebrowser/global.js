@@ -4,7 +4,10 @@
   // This global variable gets value
   // on each selecting of folders
   // by execute code in directories.js
-  path = "/";
+
+  // check stored current folder in local storage
+  path = localStorage.getItem("filebrowserCurrentfolder") || "/";
+  $.reopen = path != "/";
 
   $(function(){
 
@@ -254,17 +257,30 @@
     // end of 'files' elements handlers delegating
 
     // bind drag-n-drop external files to upload
+
+    var dropArea;
+
     $("#files").on({
       dragover: function(e){
         var dt = e.originalEvent.dataTransfer;
+        dropArea = $("#drop-files");
         if(!dt) return;
         //FF
-        if(dt.types.contains&&!dt.types.contains("Files")) return;
+        if(dt.types.contains && ! dt.types.contains("Files")) return;
         //Chrome
-        if(dt.types.indexOf&&dt.types.indexOf("Files")==-1) return;
+        if(dt.types.indexOf && dt.types.indexOf("Files")==-1) return;
 
         e.originalEvent.dataTransfer.dropEffect = 'copy';
+        // dorp bordered box position
         $(this).addClass("over");
+
+        if( ! dropArea.hasClass("corrected")) {
+          dropArea.css({
+            "top": 4 + dropArea.parent().scrollTop() + "px",
+            "bottom": 6 - dropArea.parent().scrollTop() + "px"
+          }).addClass("corrected");
+        }
+
         return false;
       },
       dragenter: function(){
@@ -272,6 +288,7 @@
       },
       dragleave: function() {
         $(this).removeClass("over");
+        dropArea.removeClass("corrected");
         return false;
       },
       drop: function(e) {
@@ -377,7 +394,18 @@
 
       // When we select file to insert in editor page
       "Filebrowser:file:select" : function(e) {
-        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), "/" + global_config.root + $.getSelectedFilePath(e));
+        window.opener.CKEDITOR.tools.callFunction($.getUrlParam('CKEditorFuncNum'), "/" + global_config.root + $.getSelectedFilePath(e), function() {
+          // Get the reference to a dialog window.
+          var element, dialog = this.getDialog();
+          // Check if this is the Image dialog window.
+          if (dialog.getName() == 'image') {
+            // Get the reference to a text field that holds the "alt" attribute.
+            element = dialog.getContentElement( 'info', 'txtAlt' );
+            // Assign the new value.
+            if ( element )
+              element.setValue( "" );
+          }
+        });
         window.close();
       },
 
@@ -540,6 +568,17 @@
 
     }) // end of user event handlers
     .trigger("Filebrowser:loadFiles");
+
+    // open folder stored from last visit
+    if($.reopen) {
+      $.parentsArray= path.replace(/\/$/, "").replace(/^\//, "").split("/");
+      $("#root").children("div").each(function(){
+        if($(this).data("data").name == $.parentsArray[0]) {
+          if($.parentsArray.length > 1) $("i", $(this).children("p")).click();
+          else $("a", $(this)).click();
+        }
+      });
+    }
 
   }); // End document ready
 
