@@ -1,6 +1,6 @@
 ;
 (function($){
-  var parentsArray;
+  $.parentsArray = [];
   $.fn.folderTree = function(opt){
     var opt = $.extend({
       autoTurnTree : true, //auto open tree to folder which files is currently opened in browser
@@ -36,7 +36,7 @@
         "folderRect" : dirP[0].getBoundingClientRect()
       });
 
-      if(isRoot) $(this).children("p").addClass("selected");
+      if(isRoot && ! $.reopen) $(this).children("p").addClass("selected");
 
       var dirData = $(dir).getD();
       if($(this).getD().hasChild == 0) this.children("p").treeOpenerToggleActive();
@@ -54,13 +54,13 @@
                 $('<div name="'+data.dirs[dirName]+'"><p><i class="icon-chevron-right"></i><a href="">'+dirName+'</a><em></em></p></div>').appendTo(dir).processFolder();
               }
             }
-            if(path != "") { // auto turn tree to selected folder
-              var level = $.inArray(dirData.name, parentsArray);
-              if(level != -1 && dirData.isParentOfSelected) {
+            if(path != "/") { // auto turn tree to selected folder
+              var level = $.inArray(dirData.name, $.parentsArray);
+              if(level != -1 && (dirData.isParentOfSelected || $.reopen)) {
                 $(dir).children("div").each(function(){
-                  if($(this).getD().name == parentsArray[level+1]){
+                  if($(this).getD().name == $.parentsArray[level+1]){
                     $(this).children("p").addClass("selected").children("i").addClass("icon-white");
-                    if(level+2 == parentsArray.length) {
+                    if(level+2 == $.parentsArray.length) {
                       $(this).getD().filesLoaded = true;
                     }
                     else {
@@ -108,8 +108,11 @@
           $(dir).addSelectMarkToParent();
           $("#breadcrumb").breadcrumbUpdate(); // method defined in global.js
         });
+        // put path to local storage for save current folder and re-open by filebrowser reload
+        localStorage.setItem("filebrowserCurrentfolder", path);
         return false;
-      })
+      });
+
 
       // drag-n-drop events handlers (not to drag folders but to recive files dropped over this folder)
  //     this.children("p").on($.foldersDragDropHandlers);
@@ -135,8 +138,8 @@
     };
     parent(this);
     if(refreshParentsArray) {
-      parentsArray = pathTxt.split("/");
-      parentsArray.pop();
+      $.parentsArray = pathTxt.split("/");
+      $.parentsArray.pop();
     }
     return "/" + pathTxt;
   };
