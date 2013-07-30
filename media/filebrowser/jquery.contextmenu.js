@@ -37,7 +37,7 @@
  *				event: 'eventName' | {} ,  // user event (name or event object) starting on click this menu point, WARNING! event start on element which has opened contextmenu, not on menu point! you can get opener as event.target
  *				handler: function(){},      // anonymous function which will call on click this menu point. WARNING! It will called "as is" like "<a>" onClick handler, it's 'return' will transport to link, you should controll return value
  *				href: 'http://somelink',    // link to some url will put to point 'href' attribute, link behaviour should be coordinate to handler function if it exist (for ex. handler can return 'false' and this 'href' not be processed)
- *			  point-nonActive : false,          // (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain overlay <span> over <a> and have no class ".point-active"
+ *			  nonActive : false,          // (BOOL) setting 'true' make menu point visible but non clicable, this point <li> element will contain overlay <span> over <a> and have no class ".point-active"
  *			 },
  *			"break",                      //change all described object to string "break" make the delimiter point between menu points. this point styles set in class '.delimiter'
  *     ]

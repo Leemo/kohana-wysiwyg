@@ -164,7 +164,7 @@
 					<a href=""><?php echo Kohana::$config->load('filebrowser.uploads_directory') ?></a>
 				</p>
 				<?php foreach ($dirs as $dir => $parents): ?>
-					<div name="<?php echo $parents ?>">
+					<div data-haschild="<?php echo $parents ?>" data-hasfiles="">
 						<p>
 							<i class="icon-chevron-right"></i><a href=""><?php echo $dir ?></a>
 							<em></em>

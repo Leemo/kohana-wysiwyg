@@ -141,7 +141,7 @@
         zone:   'any',
         events: 'closeFolderClick,openFolderClick'
       },
-      targetSelector : "div",
+      targetSelector : "div:not(#root)",
       containerClass : "contextMenu dropdown-menu",
       listClass: "nav nav-list",
       list: [
@@ -156,6 +156,13 @@
         itemClass: "rename",
         bootstrapiconClass : "icon-pencil",
         event:     "Filebrowser:dir:rename"
+      },
+      {
+        text: __("Delete"),
+        itemClass: "delete",
+        bootstrapiconClass : "icon-trash",
+        event: "Filebrowser:dir:delete",
+        nonActive : true
       }
       ]
     });
@@ -509,7 +516,7 @@
       // One handler gor add new directory, or rename directory
       "Filebrowser:dir:rename Filebrowser:dir:add" : function(e){
         var dir = $(e.target),
-        data = dir.getD(),
+        data = dir.data("data"),
         mission = e.type.split(":")[2]; // detect required mission: add or rename
 
         $("#tpl-dir-modal").tmpl({
