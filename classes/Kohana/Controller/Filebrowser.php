@@ -630,9 +630,15 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 				{
 					unlink($this->_file['path']);
 				}
-				else
+				else if ( ! empty($this->_path))
 				{
-					// TODO: check for empty dir
+					if (sizeof(Filebrowser::list_dirs($this->_file['path'])) > 0 OR
+						sizeof(Filebrowser::list_files($this->_file['path'])) > 0)
+					{
+						return $this->response->json(array(
+							'error' => __('You can\'t delete non-empty directory, you must first remove its contents')
+							));
+					}
 
 					rmdir($this->_file['path']);
 				}
