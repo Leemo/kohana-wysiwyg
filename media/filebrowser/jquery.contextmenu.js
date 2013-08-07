@@ -85,7 +85,7 @@
 								if(opt.closeType.zone == 'outSide') e.stopPropagation();
 								else if(opt.closeType.zone == 'any') $p.remove();
 								if(item.event) opener.trigger(item.event);
-								return (item.handler)? item.handler(e) :"";
+								return (item.handler)? item.handler(e) : ((item.href == "" || ! item.href) ? false : "");
 							}
 							:""
 						}

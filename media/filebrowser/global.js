@@ -550,6 +550,39 @@
 
       }, // end of dir del/rename events handler
 
+      "Filebrowser:dir:delete" : function(e){
+        var dir = $(e.target),
+        data = dir.data("data"),
+        parent = dir.parent();
+         $("#dir-delete-modal").on({
+          "hide" : function(){
+            $(this).find("a.btn-success").off("click").end().find("form").off("submit");
+          },
+          "show" : function(){
+            $(this).find(".control-group").removeClass("error").find(".help-inline").remove();
+          }
+        }).modal()
+        .find("a.btn-success").click(function() {
+          $("#dir-delete-modal form").ajaxSubmit({
+            url:      "wysiwyg/filebrowser/delete/" + dir.buildFullPath(),
+            dataType: "json",
+            success:  function(data, statusText, xhr, $form) {
+              if(data.ok !== undefined) {
+                parent.deleteFolder(dir);
+                $(document).trigger("Filebrowser:loadFiles");
+                $("#dir-delete-modal").modal("hide");
+              } else if (data.error !== undefined) {
+                $form.find(".help-inline").remove();
+
+                $form.find("div.control-group").addClass("error")
+                .append('<span class="help-inline">'+data.error+"</span>");
+              }
+            }
+          });
+          return false;
+        });
+      },
+
       "Filebrowser:dir:file:move:to" : function(e) {
         var dir = $(e.target);
 

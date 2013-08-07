@@ -163,12 +163,21 @@
     this.attr("data-haschild", this.data("haschild")*1 + 1);
   }
 
+  $.fn.deleteFolder = function(dir){ // use for parent of deleteded directory in global.js
+    var p = this.children("p"),
+    childCount = this.data("haschild") - 1;
+    dir.remove();
+    if(childCount == 0) p.addClass("noChild").treeOpenerToggleActive();
+    this.attr("data-haschild", childCount);
+    p.children("a").click();
+  }
+
   $.fn.renameFolder = function(name){ // use for renamed directory for change name immidiatly
     var dirData = this.data("data");
     dirData.name = name;
     $("a", this.children("p")).text(name);
     if(dirData.filesLoaded) {
-      path = $(this).buildFullPath(true);
+      path = this.buildFullPath(true);
       $("#breadcrumb").breadcrumbUpdate();
     }
     if(dirData.isParentOfSelected) {
