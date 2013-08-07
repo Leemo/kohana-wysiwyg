@@ -89,12 +89,12 @@
 <div id="file-delete-modal" class="modal hide fade">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">&times;</a>
-		<h3><?php echo __('Delete file') ?></h3>
+		<h3><?php echo __('Delete :delete', array(':delete' => __('file'))) ?></h3>
 	</div>
 	<div class="modal-body">
 		<div class="alert alert-danger"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('Restore deleted file will be impossible.') ?></div>
 		<div class="alert alert-info"><strong><?php echo __('By the way.') ?></strong><br /><?php echo __('If you are unsure, you can just put this file into a temporary folder. This will help to save the file. All sorts of things.') ?></div>
-		<p><?php echo __('Are you sure you want to delete this file without the possibility of his recovery?') ?></p>
+		<p><?php echo __('Are you sure you want to delete this :item without the possibility of his recovery?', array(':item' => __('file'))) ?></p>
 		<?php echo Form::open() ?>
 		<div class="control-group">
 			<?php echo Form::hidden('agree', 1) ?>
@@ -102,7 +102,7 @@
 		<?php echo Form::close() ?>
 	</div>
 	<div class="modal-footer">
-		<?php echo HTML::anchor("#", __('Delete file'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
+		<?php echo HTML::anchor("#", __('Delete'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
 		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
 	</div>
 </div>
@@ -117,11 +117,11 @@
 <div id="dir-delete-modal" class="modal hide fade">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">&times;</a>
-		<h3><?php echo __('Delete directory') ?></h3>
+		<h3><?php echo __('Delete :delete', array(':delete' => __('directory'))) ?></h3>
 	</div>
 	<div class="modal-body">
 		<div class="alert alert-danger"><strong><?php echo __('Warning!') ?></strong><br /><?php echo __('Restore deleted directory will be impossible.') ?></div>
-		<p><?php echo __('Are you sure you want to delete this directory without the possibility of his recovery?') ?></p>
+		<p><?php echo __('Are you sure you want to delete this :item without the possibility of his recovery?', array(':item' => __('directory'))) ?></p>
 		<?php echo Form::open() ?>
 		<div class="control-group">
 			<?php echo Form::hidden('agree', 1) ?>
@@ -129,7 +129,7 @@
 		<?php echo Form::close() ?>
 	</div>
 	<div class="modal-footer">
-		<?php echo HTML::anchor("#", __('Delete directory'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
+		<?php echo HTML::anchor("#", __('Delete'), array('class' => 'btn btn-success', 'data-dismiss' => 'modal')) ?>
 		<?php echo HTML::anchor('#', __('Cancel'), array('class' => 'btn', 'data-dismiss' => 'modal')) ?>
 	</div>
 </div>
