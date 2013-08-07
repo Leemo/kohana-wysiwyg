@@ -34,9 +34,7 @@
       if(isRoot && ! $.reopen) $(this).children("p").addClass("selected");
 
       var dirData = dir.data("data");
-      dirData.hasChild = dir.data("haschild")*1;
-      dirData.hasFiles = dir.data("hasfiles")*1;
-      if(dirData.hasChild == 0) this.children("p").treeOpenerToggleActive();
+      if(dir.data("haschild") == 0) this.children("p").treeOpenerToggleActive();
       // 'open-tree' handler binding to all folders, including empty folders because it may stay not empty by add childer folders
       // click on 'open-tree' <i> element of empty folders disabled by special overlay toggling by .chevronToggleActive() method
       $("i", this.children("p")).toggle(
@@ -49,7 +47,6 @@
             for(var dirName in data.dirs){
               $("<div/>", {
                 "data-haschild": data.dirs[dirName]["directories"],
-                "data-hasfiles": data.dirs[dirName]["files"],
                 html: "<p><i class='icon-chevron-right'></i><a href=''>" + dirName + "</a><em></em></p>"
               }).appendTo(dir).processFolder();
             }
@@ -114,15 +111,6 @@
         return false;
       });
 
-      // delegate event to activate "delete" point for empty folders or deactivate this for folders stay not empty
-      dir.on("onOpenContextMenu", function(e){
-        e.stopPropagation();
-        if(dir.data("haschild") == 0 && dir.data("hasfiles") == 0) {
-          e.menu.pointToggleActive(2);
-        }
-      //    todo: make deactivaction
-      });
-
 
 
       // drag-n-drop events handlers (not to drag folders but to recive files dropped over this folder)
@@ -156,18 +144,22 @@
   };
 
   $.fn.addFolder = function(){ // use for parent of created directory in global.js
-    var dirData = this.data("data"), p = this.children("p");
+    var dirData = this.data("data"), p = this.children("p"),
+    dirCount = this.attr("data-haschild")*1 + 1;
     if(p.hasClass("noChild")) p.treeOpenerToggleActive().children("i").click();
     else if (dirData.open) p.children("i").click().click();
          else p.children("i").click();
-    this.attr("data-haschild", this.data("haschild")*1 + 1);
+    this.attr("data-haschild", dirCount);
   }
 
   $.fn.deleteFolder = function(dir){ // use for parent of deleteded directory in global.js
     var p = this.children("p"),
-    childCount = this.data("haschild") - 1;
+    childCount = this.attr("data-haschild")*1 - 1;
     dir.remove();
-    if(childCount == 0) p.addClass("noChild").treeOpenerToggleActive();
+    if(childCount == 0) {
+      this.removeClass("open");
+      p.treeOpenerToggleActive();
+    }
     this.attr("data-haschild", childCount);
     p.children("a").click();
   }

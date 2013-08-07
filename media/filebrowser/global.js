@@ -161,8 +161,7 @@
         text: __("Delete"),
         itemClass: "delete",
         bootstrapiconClass : "icon-trash",
-        event: "Filebrowser:dir:delete",
-        nonActive : true
+        event: "Filebrowser:dir:delete"
       }
       ]
     });
