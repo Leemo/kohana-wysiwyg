@@ -89,9 +89,11 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 		{
 			$dir = Filebrowser::parse_path($this->_directory, $this->_path.DIRECTORY_SEPARATOR.$key);
 
-			$subdirs = Filebrowser::list_dirs($dir['path']);
-
-			$dirs[$key] = sizeof($subdirs);
+			$dirs[$key] = array
+			(
+				'directories' => sizeof(Filebrowser::list_dirs($dir['path'])),
+				'files'       => sizeof(Filebrowser::list_files($dir['path']))
+			);
 		}
 
 		return $this->response->json(array(
@@ -620,11 +622,26 @@ class Kohana_Controller_Filebrowser extends Controller_Template {
 	{
 		$this->auto_render = FALSE;
 
-		if (Arr::get($_POST, 'agree') AND is_file($this->_file['path']))
+		if (Arr::get($_POST, 'agree'))
 		{
 			try
 			{
-				unlink($this->_file['path']);
+				if (is_file($this->_file['path']))
+				{
+					unlink($this->_file['path']);
+				}
+				else if ( ! empty($this->_path))
+				{
+					if (sizeof(Filebrowser::list_dirs($this->_file['path'])) > 0 OR
+						sizeof(Filebrowser::list_files($this->_file['path'])) > 0)
+					{
+						return $this->response->json(array(
+							'error' => __('You can\'t delete non-empty directory, you must first remove its contents')
+							));
+					}
+
+					rmdir($this->_file['path']);
+				}
 			}
 			catch(Exception $e)
 			{
