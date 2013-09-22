@@ -318,6 +318,9 @@
           $("#files-row").empty().append($("#tpl-files").tmpl(data));
           $("#breadcrumb").breadcrumbUpdate();
 
+          // check existing media files (audio or video) and create buttons and handlers for play media
+          $("#files-row").mediafilesPlaying();
+
           // crossbrowser icon position vertical correction
           $("#files-row div.file div.icon img").load(function(){
             $(this).css("margin-top", ($(this.parentNode).height() - $(this).height()) / 2 +"px");
@@ -553,7 +556,7 @@
         var dir = $(e.target),
         data = dir.data("data"),
         parent = dir.parent();
-         $("#dir-delete-modal").on({
+        $("#dir-delete-modal").on({
           "hide" : function(){
             $(this).find("a.btn-success").off("click").end().find("form").off("submit");
           },
@@ -680,6 +683,46 @@
     getFileToModal: function(uploadModalId){
       this.change(function(){
         $.createFilesModal(this.files, uploadModalId)
+      });
+    },
+    // playing medi files in files list
+    mediafilesPlaying: function(){
+      var playerPopup = $("#mediaplayer-modal").css("max-height", "600px"),
+      player = $("#player-container");
+      this.children("div.non_picture").each(function(){
+        var item = $(this),
+        type = item.data("type");
+
+        if(type == "video" || type == "music") {
+          $("<div/>", {
+            "class": "play " + item.data("type"),
+            click: function(){
+              playerPopup.off("show hide");
+
+              playerPopup.on({
+                "show": function(){
+                  var tag = type == "video" ? "video" : "audio";
+                  $(this).children("div.modal-footer").text(item.attr("title")).end()
+                  .find("h3").children("span").text(item.data("type"));
+
+                  $("<" + tag + "/>", {
+                    src: "/" + global_config.root + path + item.find("p.name span").text(),
+                    controls: true,
+                    autoplay: true,
+                    width: "530px"
+                  // height: tag == "video" ? "350px" : null
+                  }).appendTo(player);
+
+                },
+
+                "hide": function(){
+                  player.empty();
+                }
+
+              }).modal();
+            }
+          }).appendTo(item);
+        }
       });
     },
 

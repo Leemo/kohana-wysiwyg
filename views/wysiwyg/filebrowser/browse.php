@@ -108,6 +108,17 @@
 </div>
 <!-- /File delete modal window -->
 
+<!-- Media player modal -->
+<div id="mediaplayer-modal" class="modal hide fade">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">&times;</a>
+		<h3><?php echo __('Play') ?> <span></span></h3>
+	</div>
+	<div id="player-container" class="modal-body"></div>
+	<div class="modal-footer"></div>
+</div>
+<!-- /Media player modal -->
+
 <!-- Directory add/rename modal window -->
 <div id="dir-modal" class="modal hide fade">
 </div>
@@ -231,7 +242,7 @@
 <!-- Files list -->
 <script id="tpl-files" type="text/x-jquery-tmpl">
 	{{each(key, value) files}}
-	<div draggable="true" class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}{{if value.width && value.height}} (${value.width} x ${value.height}),{{/if}} ${value.size}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
+	<div draggable="true"{{if value.type}} data-type="${value.type}"{{/if}} class="file thumbnail {{if value.type}}non_{{/if}}picture" title="${key}{{if value.width && value.height}} (${value.width} x ${value.height}),{{/if}} ${value.size}"{{if value.width && value.height}} rel="{width:${value.width},height:${value.height}}"{{/if}}>
 			 <div class="icon{{if value.type}} ${value.type}{{/if}}">
 			{{if value.thumb}}<img src="/${value.thumb}" alt="${key}"/>{{/if}}
 			<div class="fileOverlay"></div>

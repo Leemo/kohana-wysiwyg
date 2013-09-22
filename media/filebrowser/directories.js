@@ -105,13 +105,12 @@
           dirData.filesLoaded = true;
           dir.addSelectMarkToParent();
           $("#breadcrumb").breadcrumbUpdate(); // method defined in global.js
+          $("#files-row").mediafilesPlaying();
         });
         // put path to local storage for save current folder and re-open by filebrowser reload
         localStorage.setItem("filebrowserCurrentfolder", path);
         return false;
       });
-
-
 
       // drag-n-drop events handlers (not to drag folders but to recive files dropped over this folder)
  //     this.children("p").on($.foldersDragDropHandlers);

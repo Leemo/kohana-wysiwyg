@@ -351,23 +351,23 @@ a {
 }
 
 
-.file .archive {
+.file .icon.archive {
   background-image: url("images/icons/archive.png")
 }
 
-.file .document {
+.file .icon.document {
   background-image: url("images/icons/document.png")
 }
 
-.file .music {
+.file .icon.music {
   background-image: url("images/icons/music.png")
 }
 
-.file .unknown {
+.file .icon.unknown {
   background-image: url("images/icons/unknown.png")
 }
 
-.file .video {
+.file .icon.video {
   background-image: url("images/icons/video.png")
 }
 
@@ -552,8 +552,43 @@ input[multiple] {
   font-size: 16px;
 }
 
-
-
 #error-modal {
   width: 480px !important
 }
+
+.play {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: 10px;
+  right: 10px;
+  border-radius: 15px;
+  border: 1px solid #ddd;
+  z-index: 110;
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+  -o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.play:after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 11px;
+  top: 5px;
+  border: 10px dashed transparent;
+  border-left: 12px solid #ddd;
+  border-right: 0;
+}
+
+.play:hover {
+  border-color: #0088cc
+}
+
+.play:hover:after {
+  border-left-color: #0088cc
+}
+
