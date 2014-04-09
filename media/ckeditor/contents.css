@@ -7,7 +7,7 @@ body
 {
 	/* Font */
 	font-family: sans-serif, Arial, Verdana, "Trebuchet MS";
-	font-size: 12px;
+	font-size: 14px;
 
 	/* Text color */
 	color: #333;
@@ -20,8 +20,8 @@ body
 
 .cke_editable
 {
-	font-size: 13px;
-	line-height: 1.6em;
+	font-size: 14px;
+	line-height: 140%;
 }
 
 blockquote
@@ -74,22 +74,18 @@ hr
 }
 
 img.right {
-    border: 1px solid #ccc;
-    float: right;
-    margin-left: 15px;
-    padding: 5px;
+	float: right;
+	margin-left: 15px;
 }
 
 img.left {
-    border: 1px solid #ccc;
-    float: left;
-    margin-right: 15px;
-    padding: 5px;
+	float: left;
+	margin-right: 15px;
 }
 
 img:hover {
-	opacity: .9;
-	filter: alpha(opacity = 90);
+	opacity: 0.9;
+	filter: Alpha(opacity = 90);
 }
 
 dl
@@ -97,7 +93,7 @@ dl
 	/* IE7: reset rtl list margin. (#7334) */
 
 	/* preserved spaces for rtl list item bullets. (#6249)*/
-    padding-right:40px;
+	padding-right:40px;
 }
 
 
@@ -124,33 +120,29 @@ dl
   background-color: #F9F9F9;
 }
 
- .cke_contents ul,
- .cke_contents ol {
+.cke_contents ul,
+.cke_contents ol {
   margin: 0 0 15px 40px;
   list-style: none;
 }
 
- ol {
+ol {
   list-style-type: decimal;
 }
 
- .cke_contents li {
+.cke_contents li {
   line-height: 1.4;
   margin-bottom: 10px;
 }
 
- .cke_contents ul li {
+.cke_contents ul li {
   position: relative;
   padding-left: 20px;
 }
 
- .cke_contents ul li:before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 15px;
-  height: 9px;
-  border-bottom: 1px solid #000;
+.cke_contents ul li:before {
+  content: '\2014\a0';
+  float: left;
+  margin-left: -1.25em;
+  display: block;
 }
-

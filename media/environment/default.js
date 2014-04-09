@@ -57,6 +57,7 @@
 
     $(".rte").ckeditorInit();
 
+		CKEDITOR.config.disableNativeSpellChecker = false;
     CKEDITOR.on( 'instanceReady', function(ev) {
       var editor = ev.editor,
       writer = editor.dataProcessor.writer,
@@ -75,5 +76,12 @@
         });
       }
     });
+		// Removing "Upload" tab from "Link","Image" and "Flash" dialogs because file uploading provided by filebrowser/
+		CKEDITOR.on('dialogDefinition', function(ev) {
+			var dialogName = ev.data.name;
+			if (dialogName == 'image' || dialogName == 'link' || dialogName == 'flash') {
+				ev.data.definition.removeContents((dialogName == 'image' ? "U" : "u") + "pload");
+			}
+		});
   });
 }(jQuery));
