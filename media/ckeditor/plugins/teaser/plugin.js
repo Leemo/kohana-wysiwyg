@@ -21,6 +21,7 @@ CKEDITOR.plugins.add( 'teaser',
       'display: block;' +
       'float: none;' +
       'width: 100%;' +
+			'margin-bottom: 15px' +
       'border-top: #666 1px dotted;' +
       'border-bottom: #666 1px dotted;' +
       'height: 6px;' +
@@ -100,7 +101,7 @@ CKEDITOR.plugins.add( 'teaser',
 
       // Split the current block.
       if ( !hasMoved )
-        range.splitBlock( 'p' );
+      range.splitBlock( 'p' );
 
       // Insert the fake element into the document.
       range.insertNode( fakeElement );
@@ -109,8 +110,8 @@ CKEDITOR.plugins.add( 'teaser',
       // our fake element.
       var next = fakeElement;
       while ( ( next = next.getNext() ) && !range.moveToElementEditStart( next ) )
-      {}
-      range.select();
+      {console.log(next)}
+			range.select();
     }
   },
 

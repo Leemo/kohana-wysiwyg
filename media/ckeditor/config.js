@@ -17,11 +17,11 @@ CKEDITOR.editorConfig = function(config)
       {name: 'styles'}
     ],
 
-    extraPlugins: 'youtube,teaser,autogrow',
+    extraPlugins: 'youtube,teaser,autogrow,autosave,nbsp',
     removeButtons: 'Smiley,CreateDiv,PageBreak,Iframe,Font,Blockquote',
     removeDialogTabs: 'flash:Upload,image:Upload,link:upload',
 
-    filebrowser: true,
+    filebrowser: false,
     // Filebrowser settings
     filebrowserBrowseUrl: "wysiwyg/filebrowser/browse",
     filebrowserImageBrowseUrl: "wysiwyg/filebrowser/images",

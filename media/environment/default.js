@@ -19,7 +19,7 @@
       {name: 'paragraph', groups: [ 'list', 'align' ]},
       {name: 'styles'}
     ],
-    extraPlugins: 'autogrow',
+    extraPlugins: 'autogrow,autosave,nbsp',
     removeButtons: 'Smiley,CreateDiv,PageBreak,Iframe,Font,Blockquote,Youtube,Flash,Subscript,Superscript,Anchor,HorizontalRule,Styles',
     width: 550
 
@@ -33,7 +33,7 @@
       {name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ]}
     ],
       filebrowser: false,
-      extraPlugins: 'autogrow',
+      extraPlugins: 'autogrow,autosave,nbsp',
       removeButtons: 'Subscript,Superscript,Anchor,Strike,Undo,Redo',
       width: 450
     }
