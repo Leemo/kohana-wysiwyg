@@ -17,7 +17,7 @@ CKEDITOR.editorConfig = function(config)
       {name: 'styles'}
     ],
 
-    extraPlugins: 'youtube,teaser,autogrow,autosave,nbsp',
+    extraPlugins: 'youtube,teaser,autogrow,autosave,nbsp,spoiler',
     removeButtons: 'Smiley,CreateDiv,PageBreak,Iframe,Font,Blockquote',
     removeDialogTabs: 'flash:Upload,image:Upload,link:upload',
 
